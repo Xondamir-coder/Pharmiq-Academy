@@ -145,7 +145,7 @@ import locked from '../assets/icons/award-locked.svg';
 import link from '../assets/icons/copy-link.svg';
 import avatar from '../assets/avatar.svg';
 import Slide from '../components/Home/Slide.vue';
-import slides from '../data/slide.json';
+import slides from '../data/slide.js';
 </script>
 
 <style lang="scss" scoped>
