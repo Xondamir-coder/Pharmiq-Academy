@@ -133,7 +133,7 @@ h2 {
 #logo {
 	width: 100px; /* Adjust the width and height of your logo */
 	height: 100px;
-	background-image: url('public/favicon.ico');
+	background-image: url('./public/favicon.ico');
 	background-size: cover;
 	animation: jumpAnimation 3s infinite ease;
 }
