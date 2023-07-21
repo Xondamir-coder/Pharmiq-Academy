@@ -6,27 +6,41 @@
 			<input type="text" name="search" id="search" placeholder="Поиск" />
 		</div>
 		<nav class="sidebar__nav">
-			<img :src="home" alt="home" />
-			<RouterLink to="/">Главная</RouterLink>
-			<img :src="courses" alt="courses" />
-			<RouterLink to="/courses">Курсы</RouterLink>
-			<img :src="statistics" alt="statistics" />
-			<RouterLink to="/statistics">Статистика</RouterLink>
-			<img :src="apteka" alt="apteka" />
-			<RouterLink to="/apteka">аптека</RouterLink>
-			<img :src="store" alt="store" />
-			<RouterLink to="/store">магазин</RouterLink>
-			<img :src="mailbox" alt="mailbox" />
-			<RouterLink to="/mailbox">письма</RouterLink>
-			<img :src="darkTheme" alt="darkTheme" />
-			<button>темный режим</button>
-			<img :src="settings" alt="settings" />
-			<RouterLink to="/settings">настройки</RouterLink>
+			<RouterLink active-class="link--active" to="/">
+				<img :src="home" alt="home" />Главная</RouterLink
+			>
+
+			<RouterLink active-class="link--active" to="/learn">
+				<img :src="learn" alt="learn" />Обучения</RouterLink
+			>
+
+			<RouterLink active-class="link--active" to="/statistics"
+				><img :src="statistics" alt="statistics" />Статистика</RouterLink
+			>
+			<RouterLink active-class="link--active" to="/pharmacy">
+				<img :src="apteka" alt="apteka" />аптека</RouterLink
+			>
+
+			<RouterLink active-class="link--active" to="/store">
+				<img :src="store" alt="store" /> магазин</RouterLink
+			>
+
+			<RouterLink active-class="link--active" to="/mailbox">
+				<img :src="mailbox" alt="mailbox" /> письма</RouterLink
+			>
+
+			<button><img :src="darkTheme" alt="darkTheme" />темный режим</button>
+
+			<RouterLink active-class="link--active" to="/settings">
+				<img :src="settings" alt="settings" />
+				настройки
+			</RouterLink>
 		</nav>
 		<p>Скачивайте наше мобильное приложение</p>
 		<img :src="qrcode" alt="qr code" />
 		<div class="sidebar__logout">
-			<img :src="logout" alt="logout" /> <RouterLink to="/settings">Выход</RouterLink>
+			<img :src="logout" alt="logout" />
+			<RouterLink active-class="link--active" to="/logout">Выход</RouterLink>
 		</div>
 	</div>
 </template>
@@ -36,7 +50,7 @@ import { RouterLink } from 'vue-router';
 import logo from '../assets/Logo-White.svg';
 import search from '../assets/icons/teenyicons_search-outline.svg';
 import home from '../assets/icons/home.svg';
-import courses from '../assets/icons/bank.svg';
+import learn from '../assets/icons/bank.svg';
 import statistics from '../assets/icons/analytics.svg';
 import apteka from '../assets/icons/building.svg';
 import store from '../assets/icons/store.svg';
@@ -45,9 +59,10 @@ import darkTheme from '../assets/icons/dark-mode.svg';
 import settings from '../assets/icons/settings.svg';
 import logout from '../assets/icons/logout.svg';
 import qrcode from '../assets/qr-code.svg';
+
 setTimeout(() => {
 	document.querySelector('.sidebar').style.transform = 'translateX(0)';
-}, 3000);
+}, 3500);
 </script>
 
 <style lang="scss" scoped>
@@ -67,11 +82,30 @@ setTimeout(() => {
 		height: 4.6rem;
 	}
 	&__nav {
-		display: grid;
-		grid-template-columns: repeat(2, max-content);
+		position: relative;
+		display: flex;
+		flex-direction: column;
 		align-items: center;
-		row-gap: 3rem;
-		column-gap: 2.4rem;
+		gap: 1.6rem;
+		&::before {
+			content: '';
+			right: 0;
+			transition: all 0.5s ease;
+			transform: translateX(5.4rem);
+			position: absolute;
+			height: 3.6rem;
+			width: 0.8rem;
+			border-radius: 0.4rem;
+			background: var(--brand-solid-secondary-green, #4db1b1);
+		}
+		& a {
+			transition: all 0.5s ease;
+			width: 19rem;
+			padding: 0.6rem 0.8rem;
+			display: flex;
+			align-items: center;
+			gap: 2.4rem;
+		}
 	}
 	&__search {
 		display: flex;
@@ -106,6 +140,11 @@ setTimeout(() => {
 	}
 
 	& button {
+		display: flex;
+		align-items: center;
+		width: 19rem;
+		padding: 0.6rem 0.8rem;
+		gap: 2.2rem;
 		outline: none;
 		cursor: pointer;
 		border: none;
@@ -128,5 +167,9 @@ setTimeout(() => {
 		display: flex;
 		gap: 2.4rem;
 	}
+}
+.link--active {
+	border-radius: 1rem;
+	background: #fff;
 }
 </style>

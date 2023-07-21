@@ -3,6 +3,7 @@
 	<div class="container">
 		<Sidebar />
 		<main><RouterView /></main>
+		<Profile />
 	</div>
 </template>
 
@@ -10,6 +11,7 @@
 import Sidebar from './components/Sidebar.vue';
 import Preloader from './components/Preloader.vue';
 import { RouterView } from 'vue-router';
+import Profile from './components/Profile.vue';
 </script>
 
 <style lang="scss" scoped>
