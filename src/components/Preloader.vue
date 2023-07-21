@@ -103,15 +103,16 @@ svg {
 </template>
 <script setup>
 import logo from '../../public/favicon.ico';
-setTimeout(() => {
-	document.querySelector('.preloader').style.display = 'none';
-	document.querySelector('body').style.overflow = 'visible';
-}, 3000);
+document.querySelector('body').style.overflow = 'hidden';
+// setTimeout(() => {
+// 	document.querySelector('.preloader').style.display = 'none';
+// 	document.querySelector('body').style.overflow = 'visible';
+// }, 3000);
 </script>
 <style scoped lang="scss">
 #name {
-	bottom: 25%;
 	position: absolute;
+	bottom: 30%;
 	color: #007382;
 	text-align: center;
 	animation: scaleAnimation 1.2s infinite ease;
@@ -123,7 +124,6 @@ h2 {
 	font-weight: 400;
 }
 .preloader {
-	position: relative;
 	width: 100vw;
 	height: 100vh;
 	display: grid;
