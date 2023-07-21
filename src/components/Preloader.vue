@@ -107,7 +107,7 @@ document.querySelector('body').style.overflow = 'hidden';
 setTimeout(() => {
 	document.querySelector('.preloader').style.display = 'none';
 	document.querySelector('body').style.overflow = 'visible';
-}, 3000);
+}, 3500);
 </script>
 <style scoped lang="scss">
 #name {
