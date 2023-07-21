@@ -94,7 +94,7 @@ svg {
 </style> -->
 <template>
 	<div class="preloader">
-		<div style="background-image: url(../../public/favicon.ico)" id="logo"></div>
+		<img id="logo" :src="logo" alt="logo" />
 		<div id="name">
 			<h1>PharmIQ</h1>
 			<h2>ACADEMY</h2>
@@ -102,6 +102,7 @@ svg {
 	</div>
 </template>
 <script setup>
+import logo from '../../public/favicon.ico';
 setTimeout(() => {
 	document.querySelector('.preloader').style.display = 'none';
 	document.querySelector('body').style.overflow = 'visible';
@@ -132,7 +133,6 @@ h2 {
 #logo {
 	width: 100px; /* Adjust the width and height of your logo */
 	height: 100px;
-	background-size: cover;
 	animation: jumpAnimation 3s infinite ease;
 }
 @keyframes jumpAnimation {
