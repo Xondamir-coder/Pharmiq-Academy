@@ -112,7 +112,7 @@ document.querySelector('body').style.overflow = 'hidden';
 <style scoped lang="scss">
 #name {
 	position: absolute;
-	bottom: 30%;
+	bottom: 29.99999%;
 	color: #007382;
 	text-align: center;
 	animation: scaleAnimation 1.2s infinite ease;
