@@ -1,4 +1,5 @@
 <template>
+	<Preloader />
 	<div class="container">
 		<Sidebar />
 		<main><RouterView /></main>
@@ -7,6 +8,7 @@
 
 <script setup>
 import Sidebar from './components/Sidebar.vue';
+import Preloader from './components/Preloader.vue';
 import { RouterView } from 'vue-router';
 </script>
 

@@ -151,22 +151,22 @@ import slides from '../data/slide.js';
 <style lang="scss" scoped>
 .home {
 	position: relative;
-	height: 100%;
+	height: 88.2rem;
 	width: 100%;
 	padding: 3.6rem;
 	display: grid;
 	grid-template-columns: 32rem 42rem 1fr;
-	row-gap: 5rem;
+	row-gap: 3rem;
 	column-gap: 3rem;
 	grid-template-rows: repeat(3, max-content);
 	&__profile {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1.7rem;
+		gap: 1.4rem;
 		width: 34rem;
-		padding-top: 2rem;
-		height: 100%;
+		padding-top: 1rem;
+		height: 88.2rem;
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -241,7 +241,7 @@ import slides from '../data/slide.js';
 			}
 			&_title {
 				color: #358184;
-				font-size: 1.1rem;
+				font-size: 0.8rem;
 				font-weight: 700;
 			}
 			&_detail {
@@ -249,7 +249,7 @@ import slides from '../data/slide.js';
 				align-items: center;
 				color: #858597;
 				gap: 0.4rem;
-				font-size: 1.3rem;
+				font-size: 1rem;
 				font-weight: 500;
 			}
 			& img {

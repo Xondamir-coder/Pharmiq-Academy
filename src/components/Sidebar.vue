@@ -51,14 +51,13 @@ import qrcode from '../assets/qr-code.svg';
 .sidebar {
 	background-color: #f7f7f7;
 	width: 30rem;
-	height: 97.2rem;
+	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-evenly;
 	align-items: center;
-	gap: 3rem;
+	gap: 1.3rem;
 	&__logo {
-		margin-top: 3rem;
+		margin: 2rem 0;
 		width: 20rem;
 		height: 4.6rem;
 	}
@@ -73,6 +72,7 @@ import qrcode from '../assets/qr-code.svg';
 		display: flex;
 		gap: 2.4rem;
 		border-radius: 1.6rem;
+		margin-bottom: 1.3rem;
 		background: #fff;
 		width: 20rem;
 		padding: 1rem 1.6rem;
