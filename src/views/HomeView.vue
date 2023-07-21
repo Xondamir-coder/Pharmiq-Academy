@@ -17,12 +17,7 @@
 			</div>
 			<p class="home__course-category">Категория</p>
 			<h2>КУРС: НАЗВАНИЕ КУРСА</h2>
-			<div class="home__course-info">
-				<img :src="play" alt="play" />
-				<p>1 видеоурок</p>
-				<h1>15 минут</h1>
-			</div>
-			<div class="home__course-info__bar"></div>
+			<CourseInfo :number-of-vids="1" :time="15" :font-size="2" />
 			<button class="custom__button">
 				ПРОЙТИ КУРС И ПОЛУЧИТЬ 200
 				<img :src="coin" alt="Money" />
@@ -94,6 +89,7 @@ import play from '../assets/icons/play.svg';
 import coin from '../assets/icons/coin-icon.svg';
 import Slide from '../components/Home/Slide.vue';
 import slides from '../data/slide.js';
+import CourseInfo from '../components/CourseInfo.vue';
 </script>
 
 <style lang="scss" scoped>
@@ -198,34 +194,6 @@ import slides from '../data/slide.js';
 				width: 10.6rem;
 				color: #fff;
 				font-weight: 700;
-			}
-		}
-		&-info {
-			display: flex;
-			gap: 0.52rem;
-			align-items: center;
-			color: #61c1c0;
-			font-size: 1.2rem;
-			font-weight: 500;
-			& h1 {
-				font-size: 2rem;
-				font-weight: 700;
-				margin-left: auto;
-			}
-			&__bar {
-				width: 100%;
-				height: 0.7rem;
-				border-radius: 0.5rem;
-				border: 1px solid #61c1c0;
-				background: #effffe;
-				&::before {
-					content: '';
-					display: block;
-					width: 60%;
-					height: 100%;
-					border-radius: 0.5rem;
-					background-color: #61c1c0;
-				}
 			}
 		}
 		& h2 {

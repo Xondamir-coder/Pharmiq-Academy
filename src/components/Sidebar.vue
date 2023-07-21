@@ -6,32 +6,33 @@
 			<input type="text" name="search" id="search" placeholder="Поиск" />
 		</div>
 		<nav class="sidebar__nav">
-			<RouterLink active-class="link--active" to="/">
+			<div :style="`transform: translate(5.4rem, ${pointer} )`" class="sidebar__nav-pointer"></div>
+			<RouterLink @click="pointer = 0" active-class="link--active" to="/">
 				<img :src="home" alt="home" />Главная</RouterLink
 			>
 
-			<RouterLink active-class="link--active" to="/learn">
+			<RouterLink @click="pointer = '5rem'" active-class="link--active" to="/learn/courses">
 				<img :src="learn" alt="learn" />Обучения</RouterLink
 			>
 
-			<RouterLink active-class="link--active" to="/statistics"
+			<RouterLink @click="pointer = '10.3rem'" active-class="link--active" to="/statistics"
 				><img :src="statistics" alt="statistics" />Статистика</RouterLink
 			>
-			<RouterLink active-class="link--active" to="/pharmacy">
+			<RouterLink @click="pointer = '15.4rem'" active-class="link--active" to="/pharmacy">
 				<img :src="apteka" alt="apteka" />аптека</RouterLink
 			>
 
-			<RouterLink active-class="link--active" to="/store">
+			<RouterLink @click="pointer = '20.6rem'" active-class="link--active" to="/store">
 				<img :src="store" alt="store" /> магазин</RouterLink
 			>
 
-			<RouterLink active-class="link--active" to="/mailbox">
+			<RouterLink @click="pointer = '25.8rem'" active-class="link--active" to="/mailbox">
 				<img :src="mailbox" alt="mailbox" /> письма</RouterLink
 			>
 
 			<button><img :src="darkTheme" alt="darkTheme" />темный режим</button>
 
-			<RouterLink active-class="link--active" to="/settings">
+			<RouterLink @click="pointer = '36.3rem'" active-class="link--active" to="/settings">
 				<img :src="settings" alt="settings" />
 				настройки
 			</RouterLink>
@@ -46,6 +47,7 @@
 </template>
 
 <script setup>
+const changeToLearn = () => {};
 import { RouterLink } from 'vue-router';
 import logo from '../assets/Logo-White.svg';
 import search from '../assets/icons/teenyicons_search-outline.svg';
@@ -59,7 +61,8 @@ import darkTheme from '../assets/icons/dark-mode.svg';
 import settings from '../assets/icons/settings.svg';
 import logout from '../assets/icons/logout.svg';
 import qrcode from '../assets/qr-code.svg';
-
+import { ref } from 'vue';
+const pointer = ref('0');
 setTimeout(() => {
 	document.querySelector('.sidebar').style.transform = 'translateX(0)';
 }, 3500);
@@ -87,12 +90,10 @@ setTimeout(() => {
 		flex-direction: column;
 		align-items: center;
 		gap: 1.6rem;
-		&::before {
-			content: '';
+		&-pointer {
+			position: absolute;
 			right: 0;
 			transition: all 0.5s ease;
-			transform: translateX(5.4rem);
-			position: absolute;
 			height: 3.6rem;
 			width: 0.8rem;
 			border-radius: 0.4rem;
