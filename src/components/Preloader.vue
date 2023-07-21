@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
 	<div class="preloader">
 		<svg>
 			<g>
@@ -89,6 +89,86 @@ svg {
 	100% {
 		stroke-dasharray: $path-length $path-length;
 		stroke-dashoffset: -($path-length - 1);
+	}
+}
+</style> -->
+<template>
+	<div class="preloader">
+		<div id="logo"></div>
+		<div id="name">
+			<h1>PharmIQ</h1>
+			<h2>ACADEMY</h2>
+		</div>
+	</div>
+</template>
+<script setup>
+document.querySelector('body').style.overflow = 'hidden';
+setTimeout(() => {
+	document.querySelector('.preloader').style.display = 'none';
+	document.querySelector('body').style.overflow = 'visible';
+}, 3000);
+</script>
+<style scoped lang="scss">
+#name {
+	bottom: 25%;
+	position: absolute;
+	color: #007382;
+	text-align: center;
+	animation: scaleAnimation 1.2s infinite ease;
+}
+h1 {
+	font-size: 7rem;
+}
+h2 {
+	font-weight: 400;
+}
+.preloader {
+	position: relative;
+	width: 100vw;
+	height: 100vh;
+	display: grid;
+	place-items: center;
+	background-color: #effffe;
+}
+#logo {
+	width: 100px; /* Adjust the width and height of your logo */
+	height: 100px;
+	background-image: url('public/favicon.ico');
+	background-size: cover;
+	animation: jumpAnimation 3s infinite ease;
+}
+@keyframes jumpAnimation {
+	0% {
+		transform: translate(0, 0) rotate(0);
+	}
+	15% {
+		transform: translate(5rem, -5rem) rotate(90deg);
+	}
+	30% {
+		transform: translate(10rem, 0) rotate(180deg);
+	}
+	45% {
+		transform: translate(0, 0) rotate(0);
+	}
+	60% {
+		transform: translate(-5rem, -5rem) rotate(90deg);
+	}
+	80% {
+		transform: translate(-10rem, 0) rotate(180deg);
+	}
+	100% {
+		transform: translate(0, 0) rotate(0);
+	}
+}
+@keyframes scaleAnimation {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.2);
+	}
+	100% {
+		transform: scale(1);
 	}
 }
 </style>
