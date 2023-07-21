@@ -104,10 +104,10 @@ svg {
 <script setup>
 import logo from '../../public/favicon.ico';
 document.querySelector('body').style.overflow = 'hidden';
-// setTimeout(() => {
-// 	document.querySelector('.preloader').style.display = 'none';
-// 	document.querySelector('body').style.overflow = 'visible';
-// }, 3000);
+setTimeout(() => {
+	document.querySelector('.preloader').style.display = 'none';
+	document.querySelector('body').style.overflow = 'visible';
+}, 3000);
 </script>
 <style scoped lang="scss">
 #name {
