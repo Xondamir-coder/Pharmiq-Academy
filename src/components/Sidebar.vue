@@ -45,6 +45,9 @@ import darkTheme from '../assets/icons/dark-mode.svg';
 import settings from '../assets/icons/settings.svg';
 import logout from '../assets/icons/logout.svg';
 import qrcode from '../assets/qr-code.svg';
+setTimeout(() => {
+	document.querySelector('.sidebar').style.transform = 'translateX(0)';
+}, 3000);
 </script>
 
 <style lang="scss" scoped>
@@ -56,6 +59,8 @@ import qrcode from '../assets/qr-code.svg';
 	flex-direction: column;
 	align-items: center;
 	gap: 1.3rem;
+	transition: all 0.5s ease;
+	transform: translateX(-40%);
 	&__logo {
 		margin: 2rem 0;
 		width: 20rem;

@@ -146,10 +146,16 @@ import link from '../assets/icons/copy-link.svg';
 import avatar from '../assets/avatar.svg';
 import Slide from '../components/Home/Slide.vue';
 import slides from '../data/slide.js';
+setTimeout(() => {
+	document.querySelector('.home__profile').style.transform = 'translateX(0)';
+	document.querySelector('.home').style.opacity = '1';
+}, 3000);
 </script>
 
 <style lang="scss" scoped>
 .home {
+	opacity: 0;
+	transition: all 2s ease;
 	position: relative;
 	height: 88.2rem;
 	width: 100%;
@@ -163,6 +169,8 @@ import slides from '../data/slide.js';
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		transition: all 0.5s ease;
+		transform: translateX(40%);
 		gap: 1.4rem;
 		width: 34rem;
 		padding-top: 1rem;
