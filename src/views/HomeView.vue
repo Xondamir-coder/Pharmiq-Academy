@@ -1,7 +1,7 @@
 <template>
 	<section class="home">
 		<div>
-			<h1 style="font-weight: 600" class="home__username">С возрашением, Джон!</h1>
+			<h1 style="font-weight: 600" class="home__username">С возрашением, Джейден!</h1>
 			<p class="home__date">07 Августа, 2023</p>
 		</div>
 
