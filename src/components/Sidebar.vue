@@ -47,7 +47,6 @@
 </template>
 
 <script setup>
-const changeToLearn = () => {};
 import { RouterLink } from 'vue-router';
 import logo from '../assets/Logo-White.svg';
 import search from '../assets/icons/teenyicons_search-outline.svg';
