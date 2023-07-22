@@ -90,10 +90,15 @@ import coin from '../assets/icons/coin-icon.svg';
 import Slide from '../components/Home/Slide.vue';
 import slides from '../data/slide.js';
 import CourseInfo from '../components/CourseInfo.vue';
+setTimeout(() => {
+	document.querySelector('.home').style.opacity = '1';
+}, 200);
 </script>
 
 <style lang="scss" scoped>
 .home {
+	opacity: 0;
+	transition: all 0.5s ease;
 	position: relative;
 	height: 88.2rem;
 	width: 100%;

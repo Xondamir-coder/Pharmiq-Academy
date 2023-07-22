@@ -12,6 +12,9 @@
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router';
+setTimeout(() => {
+	document.querySelector('.learn').style.transform = 'translateY(0)';
+}, 100);
 </script>
 
 <style lang="scss" scoped>
@@ -23,6 +26,8 @@ import { RouterLink, RouterView } from 'vue-router';
 	box-shadow: 0px -4px 8px 0px rgba(0, 0, 0, 0.1) !important;
 }
 .learn {
+	transform: translateY(100%);
+	transition: transform 0.5s ease;
 	padding-top: 1.4rem;
 	&__nav {
 		padding: 3rem;
