@@ -53,6 +53,7 @@ import avatar from '../assets/avatar.svg';
 import wallet from '../assets/icons/wallet.svg';
 import locked from '../assets/icons/award-locked.svg';
 import link from '../assets/icons/copy-link.svg';
+import coin from '../assets/icons/coin-icon.svg';
 setTimeout(() => {
 	document.querySelector('.home__profile').style.transform = 'translateX(0)';
 }, 3500);

@@ -23,6 +23,7 @@ const router = createRouter({
 		{
 			path: '/learn',
 			name: 'learning',
+			redirect: '/learn/courses',
 			component: LearnView,
 			children: [
 				{

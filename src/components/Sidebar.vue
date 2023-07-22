@@ -11,7 +11,7 @@
 				<img :src="home" alt="home" />Главная</RouterLink
 			>
 
-			<RouterLink @click="pointer = '5rem'" active-class="link--active" to="/learn/courses">
+			<RouterLink @click="pointer = '5rem'" active-class="link--active" to="/learn">
 				<img :src="learn" alt="learn" />Обучения</RouterLink
 			>
 

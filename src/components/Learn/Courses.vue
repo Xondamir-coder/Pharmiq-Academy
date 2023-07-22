@@ -27,7 +27,10 @@ import CourseCard from './CourseCard.vue';
 .courses {
 	overflow-y: auto;
 	&__container {
-		height: 100vh;
+		@media only screen and (min-height: 850px) {
+			height: 83vh;
+		}
+		height: 104vh;
 		padding-left: 3rem;
 		padding-bottom: 3rem;
 		padding-top: 2rem;
