@@ -105,6 +105,9 @@ setTimeout(() => {
 			display: flex;
 			align-items: center;
 			gap: 2.4rem;
+			&:hover {
+				transform: translateX(1.5rem);
+			}
 		}
 	}
 	&__search {

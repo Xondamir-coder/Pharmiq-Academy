@@ -44,7 +44,6 @@ watchEffect(() => {
 		padding: 3rem;
 		& a {
 			z-index: 2;
-			margin-right: 1rem;
 			transition: all 0.5s ease;
 			padding: 2rem 1rem;
 			color: #545454;
