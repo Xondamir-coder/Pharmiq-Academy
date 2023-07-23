@@ -19,6 +19,7 @@ import CourseInfo from '../CourseInfo.vue';
 
 <style lang="scss" scoped>
 .courses__card {
+	cursor: pointer;
 	display: flex;
 	width: 26rem;
 	padding: 1rem;

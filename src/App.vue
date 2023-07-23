@@ -24,5 +24,6 @@ main {
 	border-radius: 5rem 0rem 0rem 5rem;
 	background-color: #fff;
 	transform: translateX(30rem);
+	user-select: none;
 }
 </style>
