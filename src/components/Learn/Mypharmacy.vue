@@ -38,6 +38,7 @@ import courses from '../../data/course.js';
 	&__nav {
 		display: flex;
 		padding-left: 3rem;
+		margin-bottom: 1rem;
 		gap: 2rem;
 		& a {
 			color: var(--brand-solid-secondary-green, #4db1b1);

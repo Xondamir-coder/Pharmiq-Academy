@@ -69,6 +69,7 @@ setTimeout(() => {
 
 <style lang="scss" scoped>
 .sidebar {
+	position: fixed;
 	background-color: #f7f7f7;
 	width: 30rem;
 	height: 100vh;

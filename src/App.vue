@@ -19,8 +19,10 @@ import Profile from './components/Profile.vue';
 	display: flex;
 }
 main {
-	flex: 1;
+	height: 100vh;
+	width: 70vw;
 	border-radius: 5rem 0rem 0rem 5rem;
 	background-color: #fff;
+	transform: translateX(30rem);
 }
 </style>

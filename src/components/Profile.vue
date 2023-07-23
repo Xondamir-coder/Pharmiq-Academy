@@ -60,6 +60,9 @@ setTimeout(() => {
 </script>
 <style lang="scss" scoped>
 .home__profile {
+	position: fixed;
+	top: 0;
+	right: 0;
 	transform: translateX(40%);
 	transition: all 0.5s ease;
 	z-index: -1;
@@ -70,9 +73,6 @@ setTimeout(() => {
 	width: 34rem;
 	padding-top: 1rem;
 	height: 88.2rem;
-	position: absolute;
-	top: 0;
-	right: 0;
 	border-radius: 5rem 0rem 0rem 5rem;
 	background: #fff;
 	box-shadow: -8px 0px 20px 0px rgba(0, 0, 0, 0.05);
