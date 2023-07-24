@@ -5,36 +5,16 @@
 			<img :src="search" alt="search" />
 			<input type="text" name="search" id="search" placeholder="Поиск" />
 		</div>
+		<div :style="`transform: translateY(${pointer}px)`" class="sidebar__nav-pointer"></div>
 		<nav class="sidebar__nav">
-			<div :style="`transform: translate(5.4rem, ${pointer} )`" class="sidebar__nav-pointer"></div>
-			<RouterLink @click="pointer = 0" active-class="link--active" to="/">
-				<img :src="home" alt="home" />Главная</RouterLink
+			<RouterLink
+				v-for="(link, index) in navLinks"
+				:key="index"
+				@click="setPointer(index)"
+				:to="link.to"
+				active-class="link--active"
 			>
-
-			<RouterLink @click="pointer = '4.6rem'" active-class="link--active" to="/learn">
-				<img :src="learn" alt="learn" />Обучения</RouterLink
-			>
-
-			<RouterLink @click="pointer = '9.2rem'" active-class="link--active" to="/statistics"
-				><img :src="statistics" alt="statistics" />Статистика</RouterLink
-			>
-			<RouterLink @click="pointer = '13.6rem'" active-class="link--active" to="/pharmacy">
-				<img :src="apteka" alt="apteka" />аптека</RouterLink
-			>
-
-			<RouterLink @click="pointer = '18.2rem'" active-class="link--active" to="/store">
-				<img :src="store" alt="store" /> магазин</RouterLink
-			>
-
-			<RouterLink @click="pointer = '22.6rem'" active-class="link--active" to="/mailbox">
-				<img :src="mailbox" alt="mailbox" /> письма</RouterLink
-			>
-
-			<button><img :src="darkTheme" alt="darkTheme" />темный режим</button>
-
-			<RouterLink @click="pointer = '32.2rem'" active-class="link--active" to="/settings">
-				<img :src="settings" alt="settings" />
-				настройки
+				<img :src="link.icon" :alt="link.text" />{{ link.text }}
 			</RouterLink>
 		</nav>
 		<p>Скачивайте наше мобильное приложение</p>
@@ -45,26 +25,62 @@
 		</div>
 	</div>
 </template>
-
 <script setup>
-import { RouterLink } from 'vue-router';
 import logo from '../assets/Logo-White.svg';
 import search from '../assets/icons/teenyicons_search-outline.svg';
 import home from '../assets/icons/home.svg';
 import learn from '../assets/icons/bank.svg';
 import statistics from '../assets/icons/analytics.svg';
-import apteka from '../assets/icons/building.svg';
+import pharmacy from '../assets/icons/building.svg';
 import store from '../assets/icons/store.svg';
 import mailbox from '../assets/icons/mailbox.svg';
 import darkTheme from '../assets/icons/dark-mode.svg';
 import settings from '../assets/icons/settings.svg';
 import logout from '../assets/icons/logout.svg';
 import qrcode from '../assets/qr-code.svg';
-import { ref } from 'vue';
-const pointer = ref('0');
 setTimeout(() => {
 	document.querySelector('.sidebar').style.transform = 'translateX(0)';
 }, 3500);
+
+import { RouterLink } from 'vue-router';
+import { ref, onMounted, nextTick } from 'vue';
+
+const navLinks = [
+	{ to: '/', icon: home, text: 'Главная' },
+	{ to: '/learn', icon: learn, text: 'Обучения' },
+	{ to: '/statistics', icon: statistics, text: 'Статистика' },
+	{ to: '/pharmacy', icon: pharmacy, text: 'Аптека' },
+	{ to: '/store', icon: store, text: 'Магазин' },
+	{ to: '/mailbox', icon: mailbox, text: 'Письма' },
+	{ to: '/settings', icon: settings, text: 'Настройки' },
+];
+const sidebarNav = ref(null); // A ref to store the sidebar__nav element
+const pointer = ref(0); // Initialize the pointer to 0
+
+const setPointer = (index) => {
+	const linkElement = navLinkElements.value[index];
+	if (linkElement && sidebarNav.value) {
+		// Get the height of the sidebar__nav element
+		const sidebarHeight = sidebarNav.value.getBoundingClientRect().y;
+		pointer.value = sidebarHeight - 18 + linkElement.offsetTop + linkElement.offsetHeight / 2;
+	}
+};
+
+// A ref to hold the references to the RouterLink elements
+const navLinkElements = ref([]);
+
+onMounted(() => {
+	// Populating the ref with the references to the RouterLink elements
+	navLinkElements.value = document.querySelectorAll('a');
+
+	// Set the sidebar__nav element reference
+	sidebarNav.value = document.querySelector('.sidebar__nav');
+
+	// Use nextTick to handle the height adjustment
+	if (sidebarNav.value) {
+		pointer.value = sidebarNav.value.getBoundingClientRect().y;
+	}
+});
 </script>
 
 <style lang="scss" scoped>
