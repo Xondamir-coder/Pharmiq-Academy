@@ -17,14 +17,13 @@ const { props } = defineProps(['props']);
 	flex-direction: column;
 	gap: 1rem;
 	@media only screen and (max-height: 740px) {
-		height: 30vh;
 	}
 	& img {
 		width: 100%;
 		height: 18rem;
 		border-radius: 1rem;
 		@media only screen and (max-height: 740px) {
-			height: 100%;
+			height: 25vh;
 		}
 		object-fit: cover;
 	}

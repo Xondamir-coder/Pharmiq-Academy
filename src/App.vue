@@ -19,7 +19,6 @@ import Profile from './components/Profile.vue';
 	display: flex;
 }
 main {
-	overflow: hidden;
 	height: 100vh;
 	width: 70vw;
 	border-radius: 5rem 0rem 0rem 5rem;

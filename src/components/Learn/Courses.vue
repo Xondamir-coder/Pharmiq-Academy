@@ -25,30 +25,9 @@ import CourseCard from './CourseCard.vue';
 	background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%)) !important;
 }
 .courses {
-	overflow-y: auto;
-	&::-webkit-scrollbar {
-		display: none;
-	}
-	&__container {
-		@media only screen and (min-height: 850px) {
-			height: 83vh;
-		}
-		height: 104vh;
-		padding-left: 3rem;
-		padding-bottom: 3rem;
-		padding-top: 2rem;
-		overflow-y: auto;
-		&::-webkit-scrollbar {
-			display: none;
-		}
-		display: grid;
-		grid-template-columns: repeat(3, max-content);
-		column-gap: 2rem;
-		row-gap: 3rem;
-	}
+	padding-left: 3rem;
 	&__nav {
 		display: flex;
-		padding-left: 3rem;
 		gap: 2rem;
 		margin-bottom: 1rem;
 		& a {
@@ -59,6 +38,16 @@ import CourseCard from './CourseCard.vue';
 			background: #fff;
 			font-size: 2rem;
 		}
+	}
+	&__container {
+		@media screen and (max-height: 700px) {
+			height: 70vh;
+		}
+		display: grid;
+		height: 75vh;
+		grid-template-columns: repeat(3, max-content);
+		overflow-y: auto;
+		gap: 2rem;
 	}
 }
 </style>

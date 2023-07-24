@@ -114,7 +114,6 @@ setTimeout(() => {
 	grid-template-columns: 32rem 42rem 1fr;
 	row-gap: 3rem;
 	column-gap: 3rem;
-	grid-template-rows: repeat(3, max-content);
 	@media only screen and (max-height: 810px) {
 		padding: 1.7rem;
 	}
@@ -123,7 +122,8 @@ setTimeout(() => {
 		display: flex;
 		flex-direction: column;
 		gap: 1.8rem;
-		height: 70vh;
+		height: 100%;
+
 		&-grid {
 			display: grid;
 			grid-template-columns: repeat(4, max-content);
@@ -178,7 +178,7 @@ setTimeout(() => {
 		grid-column: 1/-1;
 		display: flex;
 		flex-wrap: nowrap;
-		width: 86rem;
+		width: 80%;
 		padding-right: 2rem;
 		overflow-x: auto;
 		gap: 3rem;
@@ -192,10 +192,12 @@ setTimeout(() => {
 		margin-top: 1rem;
 	}
 	&__course {
+		height: max-content;
 		grid-column: 1 / span 1;
 		width: 32rem;
 		overflow: hidden;
 		display: flex;
+		justify-content: space-around;
 		flex-direction: column;
 		gap: 1rem;
 		@media only screen and (max-height: 830px) {
@@ -210,7 +212,6 @@ setTimeout(() => {
 			max-width: 340px;
 			height: 40%;
 			display: flex;
-			margin-bottom: 5rem;
 			max-height: 193px;
 			@media only screen and (max-height: 830px) {
 				margin-bottom: 0;

@@ -23,21 +23,19 @@ import courses from '../../data/course.js';
 	background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%)) !important;
 }
 .mypharmacy {
-	overflow-y: auto;
+	padding-left: 3rem;
 	&__container {
-		height: 100vh;
-		padding-left: 3rem;
-		padding-bottom: 3rem;
-		padding-top: 2rem;
-		overflow-y: auto;
 		display: grid;
+		height: 75vh;
 		grid-template-columns: repeat(3, max-content);
-		column-gap: 2rem;
-		row-gap: 3rem;
+		overflow-y: auto;
+		gap: 2rem;
+		@media screen and (max-height: 700px) {
+			height: 70vh;
+		}
 	}
 	&__nav {
 		display: flex;
-		padding-left: 3rem;
 		margin-bottom: 1rem;
 		gap: 2rem;
 		& a {
