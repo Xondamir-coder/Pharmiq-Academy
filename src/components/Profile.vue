@@ -119,6 +119,9 @@ setTimeout(() => {
 		display: inline-flex;
 		gap: 3rem;
 		& img {
+			width: 7.2rem;
+			height: 7.2rem;
+
 			@media screen and (max-height: 460px) {
 				width: 5rem;
 				height: 5rem;

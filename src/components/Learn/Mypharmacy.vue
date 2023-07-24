@@ -23,7 +23,6 @@ import courses from '../../data/course.js';
 	background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%)) !important;
 }
 .mypharmacy {
-	padding-left: 3rem;
 	&__container {
 		display: grid;
 		height: 75vh;

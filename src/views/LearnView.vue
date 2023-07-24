@@ -30,6 +30,8 @@ watchEffect(() => {
 <style lang="scss" scoped>
 .link--active {
 	color: #fff !important;
+	padding-top: 3rem !important;
+	height: 10rem !important;
 	z-index: -10;
 	@for $i from 1 through 4 {
 		&:nth-child(#{$i})::before {
@@ -42,11 +44,11 @@ watchEffect(() => {
 	transition: transform 0.5s ease;
 	padding-top: 1.4rem;
 	&__nav {
-		padding: 3rem;
+		padding: 3rem 0;
 		& a {
 			z-index: 2;
 			transition: all 0.5s ease;
-			padding: 2rem 1rem;
+			padding: 1rem;
 			color: #545454;
 			font-size: 2.4rem;
 			font-weight: 500;

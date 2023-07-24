@@ -20,6 +20,7 @@ import Profile from './components/Profile.vue';
 }
 main {
 	height: 100vh;
+	padding: 0 3rem;
 	width: 70vw;
 	border-radius: 5rem 0rem 0rem 5rem;
 	background-color: #fff;

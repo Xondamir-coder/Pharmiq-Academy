@@ -1,8 +1,8 @@
 <template>
 	<section class="home">
-		<div>
+		<div style="align-self: flex-end">
 			<h1 style="font-weight: 600; width: max-content" class="home__username">
-				С возрашением, Джейден!
+				С возращением, Джейден!
 			</h1>
 			<p class="home__date">07 Августа, 2023</p>
 		</div>
@@ -100,6 +100,9 @@ setTimeout(() => {
 	@media only screen and (max-height: 800px) {
 		row-gap: 1.5vh;
 	}
+	@media only screen and (max-height: 810px) {
+		padding: 1rem 0;
+	}
 	@media only screen and (max-height: 660px) {
 		font-size: 1.2rem;
 		row-gap: 1.5vh;
@@ -109,14 +112,11 @@ setTimeout(() => {
 	position: relative;
 	height: 100%;
 	width: 100%;
-	padding: 3.6rem;
 	display: grid;
+	align-items: center;
 	grid-template-columns: 32rem 42rem 1fr;
 	row-gap: 3rem;
 	column-gap: 3rem;
-	@media only screen and (max-height: 810px) {
-		padding: 1.7rem;
-	}
 	&__leaders {
 		grid-column: 2 / span 1;
 		display: flex;
@@ -192,16 +192,15 @@ setTimeout(() => {
 		margin-top: 1rem;
 	}
 	&__course {
-		height: max-content;
+		height: 100%;
 		grid-column: 1 / span 1;
 		width: 32rem;
 		overflow: hidden;
 		display: flex;
-		justify-content: space-around;
+		justify-content: space-evenly;
 		flex-direction: column;
 		gap: 1rem;
 		@media only screen and (max-height: 830px) {
-			height: 100%;
 			gap: 1vh;
 		}
 

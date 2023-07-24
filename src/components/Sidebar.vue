@@ -16,6 +16,7 @@
 			>
 				<img :src="link.icon" :alt="link.text" />{{ link.text }}
 			</RouterLink>
+			<button><img :src="darkTheme" alt="dark theme" />Темный режим</button>
 		</nav>
 		<p>Скачивайте наше мобильное приложение</p>
 		<img class="sidebar__qrcode" :src="qrcode" alt="qr code" />
@@ -110,6 +111,7 @@ onMounted(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: space-evenly;
 	gap: 1.3rem;
 	transition: all 0.5s ease;
 	transform: translateX(-40%);
@@ -145,6 +147,7 @@ onMounted(() => {
 		}
 		&-pointer {
 			position: absolute;
+			top: 0;
 			right: 0;
 			transition: all 0.5s ease;
 			height: 3.6rem;
@@ -152,7 +155,6 @@ onMounted(() => {
 			border-radius: 0.4rem;
 			background: var(--brand-solid-secondary-green, #4db1b1);
 		}
-
 		& img {
 			width: 2.4rem;
 			height: 2.4rem;
@@ -253,8 +255,11 @@ onMounted(() => {
 			font-size: 1.1rem;
 		}
 		@media only screen and (max-height: 530px) {
-			width: 40%;
-			justify-content: space-between;
+			width: 12.6rem;
+			gap: 0.3rem;
+		}
+		& img {
+			margin-left: 0.2rem;
 		}
 	}
 

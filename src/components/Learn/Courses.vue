@@ -25,7 +25,6 @@ import CourseCard from './CourseCard.vue';
 	background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%)) !important;
 }
 .courses {
-	padding-left: 3rem;
 	&__nav {
 		display: flex;
 		gap: 2rem;
