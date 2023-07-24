@@ -30,6 +30,7 @@ watchEffect(() => {
 <style lang="scss" scoped>
 .link--active {
 	color: #fff !important;
+	z-index: -10;
 	@for $i from 1 through 4 {
 		&:nth-child(#{$i})::before {
 			height: 100%;
@@ -50,7 +51,6 @@ watchEffect(() => {
 			font-size: 2.4rem;
 			font-weight: 500;
 			border-radius: 1rem 1rem 0rem 0rem;
-			background-color: #fff;
 			box-shadow: 0px -4px 8px 0px rgba(0, 0, 0, 0.1);
 			position: relative;
 			&::before {

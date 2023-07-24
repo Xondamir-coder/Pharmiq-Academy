@@ -17,7 +17,7 @@
 			</div>
 			<p class="home__course-category">Категория</p>
 			<h2>КУРС: НАЗВАНИЕ КУРСА</h2>
-			<CourseInfo :number-of-vids="1" :time="15" :font-size="2" />
+			<CourseInfo :number-of-vids="1" :time="15" :font-size="1.6" />
 			<button class="custom__button">
 				ПРОЙТИ КУРС И ПОЛУЧИТЬ 200
 				<img :src="coin" alt="Money" />
@@ -97,10 +97,17 @@ setTimeout(() => {
 
 <style lang="scss" scoped>
 .home {
+	@media only screen and (max-height: 800px) {
+		row-gap: 1.5vh;
+	}
+	@media only screen and (max-height: 660px) {
+		font-size: 1.2rem;
+		row-gap: 1.5vh;
+	}
 	opacity: 0;
 	transition: all 0.5s ease;
 	position: relative;
-	height: 88.2rem;
+	height: 100%;
 	width: 100%;
 	padding: 3.6rem;
 	display: grid;
@@ -108,12 +115,15 @@ setTimeout(() => {
 	row-gap: 3rem;
 	column-gap: 3rem;
 	grid-template-rows: repeat(3, max-content);
+	@media only screen and (max-height: 810px) {
+		padding: 1.7rem;
+	}
 	&__leaders {
 		grid-column: 2 / span 1;
 		display: flex;
 		flex-direction: column;
 		gap: 1.8rem;
-		height: 36.2rem;
+		height: 70vh;
 		&-grid {
 			display: grid;
 			grid-template-columns: repeat(4, max-content);
@@ -121,6 +131,12 @@ setTimeout(() => {
 			row-gap: 1.5rem;
 			align-items: center;
 			justify-items: center;
+			@media only screen and (max-height: 830px) {
+				row-gap: 1.5vh;
+			}
+			@media only screen and (max-height: 530px) {
+				row-gap: 0.6vh;
+			}
 			&_last {
 				grid-column: 1/-1;
 				display: flex;
@@ -156,7 +172,6 @@ setTimeout(() => {
 		}
 		& h1 {
 			font-weight: 400;
-			font-size: 2rem;
 		}
 	}
 	&__slider {
@@ -175,24 +190,34 @@ setTimeout(() => {
 		grid-row: 2 / span 1;
 		color: #808080;
 		margin-top: 1rem;
-		font-size: 2rem;
 	}
 	&__course {
 		grid-column: 1 / span 1;
 		width: 32rem;
+		overflow: hidden;
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		@media only screen and (max-height: 830px) {
+			height: 100%;
+			gap: 1vh;
+		}
+
 		&-bg {
 			border-radius: 3rem;
 			background: linear-gradient(136deg, #61c1c0 0%, #358184 100%);
-			width: 32rem;
-			height: 18rem;
+			width: 100%;
+			max-width: 340px;
+			height: 40%;
 			display: flex;
 			margin-bottom: 5rem;
+			max-height: 193px;
+			@media only screen and (max-height: 830px) {
+				margin-bottom: 0;
+			}
 			& img {
-				width: 19.8rem;
-				height: 21.5rem;
+				width: 50%;
+				height: 110%;
 			}
 			& p {
 				margin-top: 6rem;
@@ -211,6 +236,11 @@ setTimeout(() => {
 			font-size: 1rem;
 			font-weight: 500;
 			line-height: 150%;
+		}
+	}
+	& button {
+		@media only screen and (max-height: 830px) {
+			height: 7vh;
 		}
 	}
 }

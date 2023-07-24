@@ -72,12 +72,23 @@ setTimeout(() => {
 	gap: 1.4rem;
 	width: 34rem;
 	padding-top: 1rem;
-	height: 88.2rem;
+	height: 100vh;
 	border-radius: 5rem 0rem 0rem 5rem;
 	background: #fff;
 	box-shadow: -8px 0px 20px 0px rgba(0, 0, 0, 0.05);
 	font-weight: 600;
 	text-align: center;
+	@media screen and (max-height: 900px) {
+		gap: 0;
+		justify-content: space-around;
+	}
+	@media screen and (max-height: 710px) {
+		font-size: 1rem;
+	}
+	@media screen and (max-height: 660px) {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
 	& input {
 		display: flex;
 		justify-content: center;
@@ -88,17 +99,31 @@ setTimeout(() => {
 		font-size: 1.6rem;
 		border: 1px solid #b3b3b3;
 		background: #fff;
+		@media screen and (max-height: 530px) {
+			width: 20rem;
+			padding: 0.5rem;
+			font-size: 1.3rem;
+		}
 		&::placeholder {
 			color: #b3b3b3;
 			text-align: center;
 			font-family: var(--font-base);
 			font-size: 1.6rem;
 			font-weight: 600;
+			@media screen and (max-height: 530px) {
+				font-size: 1.3rem;
+			}
 		}
 	}
 	&-awards {
 		display: inline-flex;
 		gap: 3rem;
+		& img {
+			@media screen and (max-height: 460px) {
+				width: 5rem;
+				height: 5rem;
+			}
+		}
 	}
 	&-wallet {
 		display: flex;
@@ -112,6 +137,12 @@ setTimeout(() => {
 		gap: 0.6rem;
 		font-size: 2rem;
 		height: 3.6rem;
+	}
+	& button {
+		@media screen and (max-height: 530px) {
+			width: 27rem;
+			padding: 0.6rem 0rem;
+		}
 	}
 }
 </style>
