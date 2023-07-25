@@ -118,13 +118,15 @@ setTimeout(() => {
 	row-gap: 3rem;
 	column-gap: 3rem;
 	&__leaders {
+		padding: 2rem 0;
 		grid-column: 2 / span 1;
 		display: flex;
 		flex-direction: column;
-		gap: 1.8rem;
+		gap: 1rem;
 		height: 100%;
 
 		&-grid {
+			flex: 1;
 			display: grid;
 			grid-template-columns: repeat(4, max-content);
 			column-gap: 3rem;

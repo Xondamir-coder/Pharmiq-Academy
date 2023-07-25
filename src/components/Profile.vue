@@ -69,6 +69,7 @@ setTimeout(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: space-evenly;
 	gap: 1.4rem;
 	width: 34rem;
 	padding-top: 1rem;
@@ -140,8 +141,16 @@ setTimeout(() => {
 		gap: 0.6rem;
 		font-size: 2rem;
 		height: 3.6rem;
+		& img {
+			height: 3.6rem;
+			width: 3.6rem;
+		}
 	}
 	& button {
+		& img {
+			height: 2.4rem;
+			width: 2.4rem;
+		}
 		@media screen and (max-height: 530px) {
 			width: 27rem;
 			padding: 0.6rem 0rem;
