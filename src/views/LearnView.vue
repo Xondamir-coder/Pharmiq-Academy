@@ -31,7 +31,6 @@ watchEffect(() => {
 .link--active {
 	color: #fff !important;
 	padding-top: 3rem !important;
-	height: 10rem !important;
 	z-index: -10;
 	@for $i from 1 through 4 {
 		&:nth-child(#{$i})::before {
