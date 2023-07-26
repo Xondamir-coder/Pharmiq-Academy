@@ -22,8 +22,8 @@ main {
 	height: 100vh;
 	padding: 0 3rem;
 	width: 70vw;
-	border-radius: 5rem 0rem 0rem 5rem;
-	background-color: #fff;
+	border-radius: 3rem 0rem 0rem 3rem;
+	background: #fff;
 	transform: translateX(30rem);
 	user-select: none;
 }

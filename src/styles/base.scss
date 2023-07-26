@@ -31,6 +31,12 @@ html {
 	@media only screen and (max-width: 900px) {
 		font-size: 40%;
 	}
+	@media only screen and (max-height: 600px) {
+		font-size: 50%;
+	}
+	@media only screen and (max-height: 500px) {
+		font-size: 40%;
+	}
 }
 a {
 	text-decoration: none;

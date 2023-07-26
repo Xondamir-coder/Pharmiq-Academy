@@ -16,7 +16,7 @@
 			>
 				<img :src="link.icon" :alt="link.text" />{{ link.text }}
 			</RouterLink>
-			<button><img :src="darkTheme" alt="dark theme" />Темный режим</button>
+			<button @click="changeTheme"><img :src="darkTheme" alt="dark theme" />Темный режим</button>
 		</nav>
 		<p>Скачивайте наше мобильное приложение</p>
 		<img class="sidebar__qrcode" :src="qrcode" alt="qr code" />
@@ -30,7 +30,7 @@
 import logo from '../assets/Logo-White.svg';
 import search from '../assets/icons/teenyicons_search-outline.svg';
 import home from '../assets/icons/home.svg';
-import learn from '../assets/icons/bank.svg';
+import bank from '../assets/icons/bank.svg';
 import statistics from '../assets/icons/analytics.svg';
 import pharmacy from '../assets/icons/building.svg';
 import store from '../assets/icons/store.svg';
@@ -39,16 +39,34 @@ import darkTheme from '../assets/icons/dark-mode.svg';
 import settings from '../assets/icons/settings.svg';
 import logout from '../assets/icons/logout.svg';
 import qrcode from '../assets/qr-code.svg';
+const changeTheme = () => {
+	const sidebar = document.querySelector('.sidebar');
+	document.querySelector('body').style.backgroundColor = '#1A1A1A';
+	document.querySelector('body').style.color = 'white';
+	document.querySelector('main').style.backgroundColor = '#000';
+	document.querySelector('.home__profile').style.backgroundColor = '#000';
+	document.querySelector('.home__profile').style.boxShadow =
+		'-8px 0px 20px 0px rgba(255, 255, 255, 0.10)';
+	sidebar.style.backgroundColor = '#1a1a1a';
+	document.querySelector('.sidebar__search').style.backgroundColor = '#000';
+	document.getElementById('search').style.backgroundColor = '#000';
+	document.getElementById('search').style.color = 'white';
+	sidebar.querySelectorAll('a').forEach((link) => {
+		link.style.color = 'white';
+	});
+	sidebar.querySelector('button').style.color = 'white';
+	sidebar.querySelector('p').style.color = 'white';
+};
 setTimeout(() => {
 	document.querySelector('.sidebar').style.transform = 'translateX(0)';
 }, 3500);
 
 import { RouterLink } from 'vue-router';
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const navLinks = [
 	{ to: '/', icon: home, text: 'Главная' },
-	{ to: '/learn', icon: learn, text: 'Обучения' },
+	{ to: '/learn', icon: bank, text: 'Обучения' },
 	{ to: '/statistics', icon: statistics, text: 'Статистика' },
 	{ to: '/pharmacy', icon: pharmacy, text: 'Аптека' },
 	{ to: '/store', icon: store, text: 'Магазин' },
@@ -88,12 +106,6 @@ onMounted(() => {
 .sidebar {
 	@media only screen and (max-height: 870px) {
 		gap: 0;
-	}
-	@media only screen and (max-height: 700px) {
-		font-size: 1.3rem;
-	}
-	@media only screen and (max-height: 560px) {
-		font-size: 1.1rem;
 	}
 	@media only screen and (max-height: 530px) {
 		gap: 1rem;
@@ -248,16 +260,7 @@ onMounted(() => {
 		font-size: 1.6rem;
 		font-weight: 400;
 		text-transform: capitalize;
-		@media only screen and (max-height: 700px) {
-			font-size: 1.3rem;
-		}
-		@media only screen and (max-height: 560px) {
-			font-size: 1.1rem;
-		}
-		@media only screen and (max-height: 530px) {
-			width: 12.6rem;
-			gap: 0.3rem;
-		}
+
 		& img {
 			margin-left: 0.2rem;
 		}

@@ -1,8 +1,8 @@
 <template>
 	<div class="mypharmacy">
 		<div class="mypharmacy__nav">
-			<RouterLink active-class="link--active" to="">Препараты</RouterLink>
-			<RouterLink to="">Корпортивные</RouterLink>
+			<RouterLink class="learn--link" active-class="link--active" to="">Препараты</RouterLink>
+			<RouterLink class="learn--link" to="">Корпортивные</RouterLink>
 		</div>
 		<div class="mypharmacy__container">
 			<CourseCard v-for="course in courses" :key="course.id" :props="course" />
@@ -16,12 +16,16 @@ import courses from '../../data/course.js';
 </script>
 
 <style lang="scss" scoped>
+a {
+	color: var(--color-secondary-green);
+}
 .link--active {
 	color: #fff !important;
 	padding: 1.2rem 2.4rem !important;
 	border-radius: 1rem !important;
 	background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%)) !important;
 }
+
 .mypharmacy {
 	&__container {
 		display: grid;
