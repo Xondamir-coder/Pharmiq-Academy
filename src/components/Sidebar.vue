@@ -21,7 +21,9 @@
 			</RouterLink>
 			<button @click="changeTheme">
 				<img v-if="isDark" :src="darkThemeWhite" alt="dark theme" />
-				<img v-else :src="darkTheme" alt="dark theme" />Темный режим
+				<img v-else :src="darkTheme" alt="dark theme" />
+				<span v-if="isDark">Светлый Режим</span>
+				<span v-else>Темный Режим</span>
 			</button>
 		</nav>
 		<p>Скачивайте наше мобильное приложение</p>
@@ -61,22 +63,38 @@ const changeTheme = () => {
 	const sidebar = document.querySelector('.sidebar');
 	const body = document.querySelector('body');
 	const profile = document.querySelector('.home__profile');
-	const searchBar = document.getElementById('search');
-	body.style.backgroundColor = '#1A1A1A';
-	body.style.color = 'white';
-	document.querySelector('main').style.backgroundColor = '#000';
-	profile.style.backgroundColor = '#000';
-	profile.style.boxShadow = '-8px 0px 20px 0px rgba(255, 255, 255, 0.10)';
-	document.querySelector('.sidebar__search').style.backgroundColor = '#000';
-	searchBar.style.backgroundColor = '#000';
-	searchBar.style.color = 'white';
-	sidebar.querySelectorAll('a').forEach((link) => {
-		link.style.color = 'white';
-	});
-	sidebar.style.backgroundColor = '#1a1a1a';
-	sidebar.querySelector('button').style.color = 'white';
-	sidebar.querySelector('p').style.color = 'white';
-	isDark.value = 'true';
+	if (!isDark.value) {
+		const searchBar = document.getElementById('search');
+		body.style.backgroundColor = '#1A1A1A';
+		body.style.color = 'white';
+		document.querySelector('main').style.backgroundColor = '#000';
+		profile.style.backgroundColor = '#000';
+		profile.style.boxShadow = '-8px 0px 20px 0px rgba(255, 255, 255, 0.10)';
+		document.querySelector('.sidebar__search').style.backgroundColor = '#000';
+		searchBar.style.backgroundColor = '#000';
+		searchBar.style.color = 'white';
+		sidebar.querySelectorAll('a').forEach((link) => {
+			link.style.color = 'white';
+		});
+		sidebar.style.backgroundColor = '#1a1a1a';
+		sidebar.querySelector('button').style.color = 'white';
+		sidebar.querySelector('p').style.color = 'white';
+		isDark.value = true;
+	} else {
+		body.style.backgroundColor = '#f7f7f7';
+		body.style.color = '#000';
+		document.querySelector('main').style.backgroundColor = '#fff';
+		profile.style.backgroundColor = '#fff';
+		profile.style.boxShadow = '-8px 0px 20px 0px rgba(0, 0, 0, 0.05)';
+		document.querySelector('.sidebar__search').style.backgroundColor = '#fff';
+		sidebar.querySelectorAll('a').forEach((link) => {
+			link.style.color = '#000';
+		});
+		sidebar.style.backgroundColor = '#f7f7f7';
+		sidebar.querySelector('button').style.color = '#000';
+		sidebar.querySelector('p').style.color = '#000';
+		isDark.value = false;
+	}
 };
 setTimeout(() => {
 	document.querySelector('.sidebar').style.transform = 'translateX(0)';
@@ -288,7 +306,8 @@ onMounted(() => {
 	& button {
 		display: flex;
 		align-items: center;
-		width: 19rem;
+		transform: translateX(0.3rem);
+		width: 20rem;
 		padding: 0.6rem 0.8rem;
 		gap: 2rem;
 		outline: none;
