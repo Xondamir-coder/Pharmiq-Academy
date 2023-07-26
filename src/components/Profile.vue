@@ -41,16 +41,18 @@
 		<div class="home__profile-links">
 			<h2>Реферальная ссылка</h2>
 			<p>Чтобы добавить сотрудников вашей аптеки в систему, отправьте ему эту ссылку</p>
-			<button style="background: #4b96dc" class="custom__button">
+			<button @click="copyToClipboard" style="background: #4b96dc" class="custom__button">
 				<a href="https://go.pharmiq.uz/register/ref/2659948313928074"
 					>Нажмите на кнопку и ссылка скопируется</a
 				>
+				Нажмите на кнопку и ссылка скопируется
 				<img :src="link" alt="link" />
 			</button>
 			<p style="font-size: 1rem">По вашей ссылке прошли регистрацию: 0</p>
 			<p>Реферальная ссылка фармацевта</p>
-			<button class="custom__button">
+			<button @click="copyToClipboard" class="custom__button">
 				<a href="https://go.pharmiq.uz/inviteTo520">Нажмите на кнопку и ссылка скопируется</a>
+				Нажмите на кнопку и ссылка скопируется
 				<img :src="link" alt="link" />
 			</button>
 			<p style="font-size: 1rem">По вашей ссылке прошли регистрацию: 0</p>
@@ -63,6 +65,20 @@ import locked from '../assets/icons/award-locked.svg';
 import link from '../assets/icons/copy-link.svg';
 import coin from '../assets/icons/coin-icon.svg';
 import pen from '../assets/icons/pen.svg';
+function copyToClipboard() {
+	const linkElement = document.querySelector('.custom__button a');
+	const link = linkElement.getAttribute('href');
+
+	// Create a temporary input element to copy the link to the clipboard
+	const tempInput = document.createElement('input');
+	tempInput.value = link;
+	document.body.appendChild(tempInput);
+	tempInput.select();
+	document.execCommand('copy');
+	document.body.removeChild(tempInput);
+
+	alert('Ссылка скопирована в буфер обмена!');
+}
 
 const revealEdit = () => {
 	const editContainer = document.querySelector('.home__profile-edit_button');
@@ -237,15 +253,16 @@ h2 {
 		width: 100%;
 		border-radius: 1rem;
 		padding: 1rem;
+		color: #fff;
+		text-align: center;
+		font-size: 0.8rem;
+		font-weight: 400;
 		& img {
 			width: 2.4rem;
 			height: 2.4rem;
 		}
 		& a {
-			color: #fff;
-			text-align: center;
-			font-size: 0.8rem;
-			font-weight: 400;
+			display: none;
 		}
 	}
 }
