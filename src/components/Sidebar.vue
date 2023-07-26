@@ -2,8 +2,10 @@
 	<div class="sidebar">
 		<img class="sidebar__logo" :src="logo" alt="Logo" />
 		<div class="sidebar__search">
-			<img :src="search" alt="search" />
-			<input type="text" name="search" id="search" placeholder="Поиск" />
+			<img style="width: 2.4rem; height: 2.4rem" v-if="isDark" :src="searchWhite" alt="search" />
+			<input v-if="isDark" type="text" name="searchBlack" id="searchBlack" placeholder="Поиск" />
+			<img v-if="!isDark" :src="search" alt="search" />
+			<input v-if="!isDark" type="text" name="search" id="search" placeholder="Поиск" />
 		</div>
 		<div :style="`transform: translateY(${pointer}px)`" class="sidebar__nav-pointer"></div>
 		<nav class="sidebar__nav">
@@ -12,16 +14,21 @@
 				:key="index"
 				@click="setPointer(index)"
 				:to="link.to"
-				active-class="link--active"
+				:active-class="isDark ? 'link--active--black' : 'link--active'"
 			>
-				<img :src="link.icon" :alt="link.text" />{{ link.text }}
+				<img v-if="isDark" :src="link.iconWhite" :alt="link.text" />
+				<img v-else :src="link.icon" :alt="link.text" />{{ link.text }}
 			</RouterLink>
-			<button @click="changeTheme"><img :src="darkTheme" alt="dark theme" />Темный режим</button>
+			<button @click="changeTheme">
+				<img v-if="isDark" :src="darkThemeWhite" alt="dark theme" />
+				<img v-else :src="darkTheme" alt="dark theme" />Темный режим
+			</button>
 		</nav>
 		<p>Скачивайте наше мобильное приложение</p>
 		<img class="sidebar__qrcode" :src="qrcode" alt="qr code" />
 		<div class="sidebar__logout">
-			<img :src="logout" alt="logout" />
+			<img v-if="isDark" :src="logoutWhite" alt="logout" />
+			<img v-else :src="logout" alt="logout" />
 			<RouterLink active-class="link--active" to="/logout">Выход</RouterLink>
 		</div>
 	</div>
@@ -29,33 +36,47 @@
 <script setup>
 import logo from '../assets/Logo-White.svg';
 import search from '../assets/icons/teenyicons_search-outline.svg';
+import searchWhite from '../assets/icons/search-white.svg';
 import home from '../assets/icons/home.svg';
+import homeWhite from '../assets/icons/home-white.svg';
 import bank from '../assets/icons/bank.svg';
+import bankWhite from '../assets/icons/bank-white.svg';
 import statistics from '../assets/icons/analytics.svg';
+import statisticsWhite from '../assets/icons/analytics-white.svg';
 import pharmacy from '../assets/icons/building.svg';
+import pharmacyWhite from '../assets/icons/building-white.svg';
 import store from '../assets/icons/store.svg';
+import storeWhite from '../assets/icons/store-white.svg';
 import mailbox from '../assets/icons/mailbox.svg';
+import mailboxWhite from '../assets/icons/mailbox-white.svg';
 import darkTheme from '../assets/icons/dark-mode.svg';
+import darkThemeWhite from '../assets/icons/dark-theme-white.svg';
 import settings from '../assets/icons/settings.svg';
+import settingsWhite from '../assets/icons/settings-white.svg';
 import logout from '../assets/icons/logout.svg';
+import logoutWhite from '../assets/icons/logout-white.svg';
 import qrcode from '../assets/qr-code.svg';
+const isDark = ref(false);
 const changeTheme = () => {
 	const sidebar = document.querySelector('.sidebar');
-	document.querySelector('body').style.backgroundColor = '#1A1A1A';
-	document.querySelector('body').style.color = 'white';
+	const body = document.querySelector('body');
+	const profile = document.querySelector('.home__profile');
+	const searchBar = document.getElementById('search');
+	body.style.backgroundColor = '#1A1A1A';
+	body.style.color = 'white';
 	document.querySelector('main').style.backgroundColor = '#000';
-	document.querySelector('.home__profile').style.backgroundColor = '#000';
-	document.querySelector('.home__profile').style.boxShadow =
-		'-8px 0px 20px 0px rgba(255, 255, 255, 0.10)';
-	sidebar.style.backgroundColor = '#1a1a1a';
+	profile.style.backgroundColor = '#000';
+	profile.style.boxShadow = '-8px 0px 20px 0px rgba(255, 255, 255, 0.10)';
 	document.querySelector('.sidebar__search').style.backgroundColor = '#000';
-	document.getElementById('search').style.backgroundColor = '#000';
-	document.getElementById('search').style.color = 'white';
+	searchBar.style.backgroundColor = '#000';
+	searchBar.style.color = 'white';
 	sidebar.querySelectorAll('a').forEach((link) => {
 		link.style.color = 'white';
 	});
+	sidebar.style.backgroundColor = '#1a1a1a';
 	sidebar.querySelector('button').style.color = 'white';
 	sidebar.querySelector('p').style.color = 'white';
+	isDark.value = 'true';
 };
 setTimeout(() => {
 	document.querySelector('.sidebar').style.transform = 'translateX(0)';
@@ -65,13 +86,13 @@ import { RouterLink } from 'vue-router';
 import { ref, onMounted } from 'vue';
 
 const navLinks = [
-	{ to: '/', icon: home, text: 'Главная' },
-	{ to: '/learn', icon: bank, text: 'Обучения' },
-	{ to: '/statistics', icon: statistics, text: 'Статистика' },
-	{ to: '/pharmacy', icon: pharmacy, text: 'Аптека' },
-	{ to: '/store', icon: store, text: 'Магазин' },
-	{ to: '/mailbox', icon: mailbox, text: 'Письма' },
-	{ to: '/settings', icon: settings, text: 'Настройки' },
+	{ to: '/', icon: home, iconWhite: homeWhite, text: 'Главная' },
+	{ to: '/learn', icon: bank, iconWhite: bankWhite, text: 'Обучения' },
+	{ to: '/statistics', icon: statistics, iconWhite: statisticsWhite, text: 'Статистика' },
+	{ to: '/pharmacy', icon: pharmacy, iconWhite: pharmacyWhite, text: 'Аптека' },
+	{ to: '/store', icon: store, iconWhite: storeWhite, text: 'Магазин' },
+	{ to: '/mailbox', icon: mailbox, iconWhite: mailboxWhite, text: 'Письма' },
+	{ to: '/settings', icon: settings, iconWhite: settingsWhite, text: 'Настройки' },
 ];
 const sidebarNav = ref(null); // A ref to store the sidebar__nav element
 const pointer = ref(0); // Initialize the pointer to 0
@@ -103,6 +124,25 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+#searchBlack {
+	width: 100%;
+	color: white;
+	border: none;
+	font-family: var(--font-base);
+	font-size: 1.6rem;
+	font-weight: 400;
+	border-radius: 1.6rem;
+	background-color: #000;
+	@media only screen and (max-height: 650px) {
+		font-size: 1.3rem;
+	}
+	&:focus {
+		outline: none;
+	}
+	&::placeholder {
+		color: white;
+	}
+}
 .sidebar {
 	@media only screen and (max-height: 870px) {
 		gap: 0;
@@ -308,5 +348,9 @@ onMounted(() => {
 .link--active {
 	border-radius: 1rem;
 	background: #fff;
+}
+.link--active--black {
+	border-radius: 1rem;
+	background: #000;
 }
 </style>
