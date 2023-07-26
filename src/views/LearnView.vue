@@ -49,7 +49,7 @@ watchEffect(() => {
 			transition: all 0.5s ease;
 			padding: 1rem;
 			color: #545454;
-			font-size: 2.4rem;
+			font-size: 2rem;
 			font-weight: 500;
 			border-radius: 1rem 1rem 0rem 0rem;
 			box-shadow: 0px -4px 8px 0px rgba(0, 0, 0, 0.1);
