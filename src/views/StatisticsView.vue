@@ -160,15 +160,11 @@ const data2 = {
 		height: 90%;
 	}
 	&__courses {
-		overflow-y: auto;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		gap: 1.5rem;
-		&::-webkit-scrollbar {
-			display: none;
-		}
 		&--box {
 			width: 25.2rem;
 			color: #fff;
