@@ -33,23 +33,10 @@
 			</div>
 			<div class="stats__courses">
 				<h2>Курсы</h2>
-				<div class="stats__courses--box">
-					<Doughnut :options="options" :data="data" />
-					<div
-						style="
-							display: flex;
-							justify-content: center;
-							gap: 1rem;
-							margin-top: 1rem;
-							padding: 1rem;
-						"
-					>
-						<p style="background-color: var(--color-secondary)">Пройдено</p>
-						<p style="background-color: #96d2f5">На изучении</p>
-					</div>
-				</div>
-				<h2>Средняя оценка</h2>
-				<div class="stats__courses--box">
+				<div
+					class="stats__courses--box"
+					style="padding-top: 2rem; padding-right: 5rem; padding-left: 5rem; padding-bottom: 0"
+				>
 					<Doughnut :options="options" :data="data2" />
 					<div
 						style="
@@ -58,10 +45,59 @@
 							gap: 1rem;
 							margin-top: 1rem;
 							padding: 1rem;
+							width: 156%;
 						"
 					>
 						<p style="background-color: var(--color-secondary)">Пройдено</p>
 						<p style="background-color: #96d2f5">На изучении</p>
+					</div>
+				</div>
+				<h2>Средняя оценка</h2>
+				<div class="stats__courses--box" style="padding: 1.6rem 2.6rem; position: relative">
+					<p
+						style="
+							position: absolute;
+							top: 42%;
+							color: var(--brand-solid-primary-green, #007382);
+							text-align: center;
+							font-size: 1.6rem;
+							font-weight: 600;
+							line-height: 150%; /* 2.4rem */
+						"
+					>
+						71/100
+					</p>
+					<Doughnut :options="options" :data="data" />
+				</div>
+				<h2>История системы</h2>
+				<div class="stats__courses--box" style="padding: 2rem 1rem">
+					<div>
+						<p style="color: #000">В системе с</p>
+						<span
+							style="
+								background: var(
+									--richard-gradient,
+									linear-gradient(136deg, #61c1c0 0%, #358184 100%)
+								);
+							"
+							>20 .09.2022</span
+						>
+					</div>
+					<div>
+						<p style="color: #000">В системе</p>
+						<span style="background: var(--brand-solid-secondary-blue, #4b96dc)">354 дней</span>
+					</div>
+					<div>
+						<p style="color: #000">Статус</p>
+						<span
+							style="
+								background: var(
+									--richard-gradient,
+									linear-gradient(136deg, #61c1c0 0%, #358184 100%)
+								);
+							"
+							>Активный
+						</span>
 					</div>
 				</div>
 			</div>
@@ -79,6 +115,26 @@ setTimeout(() => {
 	document.querySelector('.stats').style.transform = 'translateY(0)';
 }, 100);
 const data = {
+	labels: ['Light Green', 'Dark Green'],
+	datasets: [
+		{
+			label: 'Second Doughnut',
+			data: [71, 100],
+			backgroundColor: ['#61C1C0', '#358184'],
+			hoverOffset: 4,
+		},
+	],
+};
+const options = {
+	responsive: true,
+	rotation: 80,
+	plugins: {
+		legend: {
+			display: false,
+		},
+	},
+};
+const data2 = {
 	labels: ['Dark Blue', 'Light Blue'],
 	datasets: [
 		{
@@ -89,37 +145,29 @@ const data = {
 		},
 	],
 };
-const options = {
-	responsive: true,
-};
-const data2 = {
-	labels: ['Dark Green', 'Light Green'],
-	datasets: [
-		{
-			label: 'Second Doughnut',
-			data: [71, 100],
-			backgroundColor: ['#4B96DC', '#96D2F5'],
-			hoverOffset: 4,
-		},
-	],
-};
 </script>
 
 <style lang="scss" scoped>
 .stats {
-	height: 100%;
+	height: 100vh;
 	padding-top: 3rem;
 	transform: translateY(-100%);
 	transition: all 0.5s ease;
 	&__container {
+		overflow-y: auto;
 		display: flex;
 		gap: 3rem;
 		margin-top: 1.5rem;
 		height: 90%;
 	}
 	&__courses {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 1.5rem;
 		&--box {
-			width: 252px;
+			width: 25.2rem;
 			color: #fff;
 			font-size: 12px;
 			font-weight: 500;
@@ -127,11 +175,37 @@ const data2 = {
 			border-radius: 10px;
 			border: 1px solid var(--brand-solid-primary-white, #e6f0f0);
 			background-color: #fff;
+			display: flex;
+			align-items: center;
+			flex-direction: column;
 			& p {
 				width: 10rem;
 				text-align: center;
 				padding: 4px;
 				border-radius: 4px;
+			}
+			& div {
+				margin-bottom: 1rem;
+				padding: 0.5rem;
+				width: 100%;
+				display: flex;
+				gap: 1rem;
+				justify-content: flex-start;
+				& p {
+					width: auto;
+					text-align: left;
+					font-size: 1.4rem;
+					font-weight: 500;
+					line-height: 150%; /* 2.1rem */
+				}
+				& span {
+					padding: 0.4rem 0.8rem;
+					color: #fff;
+					font-size: 1.4rem;
+					font-weight: 500;
+					line-height: 150%; /* 2.1rem */
+					border-radius: 0.4rem;
+				}
 			}
 		}
 	}
