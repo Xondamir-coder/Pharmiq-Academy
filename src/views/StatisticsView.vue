@@ -166,6 +166,9 @@ const data2 = {
 		flex-direction: column;
 		justify-content: space-between;
 		gap: 1.5rem;
+		&::-webkit-scrollbar {
+			display: none;
+		}
 		&--box {
 			width: 25.2rem;
 			color: #fff;
@@ -228,6 +231,9 @@ const data2 = {
 			row-gap: 0.88rem;
 			align-items: center;
 			justify-items: center;
+			&::-webkit-scrollbar {
+				display: none;
+			}
 			& h3 {
 				color: #595959;
 				font-size: 1.6rem;
