@@ -154,13 +154,13 @@ const data2 = {
 	transform: translateY(-100%);
 	transition: all 0.5s ease;
 	&__container {
-		overflow-y: auto;
 		display: flex;
 		gap: 3rem;
 		margin-top: 1.5rem;
 		height: 90%;
 	}
 	&__courses {
+		overflow-y: auto;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
