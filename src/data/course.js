@@ -1,4 +1,4 @@
-import img from '../assets/slider-1.jpg';
+import img from '../assets/slider-1.png';
 const course = [
 	{
 		id: 1,

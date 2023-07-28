@@ -85,7 +85,6 @@
 
 <script setup>
 import books from '../assets/books.png';
-import play from '../assets/icons/play.svg';
 import coin from '../assets/icons/coin-icon.svg';
 import Slide from '../components/Home/Slide.vue';
 import slides from '../data/slide.js';

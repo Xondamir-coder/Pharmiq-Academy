@@ -43,7 +43,7 @@
 				<h2>Средняя оценка</h2>
 				<div class="stats__courses--box" style="position: relative">
 					<p class="chart__numbers">71/100</p>
-					<div class="chart__container--2"><Doughnut :options="options" :data="data" /></div>
+					<div class="chart__container--2"><Doughnut :options="options2" :data="data" /></div>
 				</div>
 				<h2>История системы</h2>
 				<div class="stats__courses--system">
@@ -110,11 +110,22 @@ const options = {
 		},
 	},
 };
+const options2 = {
+	responsive: true,
+	rotation: 80,
+	plugins: {
+		tooltip: {
+			enabled: false, // <-- this option disables tooltips
+		},
+		legend: {
+			display: false,
+		},
+	},
+};
 const data2 = {
-	labels: ['Dark Blue', 'Light Blue'],
+	labels: ['33 курса, 66%', '12 курсов, 34%'],
 	datasets: [
 		{
-			label: 'My First Dataset',
 			data: [32, 32],
 			backgroundColor: ['#4B96DC', '#96D2F5'],
 			hoverOffset: 4,
@@ -134,6 +145,9 @@ const data2 = {
 		width: 156%;
 	}
 	&__numbers {
+		@media only screen and (max-height: 890px) {
+			top: 39%;
+		}
 		@media only screen and (max-height: 770px) {
 			top: 35%;
 		}

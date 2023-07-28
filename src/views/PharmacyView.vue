@@ -77,6 +77,9 @@ import arrowDown from '../assets/icons/arrow-down.svg';
 const revealDropdown = () => {
 	document.querySelector('.pharmacy__box--3__people').classList.toggle('hidden');
 };
+setTimeout(() => {
+	document.querySelector('.pharmacy').style.transform = 'scale(1)';
+}, 100);
 </script>
 
 <style lang="scss" scoped>
@@ -92,6 +95,8 @@ h3 {
 	opacity: 0;
 }
 .pharmacy {
+	transition: all 0.6s;
+	transform: scale(0.3);
 	height: 100%;
 	padding: 3rem 0;
 	display: flex;
@@ -136,6 +141,7 @@ h3 {
 				}
 			}
 			& iframe {
+				border-radius: 3rem;
 				@media only screen and (max-height: 700px) {
 					width: 287px;
 					height: 188px;
