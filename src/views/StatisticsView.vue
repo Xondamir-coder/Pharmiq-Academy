@@ -33,44 +33,20 @@
 			</div>
 			<div class="stats__courses">
 				<h2>Курсы</h2>
-				<div
-					class="stats__courses--box"
-					style="padding-top: 2rem; padding-right: 5rem; padding-left: 5rem; padding-bottom: 0"
-				>
-					<Doughnut :options="options" :data="data2" />
-					<div
-						style="
-							display: flex;
-							justify-content: center;
-							gap: 1rem;
-							margin-top: 1rem;
-							padding: 1rem;
-							width: 156%;
-						"
-					>
+				<div class="stats__courses--box">
+					<div class="chart__container--1"><Doughnut :options="options" :data="data2" /></div>
+					<div class="chart__details">
 						<p style="background-color: var(--color-secondary)">Пройдено</p>
 						<p style="background-color: #96d2f5">На изучении</p>
 					</div>
 				</div>
 				<h2>Средняя оценка</h2>
-				<div class="stats__courses--box" style="padding: 1.6rem 2.6rem; position: relative">
-					<p
-						style="
-							position: absolute;
-							top: 42%;
-							color: var(--brand-solid-primary-green, #007382);
-							text-align: center;
-							font-size: 1.6rem;
-							font-weight: 600;
-							line-height: 150%; /* 2.4rem */
-						"
-					>
-						71/100
-					</p>
-					<Doughnut :options="options" :data="data" />
+				<div class="stats__courses--box" style="position: relative">
+					<p class="chart__numbers">71/100</p>
+					<div class="chart__container--2"><Doughnut :options="options" :data="data" /></div>
 				</div>
 				<h2>История системы</h2>
-				<div class="stats__courses--box" style="padding: 2rem 1rem">
+				<div class="stats__courses--system">
 					<div>
 						<p style="color: #000">В системе с</p>
 						<span
@@ -148,6 +124,57 @@ const data2 = {
 </script>
 
 <style lang="scss" scoped>
+.chart {
+	&__details {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		margin-top: 1rem;
+		padding: 1rem;
+		width: 156%;
+	}
+	&__numbers {
+		@media only screen and (max-height: 770px) {
+			top: 35%;
+		}
+		position: absolute;
+		top: 42%;
+		color: var(--brand-solid-primary-green, #007382);
+		text-align: center;
+		font-size: 1.6rem;
+		font-weight: 600;
+		line-height: 150%; /* 2.4rem */
+	}
+	&__container--1 {
+		@media only screen and (max-height: 890px) {
+			width: 13rem;
+			height: 13rem;
+		}
+		@media only screen and (max-height: 780px) {
+			width: 10rem;
+			height: 10rem;
+		}
+		width: 16rem;
+		height: 16rem;
+		display: flex;
+		justify-content: center;
+	}
+	&__container--2 {
+		@media only screen and (max-height: 890px) {
+			width: 17rem;
+			height: 17rem;
+		}
+		@media only screen and (max-height: 780px) {
+			width: 13rem;
+			height: 13rem;
+		}
+		display: flex;
+		justify-content: center;
+		width: 20rem;
+		height: 20rem;
+		margin-bottom: 1rem;
+	}
+}
 .stats {
 	height: 100vh;
 	padding-top: 3rem;
@@ -183,28 +210,44 @@ const data2 = {
 				padding: 4px;
 				border-radius: 4px;
 			}
+		}
+		&--system {
+			@media only screen and (max-height: 830px) {
+				padding: 0.4rem;
+			}
+			@media only screen and (max-height: 700px) {
+				padding: 0;
+			}
+			color: #fff;
+			display: flex;
+			width: 25.2rem;
+			padding: 1rem;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 1rem;
+			border-radius: 1rem;
+			border: 1px solid var(--brand-solid-primary-white, #e6f0f0);
+			background: #fff;
 			& div {
-				margin-bottom: 1rem;
-				padding: 0.5rem;
-				width: 100%;
+				@media only screen and (max-height: 830px) {
+					padding: 0.4rem;
+				}
+				@media only screen and (max-height: 700px) {
+					padding: 0;
+				}
 				display: flex;
+				padding: 1rem;
 				gap: 1rem;
-				justify-content: flex-start;
-				& p {
-					width: auto;
-					text-align: left;
-					font-size: 1.4rem;
-					font-weight: 500;
-					line-height: 150%; /* 2.1rem */
-				}
-				& span {
-					padding: 0.4rem 0.8rem;
-					color: #fff;
-					font-size: 1.4rem;
-					font-weight: 500;
-					line-height: 150%; /* 2.1rem */
-					border-radius: 0.4rem;
-				}
+			}
+			& span {
+				padding: 0.4rem 0.8rem;
+				border-radius: 0.4rem;
+			}
+			& p {
+				color: #000;
+				font-size: 1.4rem;
+				font-weight: 500;
+				line-height: 150%; /* 2.1rem */
 			}
 		}
 	}
