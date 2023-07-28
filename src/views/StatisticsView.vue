@@ -152,7 +152,7 @@ const data2 = {
 			top: 35%;
 		}
 		position: absolute;
-		top: 42%;
+		top: 40%;
 		color: var(--brand-solid-primary-green, #007382);
 		text-align: center;
 		font-size: 1.6rem;
