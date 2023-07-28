@@ -19,12 +19,39 @@
 				<img v-if="isDark" :src="link.iconWhite" :alt="link.text" />
 				<img v-else :src="link.icon" :alt="link.text" />{{ link.text }}
 			</RouterLink>
-			<button @click="changeTheme">
-				<img v-if="isDark" :src="darkThemeWhite" alt="dark theme" />
-				<img v-else :src="darkTheme" alt="dark theme" />
-				<span v-if="isDark">Светлый Режим</span>
-				<span v-else>Темный Режим</span>
-			</button>
+			<input type="checkbox" name="darkmode-toggle" id="darkmode-toggle" />
+			<label @click="changeTheme" for="darkmode-toggle">
+				<svg
+					class="sun"
+					width="800px"
+					height="800px"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 6.31412L18.5 5.5M6.31412 17.69L5.5 18.5001M17.6859 17.69L18.5 18.5001M21 12H20M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z"
+						stroke="#000000"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+				<svg
+					class="moon"
+					width="800px"
+					height="800px"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M3.32031 11.6835C3.32031 16.6541 7.34975 20.6835 12.3203 20.6835C16.1075 20.6835 19.3483 18.3443 20.6768 15.032C19.6402 15.4486 18.5059 15.6834 17.3203 15.6834C12.3497 15.6834 8.32031 11.654 8.32031 6.68342C8.32031 5.50338 8.55165 4.36259 8.96453 3.32996C5.65605 4.66028 3.32031 7.89912 3.32031 11.6835Z"
+						stroke="#000000"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</label>
 		</nav>
 		<p>Скачивайте наше мобильное приложение</p>
 		<img class="sidebar__qrcode" :src="qrcode" alt="qr code" />
@@ -77,8 +104,6 @@ const changeTheme = () => {
 			link.style.color = 'white';
 		});
 		sidebar.style.backgroundColor = '#1a1a1a';
-		sidebar.querySelector('button').style.color = 'white';
-		sidebar.querySelector('p').style.color = 'white';
 		isDark.value = true;
 	} else {
 		body.style.backgroundColor = '#f7f7f7';
@@ -91,8 +116,6 @@ const changeTheme = () => {
 			link.style.color = '#000';
 		});
 		sidebar.style.backgroundColor = '#f7f7f7';
-		sidebar.querySelector('button').style.color = '#000';
-		sidebar.querySelector('p').style.color = '#000';
 		isDark.value = false;
 	}
 };
@@ -142,6 +165,69 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+label {
+	margin-left: 1rem;
+	width: 8rem;
+	height: 3rem;
+	position: relative;
+	display: block;
+	padding: 0.3rem;
+	background: #ebebeb;
+	border-radius: 10rem;
+	box-shadow: inset 0px 5px 15px rgba(0, 0, 0, 0.4), inset 0px -5px 15px rgba(255, 255, 255, 0.4);
+	cursor: pointer;
+	&::after {
+		content: '';
+		width: 2.8rem;
+		height: 80%;
+		position: absolute;
+		left: 6px;
+		background: linear-gradient(180deg, #ffcc89, #d8860b);
+		border-radius: 10rem;
+		box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+		transition: all 0.3s;
+	}
+	&:active::after {
+		width: 3.4rem;
+	}
+	& svg {
+		position: absolute;
+		width: 3.2rem;
+		height: 80%;
+		z-index: 2;
+		&.sun {
+			left: 3px;
+			fill: #fff176;
+			transition: all 0.3s;
+		}
+		&.moon {
+			right: 3px;
+			fill: #7e7e7e;
+			transition: all 0.3s;
+		}
+	}
+}
+#darkmode-toggle {
+	display: none;
+	width: 0;
+	height: 0;
+	visibility: hidden;
+	&:checked + label {
+		background: #242424;
+		&::after {
+			left: 7.4rem;
+			transform: translateX(-100%);
+			background: linear-gradient(180deg, #777, #3a3a3a);
+		}
+		& svg.sun {
+			fill: #7e7e7e;
+		}
+		& svg.moon {
+			fill: var(--color-primary);
+		}
+	}
+}
+
 #searchBlack {
 	width: 100%;
 	color: white;
@@ -201,7 +287,6 @@ onMounted(() => {
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
 		gap: 1.6rem;
 		@media only screen and (max-height: 765px) {
 			gap: 1rem;
