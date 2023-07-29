@@ -63,6 +63,7 @@
 	</div>
 </template>
 <script setup>
+import qrcode from '../assets/qr-code.webp';
 import logo from '../assets/Logo-White.svg';
 import search from '../assets/icons/teenyicons_search-outline.svg';
 import searchWhite from '../assets/icons/search-white.svg';
@@ -82,7 +83,6 @@ import settings from '../assets/icons/settings.svg';
 import settingsWhite from '../assets/icons/settings-white.svg';
 import logout from '../assets/icons/logout.svg';
 import logoutWhite from '../assets/icons/logout-white.svg';
-import qrcode from '../assets/qr-code.svg';
 const isDark = ref(false);
 const changeTheme = () => {
 	const sidebar = document.querySelector('.sidebar');

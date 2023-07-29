@@ -1,4 +1,4 @@
-import img from '../assets/slider-1.png';
+import img from '../assets/slider-1.webp';
 const course = [
 	{
 		id: 1,

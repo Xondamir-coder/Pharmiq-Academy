@@ -84,7 +84,7 @@
 </template>
 
 <script setup>
-import books from '../assets/books.png';
+import books from '../assets/books.webp';
 import coin from '../assets/icons/coin-icon.svg';
 import Slide from '../components/Home/Slide.vue';
 import slides from '../data/slide.js';

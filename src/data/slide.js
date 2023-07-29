@@ -1,6 +1,6 @@
-import slider1 from '../assets/slider-1.png';
-import slider2 from '../assets/slider-2.png';
-import slider3 from '../assets/slider-3.png';
+import slider1 from '../assets/slider-1.webp';
+import slider2 from '../assets/slider-2.webp';
+import slider3 from '../assets/slider-3.webp';
 
 const slide = [
 	{
