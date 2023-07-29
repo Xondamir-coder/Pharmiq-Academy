@@ -78,8 +78,6 @@ import store from '../assets/icons/store.svg';
 import storeWhite from '../assets/icons/store-white.svg';
 import mailbox from '../assets/icons/mailbox.svg';
 import mailboxWhite from '../assets/icons/mailbox-white.svg';
-import darkTheme from '../assets/icons/dark-mode.svg';
-import darkThemeWhite from '../assets/icons/dark-theme-white.svg';
 import settings from '../assets/icons/settings.svg';
 import settingsWhite from '../assets/icons/settings-white.svg';
 import logout from '../assets/icons/logout.svg';
