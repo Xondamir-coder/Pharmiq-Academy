@@ -84,11 +84,14 @@
 </template>
 
 <script setup>
+import axios from 'axios';
+import { onMounted } from 'vue';
 import books from '../assets/books.webp';
 import coin from '../assets/icons/coin-icon.svg';
 import Slide from '../components/Home/Slide.vue';
 import slides from '../data/slide.js';
 import CourseInfo from '../components/CourseInfo.vue';
+
 setTimeout(() => {
 	document.querySelector('.home').style.opacity = '1';
 }, 200);

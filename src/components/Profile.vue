@@ -10,9 +10,13 @@
 
 		<div class="home__profile-details">
 			<img :src="avatar" alt="avatar" />
-			<h1>Jayden Grayson</h1>
-			<p>Фармацевт в Аптеке SPACE LABS</p>
-			<div class="home__profile-budget">
+			<h1>{{ user.firstName }} {{ user.lastName }}</h1>
+			<p>{{ user.role }} в Аптеке SPACE LABS</p>
+			<div v-if="iqc" class="home__profile-budget">
+				{{ iqc }}
+				<img :src="coin" alt="coin" />
+			</div>
+			<div v-else class="home__profile-budget">
 				3000
 				<img :src="coin" alt="coin" />
 			</div>
@@ -60,11 +64,17 @@
 	</div>
 </template>
 <script setup>
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
 import avatar from '../assets/avatar.svg';
 import locked from '../assets/icons/award-locked.svg';
 import link from '../assets/icons/copy-link.svg';
 import coin from '../assets/icons/coin-icon.svg';
 import pen from '../assets/icons/pen.svg';
+
+const user = ref({});
+const iqc = ref(0);
+
 function copyToClipboard() {
 	const linkElement = document.querySelector('.custom__button a');
 	const link = linkElement.getAttribute('href');
@@ -79,7 +89,6 @@ function copyToClipboard() {
 
 	alert('Ссылка скопирована в буфер обмена!');
 }
-
 const revealEdit = () => {
 	const editContainer = document.querySelector('.home__profile-edit_button');
 	editContainer.style.transform = 'translateX(0)';
@@ -90,9 +99,33 @@ const hideEdit = () => {
 	editContainer.style.transform = 'translateX(8rem)';
 	editContainer.querySelector('p').style.opacity = '0';
 };
-setTimeout(() => {
-	document.querySelector('.home__profile').style.transform = 'translateX(0)';
-}, 3500);
+
+/* Fetch Data */
+const url = 'http://api.pharmiq.uz/api/v1-1/mobile-user';
+const apiKey = '10638|kw7JpzOBtw1Hig3w2bkCEsboQxS8FT9XDK4UcPbB';
+const headers = {
+	Accept: 'application/json',
+	'Content-Type': 'application/json',
+	Authorization: `Bearer ${apiKey}`,
+};
+const fetchData = async () => {
+	try {
+		const response = await axios.get(url, { headers });
+		const data = response.data;
+		iqc.value = data.iqc.amountofIQC;
+		user.value = data.user;
+		console.log(data);
+	} catch (error) {
+		console.error('Error:', error.message);
+	}
+};
+
+onMounted(() => {
+	fetchData();
+	setTimeout(() => {
+		document.querySelector('.home__profile').style.transform = 'translateX(0)';
+	}, 3500);
+});
 </script>
 <style lang="scss" scoped>
 p {
