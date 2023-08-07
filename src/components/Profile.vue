@@ -65,6 +65,7 @@
 </template>
 <script setup>
 import axios from 'axios';
+import env from '../env.js';
 import { onMounted, ref } from 'vue';
 import avatar from '../assets/avatar.svg';
 import locked from '../assets/icons/award-locked.svg';
@@ -73,7 +74,6 @@ import coin from '../assets/icons/coin-icon.svg';
 import pen from '../assets/icons/pen.svg';
 
 const user = ref({});
-const iqc = ref(0);
 
 function copyToClipboard() {
 	const linkElement = document.querySelector('.custom__button a');
@@ -101,18 +101,15 @@ const hideEdit = () => {
 };
 
 /* Fetch Data */
-const url = 'https://api.pharmiq.uz/api/v1-1/mobile-user';
-const apiKey = '10638|kw7JpzOBtw1Hig3w2bkCEsboQxS8FT9XDK4UcPbB';
 const headers = {
 	Accept: 'application/json',
 	'Content-Type': 'application/json',
-	Authorization: `Bearer ${apiKey}`,
+	Authorization: `Bearer ${env.apikey}`,
 };
 const fetchData = async () => {
 	try {
-		const response = await axios.get(url, { headers });
+		const response = await axios.get(env.url, { headers });
 		const data = response.data;
-		// iqc.value = data.iqc.amountofIQC;
 		user.value = data.user;
 	} catch (error) {
 		console.error('Error:', error.message);
@@ -138,6 +135,10 @@ h2 {
 	font-weight: 600;
 }
 .home__profile {
+	@media only screen and (max-width: 1450px) {
+		width: 28rem;
+		padding: 0.8rem 1rem;
+	}
 	position: fixed;
 	top: 0;
 	right: 0;

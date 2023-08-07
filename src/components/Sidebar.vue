@@ -246,6 +246,9 @@ label {
 	}
 }
 .sidebar {
+	@media only screen and (max-width: 1450px) {
+		width: 23rem;
+	}
 	@media only screen and (max-height: 870px) {
 		gap: 0;
 	}
@@ -410,6 +413,9 @@ label {
 
 	& p {
 		margin-left: 6.7rem;
+		@media only screen and (max-width: 1450px) {
+			margin-left: 3.7rem;
+		}
 		@media only screen and (max-height: 530px) {
 			margin-left: 0;
 		}

@@ -19,9 +19,13 @@ import Profile from './components/Profile.vue';
 	display: flex;
 }
 main {
+	@media only screen and (max-width: 1450px) {
+		width: calc(100vw - 20rem - 25rem);
+		transform: translateX(22rem);
+	}
 	height: 100vh;
 	padding: 0 3rem;
-	width: 70vw;
+	width: calc(100vw - 30rem - 30rem);
 	border-radius: 3rem 0rem 0rem 3rem;
 	background: #fff;
 	transform: translateX(30rem);

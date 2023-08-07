@@ -2,9 +2,9 @@
 	<section class="home">
 		<div style="align-self: flex-end">
 			<h1 style="font-weight: 600; width: max-content" class="home__username">
-				С возращением, Джейден!
+				С возращением, {{ name }}!
 			</h1>
-			<p class="home__date">07 Августа, 2023</p>
+			<p class="home__date">{{ getFormattedDate() }}</p>
 		</div>
 
 		<div class="home__slider">
@@ -18,9 +18,9 @@
 			<p class="home__course-category">Категория</p>
 			<h2>КУРС: НАЗВАНИЕ КУРСА</h2>
 			<CourseInfo :number-of-vids="1" :time="15" :font-size="1.6" />
-			<button class="custom__button">
+			<button style="width: 100%" class="custom__button">
 				ПРОЙТИ КУРС И ПОЛУЧИТЬ 200
-				<img :src="coin" alt="Money" />
+				<img style="width: 3.6rem; height: 3.6rem" :src="coin" alt="Money" />
 			</button>
 		</div>
 		<div class="home__leaders">
@@ -85,20 +85,68 @@
 
 <script setup>
 import axios from 'axios';
-import { onMounted } from 'vue';
+import env from '../env.js';
+import { onMounted, ref } from 'vue';
 import books from '../assets/books.webp';
 import coin from '../assets/icons/coin-icon.svg';
 import Slide from '../components/Home/Slide.vue';
 import slides from '../data/slide.js';
 import CourseInfo from '../components/CourseInfo.vue';
 
-setTimeout(() => {
-	document.querySelector('.home').style.opacity = '1';
-}, 200);
+const name = ref('');
+const headers = {
+	Accept: 'application/json',
+	'Content-Type': 'application/json',
+	Authorization: `Bearer ${env.apikey}`,
+};
+const fetchData = async () => {
+	try {
+		const response = await axios.get(env.url, { headers });
+		name.value = response.data.user.firstName;
+	} catch (error) {
+		console.error('Error:', error.message);
+	}
+};
+
+onMounted(() => {
+	fetchData();
+	setTimeout(() => {
+		document.querySelector('.home').style.opacity = '1';
+	}, 200);
+});
+
+const getFormattedDate = () => {
+	const months = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December',
+	];
+
+	const currentDate = new Date();
+	const day = String(currentDate.getDate()).padStart(2, '0');
+	const month = months[currentDate.getMonth()];
+	const year = currentDate.getFullYear();
+
+	const formattedDate = `${day} ${month} ${year}`;
+	return formattedDate;
+};
 </script>
 
 <style lang="scss" scoped>
 .home {
+	padding-bottom: 2rem;
+	@media only screen and (max-width: 1450px) {
+		column-gap: 1rem;
+	}
 	@media only screen and (max-height: 800px) {
 		row-gap: 1.5vh;
 	}
@@ -116,11 +164,10 @@ setTimeout(() => {
 	width: 100%;
 	display: grid;
 	align-items: center;
-	grid-template-columns: 32rem 42rem 1fr;
+	grid-template-columns: 45% 50%;
 	row-gap: 3rem;
 	column-gap: 3rem;
 	&__leaders {
-		padding: 2rem 0;
 		grid-column: 2 / span 1;
 		display: flex;
 		flex-direction: column;
@@ -130,11 +177,14 @@ setTimeout(() => {
 		&-grid {
 			flex: 1;
 			display: grid;
-			grid-template-columns: repeat(4, max-content);
+			grid-template-columns: repeat(4, 22%);
 			column-gap: 3rem;
 			row-gap: 1.5rem;
 			align-items: center;
 			justify-items: center;
+			@media only screen and (max-width: 1450px) {
+				column-gap: 2rem;
+			}
 			@media only screen and (max-height: 830px) {
 				row-gap: 1.5vh;
 			}
@@ -182,8 +232,8 @@ setTimeout(() => {
 		grid-column: 1/-1;
 		display: flex;
 		flex-wrap: nowrap;
-		width: 80%;
-		padding-right: 2rem;
+		width: 100%;
+		padding-right: 7rem;
 		overflow-x: auto;
 		gap: 3rem;
 		&::-webkit-scrollbar {
@@ -198,7 +248,8 @@ setTimeout(() => {
 	&__course {
 		height: 100%;
 		grid-column: 1 / span 1;
-		width: 32rem;
+		width: 100%;
+		max-width: 520px;
 		overflow: hidden;
 		display: flex;
 		justify-content: space-evenly;
@@ -212,10 +263,10 @@ setTimeout(() => {
 			border-radius: 3rem;
 			background: linear-gradient(136deg, #61c1c0 0%, #358184 100%);
 			width: 100%;
-			max-width: 340px;
-			height: 40%;
+			max-width: 520px;
+			height: 50%;
 			display: flex;
-			max-height: 193px;
+			align-items: center;
 			@media only screen and (max-height: 830px) {
 				margin-bottom: 0;
 			}
@@ -224,7 +275,6 @@ setTimeout(() => {
 				height: 110%;
 			}
 			& p {
-				margin-top: 6rem;
 				width: 10.6rem;
 				color: #fff;
 				font-weight: 700;

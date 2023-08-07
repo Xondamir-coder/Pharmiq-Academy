@@ -23,3 +23,7 @@
 	background: #fff;
 	font-size: 2rem;
 }
+::selection {
+	background-color: var(--color-primary);
+	color: white;
+}
