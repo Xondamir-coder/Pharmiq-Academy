@@ -112,9 +112,8 @@ const fetchData = async () => {
 	try {
 		const response = await axios.get(url, { headers });
 		const data = response.data;
-		iqc.value = data.iqc.amountofIQC;
+		// iqc.value = data.iqc.amountofIQC;
 		user.value = data.user;
-		console.log(data);
 	} catch (error) {
 		console.error('Error:', error.message);
 	}
