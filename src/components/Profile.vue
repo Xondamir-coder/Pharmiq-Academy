@@ -107,10 +107,27 @@ const headers = {
 	Authorization: `Bearer ${env.apikey}`,
 };
 const fetchData = async () => {
+	const formData = new FormData();
+	formData.append('promocode', 'TESTONE');
+	formData.append('platform', 'academy');
+	formData.append('browser', 'Chrome');
+	formData.append('device', 'Device name');
+	formData.append('timeZone', '500');
 	try {
-		const response = await axios.get(env.userUrl, { headers });
-		const data = response.data;
-		user.value = data.user;
+		/* Get User Data */
+		const userData = await axios.get(env.userUrl, { headers });
+		user.value = userData.data.user;
+
+		/* Send Promocode */
+		const promocodeData = await axios.post(env.promocodeUrl, formData, {
+			headers: { Authorization: `Bearer ${env.apikey}` },
+		});
+		console.log(promocodeData);
+		if (response.data.error) {
+			console.log('Error:', response.data.message.uz);
+		} else {
+			console.log('Promocode used successfully.');
+		}
 	} catch (error) {
 		console.error('Error:', error.message);
 	}

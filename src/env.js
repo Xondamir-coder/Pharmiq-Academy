@@ -3,5 +3,6 @@ const env = {
 	newsUrl: 'http://api.pharmiq.uz/api/v1-1/spa-news?page=1',
 	leaderboardsUrl: 'http://api.pharmiq.uz/api/v1-1/spa-users/users-top-iqc-statistics',
 	userUrl: 'https://api.pharmiq.uz/api/v1-1/mobile-user',
+	promocodeUrl: 'http://api.pharmiq.uz/api/v1-1/spa-users/user-promocode',
 };
 export default env;

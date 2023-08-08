@@ -25,56 +25,37 @@
 		</div>
 		<div class="home__leaders">
 			<h1>Таблица лидеров</h1>
-			<div class="home__leaders-grid">
-				<p class="home__leaders-grid_title">Место</p>
-				<p class="home__leaders-grid_title">Фамилия Имя</p>
-				<p class="home__leaders-grid_title">Аптека</p>
-				<p class="home__leaders-grid_title">Показатель обучения</p>
-				<p class="home__leaders-grid_detail">1</p>
-				<p class="home__leaders-grid_detail">Калинина О.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">34235 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">2</p>
-				<p class="home__leaders-grid_detail">Романовский Р.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">29235 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">3</p>
-				<p class="home__leaders-grid_detail">Дауров Т.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">29035 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">4</p>
-				<p class="home__leaders-grid_detail">Дауров Т.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">28035 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">5</p>
-				<p class="home__leaders-grid_detail">Дауров Т.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">27035 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">6</p>
-				<p class="home__leaders-grid_detail">Дауров Т.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">26035 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">7</p>
-				<p class="home__leaders-grid_detail">Дауров Т.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">25035 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">8</p>
-				<p class="home__leaders-grid_detail">Дауров Т.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">24035 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">9</p>
-				<p class="home__leaders-grid_detail">Дауров Т.</p>
-				<p class="home__leaders-grid_detail">Tabletka # 32</p>
-				<p class="home__leaders-grid_detail">20035 <img :src="coin" alt="coin" /></p>
-				<p class="home__leaders-grid_detail">.................</p>
-				<p class="home__leaders-grid_detail">.......................................</p>
-				<p class="home__leaders-grid_detail">.......................................</p>
-				<p class="home__leaders-grid_detail">.......................................</p>
-				<div class="home__leaders-grid_last">
-					<p>101</p>
-					<p>Очкин Р.</p>
-					<p>PIQ</p>
-					<p style="color: #fff" class="home__leaders-grid_detail">
+			<div>
+				<div class="home__leaders-box">
+					<p class="home__leaders-title">Место</p>
+					<p class="home__leaders-title">Фамилия Имя</p>
+					<p class="home__leaders-title">Аптека</p>
+					<p class="home__leaders-title">Показатель обучения</p>
+				</div>
+				<div v-for="(user, id) in users" :key="id" class="home__leaders-box">
+					<p class="home__leaders-detail">{{ id + 1 }}</p>
+					<p class="home__leaders-detail">{{ user.user }}</p>
+					<p class="home__leaders-detail">{{ user.company }}</p>
+					<p class="home__leaders-detail">{{ user.iqc }} <img :src="coin" alt="coin" /></p>
+				</div>
+				<div class="home__leaders-box">
+					<p class="home__leaders-detail">............</p>
+					<p class="home__leaders-detail">..........................</p>
+					<p class="home__leaders-detail">..........................</p>
+					<p class="home__leaders-detail">..........................</p>
+				</div>
+				<div
+					style="
+						background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%));
+						padding: 0.4rem 0rem;
+						border-radius: 0.4rem;
+					"
+					class="home__leaders-box"
+				>
+					<p class="home__leaders-detail" style="color: white">101</p>
+					<p class="home__leaders-detail" style="color: white">Очкин Р.</p>
+					<p class="home__leaders-detail" style="color: white">PIQ</p>
+					<p class="home__leaders-detail" style="color: white">
 						2350 <img :src="coin" alt="coin" />
 					</p>
 				</div>
@@ -109,7 +90,6 @@ const fetchData = async () => {
 		/* Get Users for Leaderboard */
 		const leaderboardData = await axios.get(env.leaderboardsUrl, { headers });
 		users.value = leaderboardData.data;
-		console.log(users.value);
 	} catch (error) {
 		console.error('Error:', error.message);
 	}
@@ -181,59 +161,36 @@ const getFormattedDate = () => {
 		gap: 1rem;
 		height: 100%;
 
-		&-grid {
-			flex: 1;
+		&-box {
+			width: 100%;
+			&:not(:last-child) {
+				margin-bottom: 1rem;
+			}
 			display: grid;
-			grid-template-columns: repeat(4, 22%);
-			column-gap: 2.5vh;
-			row-gap: 1.5rem;
-			align-items: center;
+			grid-template-columns: repeat(4, 25%);
 			justify-items: center;
-			@media only screen and (max-width: 1450px) {
-				column-gap: 2rem;
-			}
-			@media only screen and (max-height: 830px) {
-				row-gap: 1.5vh;
-			}
-			@media only screen and (max-height: 530px) {
-				row-gap: 0.6vh;
-			}
-			&_last {
-				grid-column: 1/-1;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				width: 100%;
-				padding: 0.4rem 1.4rem;
-				border-radius: 0.4rem;
-				background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%));
-				& > * {
-					color: #fff;
-					font-size: 1rem;
-					font-weight: 500;
-				}
-			}
-			&_title {
-				color: #358184;
-				font-size: 0.8rem;
-				font-weight: 700;
-			}
-			&_detail {
-				display: flex;
-				align-items: center;
-				color: #858597;
-				gap: 0.4rem;
-				font-size: 1rem;
-				font-weight: 500;
-			}
-			& img {
-				width: 1.5rem;
-				height: 1.5rem;
-			}
 		}
-		& h1 {
-			font-weight: 400;
+		&-title {
+			color: #358184;
+			font-size: 0.8rem;
+			font-weight: 700;
 		}
+		&-detail {
+			text-align: center;
+			display: flex;
+			align-items: center;
+			color: #858597;
+			gap: 0.4rem;
+			font-size: 1rem;
+			font-weight: 500;
+		}
+		& img {
+			width: 1.5rem;
+			height: 1.5rem;
+		}
+	}
+	& h1 {
+		font-weight: 400;
 	}
 	&__slider {
 		grid-column: 1/-1;
