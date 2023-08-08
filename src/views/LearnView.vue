@@ -11,10 +11,7 @@
 </template>
 
 <script setup>
-setTimeout(() => {
-	document.querySelector('.learn').style.transform = 'translateY(0)';
-}, 100);
-import { ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -24,6 +21,11 @@ watchEffect(() => {
 	// Find the current active link element based on the route
 	const activeLinkIndex = ['current', 'courses', 'mypharmacy', 'completed'].indexOf(route.name);
 	activeLinkRef.value = activeLinkIndex !== -1 ? activeLinkIndex + 1 : null;
+});
+onMounted(() => {
+	setTimeout(() => {
+		document.querySelector('.learn').style.transform = 'translateY(0)';
+	}, 100);
 });
 </script>
 
@@ -43,6 +45,7 @@ watchEffect(() => {
 	transition: transform 0.5s ease;
 	padding-top: 1.4rem;
 	&__nav {
+		margin-left: 1rem;
 		padding: 3rem 0;
 		& a {
 			z-index: 2;

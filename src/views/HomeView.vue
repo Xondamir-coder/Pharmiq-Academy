@@ -178,7 +178,7 @@ const getFormattedDate = () => {
 			flex: 1;
 			display: grid;
 			grid-template-columns: repeat(4, 22%);
-			column-gap: 3rem;
+			column-gap: 2.5vh;
 			row-gap: 1.5rem;
 			align-items: center;
 			justify-items: center;
@@ -252,7 +252,7 @@ const getFormattedDate = () => {
 		max-width: 520px;
 		overflow: hidden;
 		display: flex;
-		justify-content: space-evenly;
+		justify-content: space-between;
 		flex-direction: column;
 		gap: 1rem;
 		@media only screen and (max-height: 830px) {

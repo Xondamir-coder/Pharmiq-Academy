@@ -21,7 +21,7 @@ import CourseInfo from '../CourseInfo.vue';
 .courses__card {
 	cursor: pointer;
 	display: flex;
-	width: 26rem;
+	width: 100%;
 	padding: 1rem;
 	flex-direction: column;
 	justify-content: center;

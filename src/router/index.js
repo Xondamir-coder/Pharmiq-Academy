@@ -28,7 +28,7 @@ const router = createRouter({
 			children: [
 				{
 					path: 'current',
-					name: 'currently learning',
+					name: 'current',
 					component: Current,
 				},
 				{
