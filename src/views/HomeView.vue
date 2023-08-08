@@ -94,6 +94,7 @@ import slides from '../data/slide.js';
 import CourseInfo from '../components/CourseInfo.vue';
 
 const name = ref('');
+const users = ref([]);
 const headers = {
 	Accept: 'application/json',
 	'Content-Type': 'application/json',
@@ -101,8 +102,14 @@ const headers = {
 };
 const fetchData = async () => {
 	try {
-		const response = await axios.get(env.url, { headers });
-		name.value = response.data.user.firstName;
+		/* Get UserName */
+		const userData = await axios.get(env.userUrl, { headers });
+		name.value = userData.data.user.firstName;
+
+		/* Get Users for Leaderboard */
+		const leaderboardData = await axios.get(env.leaderboardsUrl, { headers });
+		users.value = leaderboardData.data;
+		console.log(users.value);
 	} catch (error) {
 		console.error('Error:', error.message);
 	}

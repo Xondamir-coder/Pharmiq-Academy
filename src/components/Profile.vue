@@ -108,7 +108,7 @@ const headers = {
 };
 const fetchData = async () => {
 	try {
-		const response = await axios.get(env.url, { headers });
+		const response = await axios.get(env.userUrl, { headers });
 		const data = response.data;
 		user.value = data.user;
 	} catch (error) {
