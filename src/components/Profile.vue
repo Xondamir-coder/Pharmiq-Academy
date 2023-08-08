@@ -13,7 +13,7 @@
 			<h1>{{ user.firstName }} {{ user.lastName }}</h1>
 			<p>{{ user.role }} в Аптеке SPACE LABS</p>
 			<div v-if="iqc" class="home__profile-budget">
-				{{ iqc }}
+				{{ iqc.amountofIQC }}
 				<img :src="coin" alt="coin" />
 			</div>
 			<div v-else class="home__profile-budget">
@@ -39,7 +39,14 @@
 
 		<div class="home__profile-promocode">
 			<h2>У вас есть промокод, введите его здесь</h2>
-			<input placeholder="PROMOCODE" type="text" name="promocode" id="promocode" />
+			<input
+				@keyup.enter="fetchData"
+				v-model="promocode"
+				placeholder="PROMOCODE"
+				type="text"
+				name="promocode"
+				id="promocode"
+			/>
 		</div>
 
 		<div class="home__profile-links">
@@ -74,6 +81,8 @@ import coin from '../assets/icons/coin-icon.svg';
 import pen from '../assets/icons/pen.svg';
 
 const user = ref({});
+const iqc = ref({});
+const promocode = ref('');
 
 function copyToClipboard() {
 	const linkElement = document.querySelector('.custom__button a');
@@ -99,7 +108,18 @@ const hideEdit = () => {
 	editContainer.style.transform = 'translateX(8rem)';
 	editContainer.querySelector('p').style.opacity = '0';
 };
-
+const getBrowser = () => {
+	const userAgent = navigator.userAgent;
+	const browserNames = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera', 'IE'];
+	let detectedBrowser = 'Unknown';
+	for (var i = 0; i < browserNames.length; i++) {
+		if (userAgent.indexOf(browserNames[i]) !== -1) {
+			detectedBrowser = browserNames[i];
+			break;
+		}
+	}
+	return detectedBrowser;
+};
 /* Fetch Data */
 const headers = {
 	Accept: 'application/json',
@@ -108,25 +128,30 @@ const headers = {
 };
 const fetchData = async () => {
 	const formData = new FormData();
-	formData.append('promocode', 'TESTONE');
-	formData.append('platform', 'academy');
-	formData.append('browser', 'Chrome');
-	formData.append('device', 'Device name');
-	formData.append('timeZone', '500');
+	if (promocode.value) {
+		formData.append('promocode', `${promocode}`);
+		formData.append('platform', 'academy');
+		formData.append('browser', `${getBrowser()}`);
+		formData.append('device', 'Device name');
+		formData.append('timeZone', '500');
+	}
 	try {
 		/* Get User Data */
 		const userData = await axios.get(env.userUrl, { headers });
 		user.value = userData.data.user;
+		iqc.value = userData.data.iqc;
 
 		/* Send Promocode */
-		const promocodeData = await axios.post(env.promocodeUrl, formData, {
-			headers: { Authorization: `Bearer ${env.apikey}` },
-		});
-		console.log(promocodeData);
-		if (response.data.error) {
-			console.log('Error:', response.data.message.uz);
-		} else {
-			console.log('Promocode used successfully.');
+		if (promocode.value) {
+			const promocodeData = await axios.post(env.promocodeUrl, formData, {
+				headers: { Authorization: `Bearer ${env.apikey}` },
+			});
+			console.log(promocodeData);
+			if (promocodeData.data.error) {
+				console.log('Error:', response.data.message.uz);
+			} else {
+				console.log('Promocode used successfully.');
+			}
 		}
 	} catch (error) {
 		console.error('Error:', error.message);
