@@ -76,6 +76,7 @@ import CourseInfo from '../components/CourseInfo.vue';
 
 const name = ref('');
 const users = ref([]);
+const courses = ref([]);
 const headers = {
 	Accept: 'application/json',
 	'Content-Type': 'application/json',
@@ -84,12 +85,17 @@ const headers = {
 const fetchData = async () => {
 	try {
 		/* Get UserName */
-		const userData = await axios.get(env.userUrl, { headers });
+		const userData = await axios.get(env.url.users, { headers });
 		name.value = userData.data.user.firstName;
 
 		/* Get Users for Leaderboard */
-		const leaderboardData = await axios.get(env.leaderboardsUrl, { headers });
+		const leaderboardData = await axios.get(env.url.leaderboard, { headers });
 		users.value = leaderboardData.data;
+
+		/* Get Courses */
+		const coursesData = await axios.get(env.url.courses, { headers });
+		courses.value = coursesData.data;
+		console.log(courses.value);
 	} catch (error) {
 		console.error('Error:', error.message);
 	}
@@ -236,7 +242,7 @@ const getFormattedDate = () => {
 			}
 			& img {
 				width: 50%;
-				height: 110%;
+				height: 120%;
 			}
 			& p {
 				width: 10.6rem;

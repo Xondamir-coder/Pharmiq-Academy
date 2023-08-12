@@ -1,8 +1,11 @@
 const env = {
 	apikey: '10638|kw7JpzOBtw1Hig3w2bkCEsboQxS8FT9XDK4UcPbB',
-	newsUrl: 'https://api.pharmiq.uz/api/v1-1/spa-news?page=1',
-	leaderboardsUrl: 'https://api.pharmiq.uz/api/v1-1/spa-users/users-top-iqc-statistics',
-	userUrl: 'https://api.pharmiq.uz/api/v1-1/mobile-user',
-	promocodeUrl: 'https://api.pharmiq.uz/api/v1-1/spa-users/user-promocode',
+	url: {
+		news: 'https://api.pharmiq.uz/api/v1-1/spa-news?page=1',
+		users: 'https://api.pharmiq.uz/api/v1-1/mobile-user',
+		leaderboard: 'https://api.pharmiq.uz/api/v1-1/spa-users/users-top-iqc-statistics',
+		promocode: 'https://api.pharmiq.uz/api/v1-1/spa-users/user-promocode',
+		courses: 'https://api.pharmiq.uz/api/v1-1/spa-courses/getCategories',
+	},
 };
 export default env;

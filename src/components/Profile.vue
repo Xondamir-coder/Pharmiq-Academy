@@ -330,7 +330,7 @@ h2 {
 		padding: 1rem;
 		color: #fff;
 		text-align: center;
-		font-size: 0.8rem;
+		font-size: 0.9rem;
 		font-weight: 400;
 		& img {
 			width: 2.4rem;
