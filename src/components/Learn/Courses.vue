@@ -3,8 +3,8 @@
 		:props="[
 			{ name: 'Все', to: '' },
 			{ name: 'Нозология', to: '' },
-			{ name: 'Название', to: 'courses' },
-			{ name: 'Название', to: '' },
+			{ name: 'Фармопека', to: 'courses' },
+			{ name: 'Продажи и ассортимент', to: '' },
 		]"
 	/>
 	<LearnContainer height="calc(100vh - 18rem)" />
