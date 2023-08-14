@@ -1,5 +1,8 @@
 <template>
-	<div class="sidebar">
+	<div
+		class="sidebar"
+		:style="{ transform: appStore.showPreloader ? 'translateX(-40%)' : 'translateX(0)' }"
+	>
 		<img class="sidebar__logo" :src="logo" alt="Logo" />
 		<div class="sidebar__search">
 			<img style="width: 2.4rem; height: 2.4rem" v-if="isDark" :src="searchWhite" alt="search" />
@@ -56,6 +59,14 @@
 	</div>
 </template>
 <script setup>
+/* Pinia */
+import { useAppStore } from '../appStore.js';
+const appStore = useAppStore();
+
+import { RouterLink } from 'vue-router';
+import { ref, onMounted } from 'vue';
+
+/* Assets */
 import qrcode from '../assets/qr-code.webp';
 import logo from '../assets/Logo-White.svg';
 import search from '../assets/icons/teenyicons_search-outline.svg';
@@ -110,12 +121,6 @@ const changeTheme = () => {
 		isDark.value = false;
 	}
 };
-setTimeout(() => {
-	document.querySelector('.sidebar').style.transform = 'translateX(0)';
-}, 3500);
-
-import { RouterLink } from 'vue-router';
-import { ref, onMounted } from 'vue';
 
 const navLinks = [
 	{ to: '/', icon: home, iconWhite: homeWhite, text: 'Главная' },
@@ -262,7 +267,6 @@ label {
 	justify-content: space-evenly;
 	gap: 1.3rem;
 	transition: all 0.5s ease;
-	transform: translateX(-40%);
 	&__logo {
 		margin: 2rem 0;
 		width: 20rem;

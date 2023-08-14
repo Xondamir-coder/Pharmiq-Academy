@@ -1,5 +1,5 @@
 <template>
-	<div class="preloader">
+	<div v-if="appStore.showPreloader" class="preloader">
 		<img id="logo" :src="logo" alt="logo" />
 		<div id="name">
 			<h1>PharmIQ</h1>
@@ -7,15 +7,31 @@
 		</div>
 	</div>
 </template>
+
 <script setup>
+/* Pinia */
+import { useAppStore } from '../appStore.js';
+const appStore = useAppStore();
+
+import { onBeforeMount, onBeforeUnmount } from 'vue';
 import logo from '../../public/favicon.ico';
-document.querySelector('body').style.overflow = 'hidden';
-setTimeout(() => {
-	document.querySelector('.preloader').style.display = 'none';
-	document.querySelector('body').style.overflow = 'visible';
-	document.querySelector('.home__profile').style.zIndex = '10';
-}, 3500);
+
+onBeforeMount(() => {
+	// Use Vue's reactive system to control the overflow property
+	document.body.style.overflow = 'hidden';
+
+	// Use Vue's reactive properties to control the preloader visibility
+	setTimeout(() => {
+		appStore.setShowPreloader(false);
+	}, 3500);
+});
+
+// Reset the overflow property and other cleanup when component unmounts
+onBeforeUnmount(() => {
+	document.body.style.overflow = 'visible';
+});
 </script>
+
 <style scoped lang="scss">
 #name {
 	position: absolute;

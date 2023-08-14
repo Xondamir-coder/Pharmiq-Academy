@@ -1,5 +1,5 @@
 <template>
-	<section class="home">
+	<section class="home" :style="{ opacity: showHome ? '1' : '0' }">
 		<div style="align-self: flex-end">
 			<h1 style="font-weight: 600; width: max-content" class="home__username">
 				С возращением, {{ name }}!
@@ -77,25 +77,25 @@ import CourseInfo from '../components/CourseInfo.vue';
 const name = ref('');
 const users = ref([]);
 const courses = ref([]);
+const showHome = ref(false);
+
 const headers = {
 	Accept: 'application/json',
 	'Content-Type': 'application/json',
 	Authorization: `Bearer ${env.apikey}`,
 };
+
 const fetchData = async () => {
 	try {
-		/* Get UserName */
-		const userData = await axios.get(env.url.users, { headers });
+		const [userData, leaderboardData, coursesData] = await Promise.all([
+			axios.get(env.url.users, { headers }),
+			axios.get(env.url.leaderboard, { headers }),
+			axios.get(env.url.courses, { headers }),
+		]);
+
 		name.value = userData.data.user.firstName;
-
-		/* Get Users for Leaderboard */
-		const leaderboardData = await axios.get(env.url.leaderboard, { headers });
 		users.value = leaderboardData.data;
-
-		/* Get Courses */
-		const coursesData = await axios.get(env.url.courses, { headers });
 		courses.value = coursesData.data;
-		console.log(courses.value);
 	} catch (error) {
 		console.error('Error:', error.message);
 	}
@@ -104,7 +104,7 @@ const fetchData = async () => {
 onMounted(() => {
 	fetchData();
 	setTimeout(() => {
-		document.querySelector('.home').style.opacity = '1';
+		showHome.value = true;
 	}, 200);
 });
 
@@ -123,13 +123,10 @@ const getFormattedDate = () => {
 		'November',
 		'December',
 	];
-
 	const currentDate = new Date();
-	const day = String(currentDate.getDate()).padStart(2, '0');
-	const month = months[currentDate.getMonth()];
-	const year = currentDate.getFullYear();
-
-	const formattedDate = `${day} ${month} ${year}`;
+	const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')} ${
+		months[currentDate.getMonth()]
+	} ${currentDate.getFullYear()}`;
 	return formattedDate;
 };
 </script>

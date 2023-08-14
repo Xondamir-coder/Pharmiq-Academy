@@ -1,5 +1,11 @@
 <template>
-	<div class="home__profile">
+	<div
+		class="home__profile"
+		:style="{
+			transform: appStore.showPreloader ? 'translateX(40%)' : 'translateX(0)',
+			zIndex: appStore.showPreloader ? '-1' : '10',
+		}"
+	>
 		<div class="home__profile-edit">
 			<h1>Мой профиль</h1>
 			<div @mouseout="hideEdit" @mouseover="revealEdit" class="home__profile-edit_button">
@@ -10,14 +16,10 @@
 
 		<div class="home__profile-details">
 			<img :src="avatar" alt="avatar" />
-			<h1>{{ user.firstName }} {{ user.lastName }}</h1>
+			<h1>{{ user.fullName }}</h1>
 			<p>{{ user.role }} в Аптеке SPACE LABS</p>
-			<div v-if="iqc" class="home__profile-budget">
-				{{ iqc.amountofIQC }}
-				<img :src="coin" alt="coin" />
-			</div>
-			<div v-else class="home__profile-budget">
-				3000
+			<div class="home__profile-budget">
+				{{ iqc ? iqc.amountofIQC : 3000 }}
 				<img :src="coin" alt="coin" />
 			</div>
 		</div>
@@ -25,14 +27,13 @@
 		<div class="home__profile-rewards">
 			<h2>Достижения</h2>
 			<div class="home__profile-awards">
-				<div style="display: flex; flex-direction: column; align-items: center">
-					<img :src="locked" alt="locked" />Name
-				</div>
-				<div style="display: flex; flex-direction: column; align-items: center">
-					<img :src="locked" alt="locked" />Name
-				</div>
-				<div style="display: flex; flex-direction: column; align-items: center">
-					<img :src="locked" alt="locked" />Name
+				<div
+					v-for="award in userAwards"
+					:key="award.id"
+					style="display: flex; flex-direction: column; align-items: center"
+				>
+					<img :src="award.img" :alt="award.name" />
+					{{ award.name }}
 				</div>
 			</div>
 		</div>
@@ -70,7 +71,12 @@
 		</div>
 	</div>
 </template>
+
 <script setup>
+/* Pinia */
+import { useAppStore } from '../appStore.js';
+const appStore = useAppStore();
+
 import axios from 'axios';
 import env from '../env.js';
 import { onMounted, ref } from 'vue';
@@ -80,6 +86,23 @@ import link from '../assets/icons/copy-link.svg';
 import coin from '../assets/icons/coin-icon.svg';
 import pen from '../assets/icons/pen.svg';
 
+const userAwards = [
+	{
+		id: 0,
+		name: 'Name',
+		img: locked,
+	},
+	{
+		id: 1,
+		name: 'Name',
+		img: locked,
+	},
+	{
+		id: 2,
+		name: 'Name',
+		img: locked,
+	},
+];
 const user = ref({});
 const iqc = ref({});
 const promocode = ref('');
@@ -120,39 +143,49 @@ const getBrowser = () => {
 	}
 	return detectedBrowser;
 };
+
 /* Fetch Data */
 const headers = {
 	Accept: 'application/json',
 	'Content-Type': 'application/json',
 	Authorization: `Bearer ${env.apikey}`,
 };
-const fetchData = async () => {
-	const formData = new FormData();
-	if (promocode.value) {
-		formData.append('promocode', `${promocode}`);
-		formData.append('platform', 'academy');
-		formData.append('browser', `${getBrowser()}`);
-		formData.append('device', 'Device name');
-		formData.append('timeZone', '500');
-	}
+
+// Define a utility function to send the promocode
+const sendPromocode = async (formData) => {
 	try {
-		/* Get User Data */
-		const userData = await axios.get(env.userUrl, { headers });
+		const promocodeData = await axios.post(env.promocodeUrl, formData, {
+			headers: { Authorization: `Bearer ${env.apikey}` },
+		});
+		console.log(promocodeData);
+		if (promocodeData.data.error) {
+			console.log('Error:', response.data.message.uz);
+		} else {
+			console.log('Promocode used successfully.');
+		}
+	} catch (error) {
+		console.error('Error:', error.message);
+	}
+};
+
+// Fetch user data and send promocode
+const fetchData = async () => {
+	try {
+		const [userData, promocodeResponse] = await Promise.all([
+			axios.get(env.url.users, { headers }),
+			promocode.value
+				? sendPromocode({
+						promocode: `${promocode}`,
+						platform: 'academy',
+						browser: `${getBrowser()}`,
+						device: 'Device name',
+						timeZone: '500',
+				  })
+				: null,
+		]);
+
 		user.value = userData.data.user;
 		iqc.value = userData.data.iqc;
-
-		/* Send Promocode */
-		if (promocode.value) {
-			const promocodeData = await axios.post(env.promocodeUrl, formData, {
-				headers: { Authorization: `Bearer ${env.apikey}` },
-			});
-			console.log(promocodeData);
-			if (promocodeData.data.error) {
-				console.log('Error:', response.data.message.uz);
-			} else {
-				console.log('Promocode used successfully.');
-			}
-		}
 	} catch (error) {
 		console.error('Error:', error.message);
 	}
@@ -160,9 +193,6 @@ const fetchData = async () => {
 
 onMounted(() => {
 	fetchData();
-	setTimeout(() => {
-		document.querySelector('.home__profile').style.transform = 'translateX(0)';
-	}, 3500);
 });
 </script>
 <style lang="scss" scoped>
@@ -184,9 +214,7 @@ h2 {
 	position: fixed;
 	top: 0;
 	right: 0;
-	transform: translateX(40%);
 	transition: all 0.5s ease;
-	z-index: -1;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
