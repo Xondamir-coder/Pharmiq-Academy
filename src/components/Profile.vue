@@ -16,7 +16,7 @@
 
 		<div class="home__profile-details">
 			<img :src="avatar" alt="avatar" />
-			<h1>{{ user.fullName }}</h1>
+			<h1>{{ user.firstName }} {{ user.lastName }}</h1>
 			<p>{{ user.role }} в Аптеке SPACE LABS</p>
 			<div class="home__profile-budget">
 				{{ iqc ? iqc.amountofIQC : 3000 }}
