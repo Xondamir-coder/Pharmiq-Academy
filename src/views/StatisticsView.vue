@@ -196,11 +196,13 @@ const data2 = {
 	transition: all 0.5s ease;
 	&__container {
 		display: flex;
-		gap: 3rem;
 		margin-top: 1.5rem;
 		height: 90%;
+		justify-content: space-between;
+		gap: 2rem;
 	}
 	&__courses {
+		margin-right: 3vw;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
