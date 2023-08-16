@@ -45,8 +45,8 @@ onMounted(() => {
 	transition: transform 0.5s ease;
 	padding-top: 1.4rem;
 	&__nav {
-		margin-left: 1rem;
 		padding: 3rem 0;
+		margin-left: 1rem;
 		& a {
 			z-index: 2;
 			transition: all 0.5s ease;

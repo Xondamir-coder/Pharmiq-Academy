@@ -11,7 +11,11 @@
 
 <script setup>
 import play from '../assets/icons/play.svg';
-const { numberOfVids, time, fontSize } = defineProps(['numberOfVids', 'time', 'fontSize']);
+const props = defineProps({
+	numberOfVids: Number,
+	time: Number,
+	fontSize: Number,
+});
 </script>
 
 <style lang="scss" scoped>
