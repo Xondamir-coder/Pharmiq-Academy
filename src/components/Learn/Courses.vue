@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useAppStore } from '../../appStore.js';
 import CourseCard from './CourseCard.vue';
 
@@ -34,10 +34,6 @@ const filteredCourses = computed(() => {
 const filterCourses = (id) => {
 	activeFilter.value = id;
 };
-
-onMounted(() => {
-	store.getCourses();
-});
 </script>
 
 <style lang="scss">

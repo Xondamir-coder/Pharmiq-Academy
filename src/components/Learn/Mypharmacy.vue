@@ -1,3 +1,36 @@
 <template>
-	<div>My Pharmacy</div>
+	<div class="courses__nav">
+		<button :class="{ 'active-button': activeFilter === 0 }" @click="filterCourses(0)">
+			Препараты
+		</button>
+		<button :class="{ 'active-button': activeFilter === 1 }" @click="filterCourses(1)">
+			Корпортивные
+		</button>
+	</div>
+	<div class="learn__container">
+		<div class="courses__card" v-for="course in courses" :key="course.id">
+			<img style="height: 13.5rem" class="courses__card-banner" :src="course.img" alt="bg" />
+			<h6>{{ course.category }}</h6>
+			<p class="courses__card-title">{{ course.title }}</p>
+			<p class="courses__card-text">{{ course.text }}</p>
+			<CourseInfo :number-of-vids="1" :time="1000" :font-size="1.6" />
+			<button style="width: 100%; padding: 1rem; font-size: 1rem" class="custom__button">
+				ПРОЙТИ КУРС И ПОЛУЧИТЬ 20
+				<img v-bind:srcset="coin" alt="coin" />
+			</button>
+		</div>
+	</div>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+import courses from '../../data/course.js';
+import coin from '../../assets/icons/coin-icon.svg';
+import CourseInfo from '../CourseInfo.vue';
+
+const activeFilter = ref(0);
+
+const filterCourses = (id) => {
+	activeFilter.value = id;
+};
+</script>
