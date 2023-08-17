@@ -10,6 +10,7 @@
 		<div class="home__slider">
 			<Slide v-for="slide in slides" :key="slide.id" :props="slide" />
 		</div>
+
 		<div class="home__course">
 			<div class="home__course-bg">
 				<img :src="books" alt="Books" />
@@ -23,6 +24,7 @@
 				<img style="width: 3.6rem; height: 3.6rem" :src="coin" alt="Money" />
 			</button>
 		</div>
+
 		<div class="home__leaders">
 			<h1>Таблица лидеров</h1>
 			<div>
@@ -32,32 +34,26 @@
 					<p class="home__leaders-title">Аптека</p>
 					<p class="home__leaders-title">Показатель обучения</p>
 				</div>
+
 				<div v-for="(user, id) in users" :key="id" class="home__leaders-box">
 					<p class="home__leaders-detail">{{ id + 1 }}</p>
 					<p class="home__leaders-detail">{{ user.user }}</p>
 					<p class="home__leaders-detail">{{ user.company }}</p>
 					<p class="home__leaders-detail">{{ user.iqc }} <img :src="coin" alt="coin" /></p>
 				</div>
+
 				<div class="home__leaders-box">
 					<p class="home__leaders-detail">............</p>
 					<p class="home__leaders-detail">..........................</p>
 					<p class="home__leaders-detail">..........................</p>
 					<p class="home__leaders-detail">..........................</p>
 				</div>
-				<div
-					style="
-						background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%));
-						padding: 0.4rem 0rem;
-						border-radius: 0.4rem;
-					"
-					class="home__leaders-box"
-				>
-					<p class="home__leaders-detail" style="color: white">101</p>
-					<p class="home__leaders-detail" style="color: white">Очкин Р.</p>
-					<p class="home__leaders-detail" style="color: white">PIQ</p>
-					<p class="home__leaders-detail" style="color: white">
-						2350 <img :src="coin" alt="coin" />
-					</p>
+
+				<div class="home__leaders-box home__leaders-box_last">
+					<p class="home__leaders-detail">101</p>
+					<p class="home__leaders-detail">Очкин Р.</p>
+					<p class="home__leaders-detail">PIQ</p>
+					<p class="home__leaders-detail">2350 <img :src="coin" alt="coin" /></p>
 				</div>
 			</div>
 		</div>
@@ -76,7 +72,6 @@ import CourseInfo from '../components/CourseInfo.vue';
 
 const name = ref('');
 const users = ref([]);
-const courses = ref([]);
 const showHome = ref(false);
 
 const headers = {
@@ -90,12 +85,10 @@ const fetchData = async () => {
 		const [userData, leaderboardData, coursesData] = await Promise.all([
 			axios.get(env.url.users, { headers }),
 			axios.get(env.url.leaderboard, { headers }),
-			axios.get(env.url.courses, { headers }),
 		]);
 
 		name.value = userData.data.user.firstName;
 		users.value = leaderboardData.data;
-		courses.value = coursesData.data;
 	} catch (error) {
 		console.error('Error:', error.message);
 	}
@@ -172,6 +165,14 @@ const getFormattedDate = () => {
 			display: grid;
 			grid-template-columns: repeat(4, 25%);
 			justify-items: center;
+			&_last {
+				background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%));
+				padding: 0.4rem 0rem;
+				border-radius: 0.4rem;
+				& p {
+					color: white;
+				}
+			}
 		}
 		&-title {
 			color: #358184;

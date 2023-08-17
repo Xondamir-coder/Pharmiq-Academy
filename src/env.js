@@ -5,7 +5,6 @@ const env = {
 		users: 'https://api.pharmiq.uz/api/v1-1/mobile-user',
 		leaderboard: 'https://api.pharmiq.uz/api/v1-1/spa-users/users-top-iqc-statistics',
 		promocode: 'https://api.pharmiq.uz/api/v1-1/spa-users/user-promocode',
-		courses: 'https://api.pharmiq.uz/api/v1-1/spa-courses/getCategories',
 	},
 };
 export default env;
