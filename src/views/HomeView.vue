@@ -2,7 +2,7 @@
 	<section class="home" :style="{ opacity: showHome ? '1' : '0' }">
 		<div style="align-self: flex-end">
 			<h1 style="font-weight: 600; width: max-content" class="home__username">
-				С возращением, {{ name }}!
+				С возращением, {{ store.name }}!
 			</h1>
 			<p class="home__date">{{ getFormattedDate() }}</p>
 		</div>
@@ -35,7 +35,7 @@
 					<p class="home__leaders-title">Показатель обучения</p>
 				</div>
 
-				<div v-for="(user, id) in users" :key="id" class="home__leaders-box">
+				<div v-for="(user, id) in store.users" :key="id" class="home__leaders-box">
 					<p class="home__leaders-detail">{{ id + 1 }}</p>
 					<p class="home__leaders-detail">{{ user.user }}</p>
 					<p class="home__leaders-detail">{{ user.company }}</p>
@@ -61,8 +61,7 @@
 </template>
 
 <script setup>
-import axios from 'axios';
-import env from '../env.js';
+import { useAppStore } from '../appStore.js';
 import { onMounted, ref } from 'vue';
 import books from '../assets/books.webp';
 import coin from '../assets/icons/coin-icon.svg';
@@ -70,32 +69,10 @@ import Slide from '../components/Home/Slide.vue';
 import slides from '../data/slide.js';
 import CourseInfo from '../components/CourseInfo.vue';
 
-const name = ref('');
-const users = ref([]);
+const store = useAppStore();
 const showHome = ref(false);
 
-const headers = {
-	Accept: 'application/json',
-	'Content-Type': 'application/json',
-	Authorization: `Bearer ${env.apikey}`,
-};
-
-const fetchData = async () => {
-	try {
-		const [userData, leaderboardData, coursesData] = await Promise.all([
-			axios.get(env.url.users, { headers }),
-			axios.get(env.url.leaderboard, { headers }),
-		]);
-
-		name.value = userData.data.user.firstName;
-		users.value = leaderboardData.data;
-	} catch (error) {
-		console.error('Error:', error.message);
-	}
-};
-
 onMounted(() => {
-	fetchData();
 	setTimeout(() => {
 		showHome.value = true;
 	}, 200);

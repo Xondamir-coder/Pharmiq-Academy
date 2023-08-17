@@ -11,11 +11,9 @@
 </template>
 
 <script setup>
-import { useAppStore } from '../appStore.js';
 import { onMounted, ref, watchEffect } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 
-const store = useAppStore();
 const route = useRoute();
 const activeLinkRef = ref(null);
 
@@ -28,7 +26,6 @@ onMounted(() => {
 	setTimeout(() => {
 		document.querySelector('.learn').style.transform = 'translateY(0)';
 	}, 100);
-	store.fetchCoursesAndOngoing();
 });
 </script>
 

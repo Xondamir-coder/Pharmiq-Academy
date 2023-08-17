@@ -8,10 +8,18 @@
 </template>
 
 <script setup>
+import { useAppStore } from './appStore.js';
 import Sidebar from './components/Sidebar.vue';
 import Preloader from './components/Preloader.vue';
 import { RouterView } from 'vue-router';
 import Profile from './components/Profile.vue';
+import { onMounted } from 'vue';
+
+const store = useAppStore();
+
+onMounted(() => {
+	store.fetchAPI();
+});
 </script>
 
 <style lang="scss" scoped>

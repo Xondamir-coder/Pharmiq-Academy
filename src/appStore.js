@@ -16,11 +16,19 @@ export const useAppStore = defineStore('app', {
 		courses: ref([]),
 		ongoing: ref([]),
 		passed: ref([]),
+		name: ref(''),
+		users: ref([]),
 	}),
 	actions: {
-		async fetchCoursesAndOngoing() {
+		async fetchAPI() {
 			try {
-				const [coursesResponse, ongoingResponse, passedResponse] = await Promise.all([
+				const [
+					coursesResponse,
+					ongoingResponse,
+					passedResponse,
+					userResponse,
+					leadearboardResponse,
+				] = await Promise.all([
 					axios.get(`${BASE_URL}/coursesNew?params=free`, {
 						headers: headers,
 					}),
@@ -28,11 +36,15 @@ export const useAppStore = defineStore('app', {
 					axios.get(`${BASE_URL}/mycoursesPassedNew?category_id=0&params=free`, {
 						headers: headers,
 					}),
+					axios.get(env.url.users, { headers: headers }),
+					axios.get(env.url.leaderboard, { headers: headers }),
 				]);
 
 				this.courses = coursesResponse.data.courses.data;
 				this.ongoing = ongoingResponse.data;
 				this.passed = passedResponse.data;
+				this.name = userResponse.data.user.firstName;
+				this.users = leadearboardResponse.data;
 
 				console.log('Courses : ', this.courses);
 				console.log('Ongoing courses : ', this.ongoing);
