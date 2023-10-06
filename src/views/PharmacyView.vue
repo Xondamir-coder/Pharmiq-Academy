@@ -5,7 +5,7 @@
 		<div class="pharmacy__box--1 pharmacy__box">
 			<div class="pharmacy__text--wrapper">DORIDARMON</div>
 			<div class="pharmacy__box--edit">
-				<img :src="pen" alt="pen" />
+				<Pen />
 				<span>Редактировать</span>
 			</div>
 		</div>
@@ -32,7 +32,7 @@
 
 			<div class="pharmacy__box--2_right">
 				<div class="pharmacy__box--edit" style="align-self: flex-end">
-					<img :src="pen" alt="pen" />
+					<Pen />
 					<span>Редактировать</span>
 				</div>
 				<div class="pharmacy__box--map">
@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import pen from '../assets/icons/pen.svg';
+import { Pen } from '../assets/icons';
 import findme from '../assets/icons/find-me.svg';
 import arrowDown from '../assets/icons/arrow-down.svg';
 const revealDropdown = () => {

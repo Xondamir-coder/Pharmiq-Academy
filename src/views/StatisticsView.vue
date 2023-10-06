@@ -1,6 +1,6 @@
 <template>
 	<section class="stats">
-		<h1 style="font-weight: 500; width: max-content">Моя Статистика</h1>
+		<h1>Моя Статистика</h1>
 		<div class="stats__container">
 			<div class="stats__history">
 				<h2>История кошелка</h2>
@@ -9,11 +9,11 @@
 					<h3>Получено / Потрачено</h3>
 					<h3>Дата / Время</h3>
 					<p
-						:style="`color: ${stat.color}; grid-column: 1/2; justify-self: right;`"
+						:style="`color: ${stat.color}; grid-column: 1/2;`"
 						v-for="(stat, index) in stats"
 						:key="index"
 					>
-						{{ stat.number }} <img :src="coin" alt="coin" />
+						<Coin />
 					</p>
 					<p
 						:style="`color: ${stat.color}; grid-column: 2/3; grid-row: ${stat.id}/span 1; justify-self: left`"
@@ -31,24 +31,34 @@
 					</p>
 				</div>
 			</div>
+
 			<div class="stats__courses">
 				<h2>Курсы</h2>
+
 				<div class="stats__courses--box">
-					<div class="chart__container--1"><Doughnut :options="options" :data="data2" /></div>
+					<div class="chart__container--1">
+						<Doughnut :options="options" :data="data" />
+					</div>
 					<div class="chart__details">
-						<p style="background-color: var(--color-secondary)">Пройдено</p>
-						<p style="background-color: #96d2f5">На изучении</p>
+						<p>Пройдено</p>
+						<p>На изучении</p>
 					</div>
 				</div>
+
 				<h2>Средняя оценка</h2>
-				<div class="stats__courses--box" style="position: relative">
-					<p class="chart__numbers">71/100</p>
-					<div class="chart__container--2"><Doughnut :options="options2" :data="data" /></div>
+
+				<div class="stats__average stats__courses--box">
+					<div>
+						<h1>81</h1>
+						<span>/100</span>
+					</div>
 				</div>
+
 				<h2>История системы</h2>
+
 				<div class="stats__courses--system">
 					<div>
-						<p style="color: #000">В системе с</p>
+						<p>В системе с</p>
 						<span
 							style="
 								background: var(
@@ -60,11 +70,11 @@
 						>
 					</div>
 					<div>
-						<p style="color: #000">В системе</p>
+						<p>В системе</p>
 						<span style="background: var(--brand-solid-secondary-blue, #4b96dc)">354 дней</span>
 					</div>
 					<div>
-						<p style="color: #000">Статус</p>
+						<p>Статус</p>
 						<span
 							style="
 								background: var(
@@ -82,25 +92,20 @@
 </template>
 
 <script setup>
-import coin from '../assets/icons/coin-icon.svg';
-import stats from '../data/stats.js';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useAppStore } from '../appStore';
 import { Doughnut } from 'vue-chartjs';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Coin } from '../assets/icons';
+import stats from '../data/stats.js';
+
 ChartJS.register(ArcElement, Tooltip, Legend);
-setTimeout(() => {
-	document.querySelector('.stats').style.transform = 'translateY(0)';
-}, 100);
-const data = {
-	labels: ['Light Green', 'Dark Green'],
-	datasets: [
-		{
-			label: 'Second Doughnut',
-			data: [71, 100],
-			backgroundColor: ['#61C1C0', '#358184'],
-			hoverOffset: 4,
-		},
-	],
-};
+
+const appStore = useAppStore();
+const ongoingCourses = appStore.ongoing.length;
+const passedCourses = appStore.passed.length;
+let coursesData;
+if (ongoingCourses == 0 && passedCourses == 0) coursesData = [32, 32];
+else coursesData = [ongoingCourses, passedCourses];
 const options = {
 	responsive: true,
 	rotation: 80,
@@ -110,39 +115,43 @@ const options = {
 		},
 	},
 };
-const options2 = {
-	responsive: true,
-	rotation: 80,
-	plugins: {
-		tooltip: {
-			enabled: false, // <-- this option disables tooltips
-		},
-		legend: {
-			display: false,
-		},
-	},
-};
-const data2 = {
-	labels: ['33 курса, 66%', '12 курсов, 34%'],
+const data = {
+	labels: [`${ongoingCourses} курса`, `${passedCourses} курсов`],
 	datasets: [
 		{
-			data: [32, 32],
-			backgroundColor: ['#4B96DC', '#96D2F5'],
+			data: coursesData,
+			backgroundColor: ['#4DB1B1', '#007382'],
 			hoverOffset: 4,
 		},
 	],
 };
+
+setTimeout(() => {
+	document.querySelector('.stats').style.transform = 'translateY(0)';
+}, 100);
 </script>
 
 <style lang="scss" scoped>
 .chart {
 	&__details {
+		margin-top: 2rem;
 		display: flex;
-		justify-content: center;
 		gap: 1rem;
-		margin-top: 1rem;
-		padding: 1rem;
-		width: 156%;
+		padding-bottom: 1rem;
+		& p {
+			width: 10rem;
+			text-align: center;
+			padding: 4px;
+			border-radius: 4px;
+			&:first-child {
+				background-color: var(--color-secondary);
+				background: var(--brand-solid-primary-green, #007382);
+			}
+			&:last-child {
+				background-color: #96d2f5;
+				background: var(--brand-solid-secondary-green, #4db1b1);
+			}
+		}
 	}
 	&__numbers {
 		@media only screen and (max-height: 890px) {
@@ -165,8 +174,8 @@ const data2 = {
 			height: 13rem;
 		}
 		@media only screen and (max-height: 780px) {
-			width: 10rem;
-			height: 10rem;
+			width: 13rem;
+			height: 13rem;
 		}
 		width: 16rem;
 		height: 16rem;
@@ -220,12 +229,6 @@ const data2 = {
 			display: flex;
 			align-items: center;
 			flex-direction: column;
-			& p {
-				width: 10rem;
-				text-align: center;
-				padding: 4px;
-				border-radius: 4px;
-			}
 		}
 		&--system {
 			@media only screen and (max-height: 830px) {
@@ -286,6 +289,9 @@ const data2 = {
 			row-gap: 0.88rem;
 			align-items: center;
 			justify-items: center;
+			@media only screen and (max-width: 1400px) and (max-height: 800px) {
+				column-gap: 0rem;
+			}
 			&::-webkit-scrollbar {
 				display: none;
 			}
@@ -305,11 +311,40 @@ const data2 = {
 				justify-content: right;
 				text-align: center;
 			}
-			& img {
+			& svg {
 				width: 2.4rem;
 				height: 2.4rem;
 			}
 		}
+	}
+	&__average {
+		padding: 3.4rem 0;
+		place-items: center;
+		grid-template-columns: repeat(2, max-content);
+		justify-content: center;
+
+		color: var(--brand-solid-secondary-green, #4db1b1);
+		text-shadow: 0px 0px 10px rgba(77, 177, 177, 0.3);
+		& div {
+			display: flex;
+			align-items: baseline;
+		}
+		& h1 {
+			font-weight: 700 !important;
+			font-size: 6.4rem;
+			line-height: 150%;
+			@media only screen and (max-height: 750px) {
+				line-height: 100%;
+			}
+		}
+		& span {
+			font-weight: 700 !important;
+			font-size: 2rem;
+		}
+	}
+	& h1 {
+		font-weight: 500;
+		width: max-content;
 	}
 	& h2 {
 		color: #595959;

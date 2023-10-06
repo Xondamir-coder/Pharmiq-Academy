@@ -1,32 +1,49 @@
 <template>
-	<section class="learn">
+	<section :style="showSection" class="learn">
 		<nav class="learn__nav">
-			<RouterLink ref="link1" active-class="link--active" to="current">На изучении</RouterLink>
-			<RouterLink ref="link2" active-class="link--active" to="courses">Курсы</RouterLink>
-			<RouterLink ref="link3" active-class="link--active" to="mypharmacy">Моя Аптека</RouterLink>
-			<RouterLink ref="link4" active-class="link--active" to="completed">Пройденные</RouterLink>
+			<RouterLink
+				active-class="link--active"
+				v-for="route in routes"
+				:key="route.name"
+				:to="route.to"
+			>
+				{{ route.name }}
+			</RouterLink>
 		</nav>
 		<RouterView />
 	</section>
 </template>
 
 <script setup>
-import { onMounted, ref, watchEffect } from 'vue';
-import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { onMounted, ref, computed } from 'vue';
+import { RouterLink, RouterView } from 'vue-router';
+import useAppear from '../composables/useAppear';
 
-const route = useRoute();
-const activeLinkRef = ref(null);
+const routes = ref([
+	{
+		to: 'ongoing',
+		name: 'На изучении',
+	},
+	{
+		to: 'courses',
+		name: 'Курсы',
+	},
+	{
+		to: 'mypharmacy',
+		name: 'Моя Аптека',
+	},
+	{
+		to: 'completed',
+		name: 'Пройденные',
+	},
+]);
+const appear = ref(false);
 
-watchEffect(() => {
-	// Find the current active link element based on the route
-	const activeLinkIndex = ['current', 'courses', 'mypharmacy', 'completed'].indexOf(route.name);
-	activeLinkRef.value = activeLinkIndex !== -1 ? activeLinkIndex + 1 : null;
-});
-onMounted(() => {
-	setTimeout(() => {
-		document.querySelector('.learn').style.transform = 'translateY(0)';
-	}, 100);
-});
+onMounted(() => useAppear(appear));
+
+const showSection = computed(() => ({
+	transform: appear.value ? 'translateY(0)' : 'translateY(100%)',
+}));
 </script>
 
 <style lang="scss" scoped>

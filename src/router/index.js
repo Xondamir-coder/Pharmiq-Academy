@@ -8,7 +8,7 @@ import PharmacyView from '../views/PharmacyView.vue';
 
 /* Components for Learn View */
 import LearnView from '../views/LearnView.vue';
-import Current from '../components/Learn/Current.vue';
+import Ongoing from '../components/Learn/Ongoing.vue';
 import Courses from '../components/Learn/Courses.vue';
 import Mypharmacy from '../components/Learn/Mypharmacy.vue';
 import Completed from '../components/Learn/Completed.vue';
@@ -27,9 +27,9 @@ const router = createRouter({
 			component: LearnView,
 			children: [
 				{
-					path: 'current',
-					name: 'current',
-					component: Current,
+					path: 'ongoing',
+					name: 'ongoing',
+					component: Ongoing,
 				},
 				{
 					path: 'courses',

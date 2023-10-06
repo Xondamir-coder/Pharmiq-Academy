@@ -1,117 +1,148 @@
 <template>
-	<div
-		class="home__profile"
-		:style="{
-			transform: appStore.showPreloader ? 'translateX(40%)' : 'translateX(0)',
-			zIndex: appStore.showPreloader ? '-1' : '10',
-		}"
-	>
+	<div class="home__profile" :style="profileStyle">
 		<div class="home__profile-edit">
-			<h1>Мой профиль</h1>
-			<div @mouseout="hideEdit" @mouseover="revealEdit" class="home__profile-edit_button">
-				<img :src="pen" alt="pen" />
-				<p style="font-size: 1rem">Редактировать</p>
+			<h1 :style="headingStyle">Мой профиль</h1>
+			<div class="home__profile-edit_button">
+				<Pen />
+				<p>Редактировать</p>
 			</div>
 		</div>
 
 		<div class="home__profile-details">
-			<img :src="avatar" alt="avatar" />
-			<h1>{{ user.firstName }} {{ user.lastName }}</h1>
-			<p>{{ user.role }} в Аптеке SPACE LABS</p>
+			<Avatar class="home__profile-details__avatar" />
+			<h1>{{ userFullName }}</h1>
+			<p>{{ appStore.user.role }} в Аптеке SPACE LABS</p>
 			<div class="home__profile-budget">
-				{{ iqc ? iqc.amountofIQC : 3000 }}
-				<img :src="coin" alt="coin" />
+				{{ formattedIqcAmount }}
+				<Coin />
 			</div>
 		</div>
 
 		<div class="home__profile-rewards">
 			<h2>Достижения</h2>
 			<div class="home__profile-awards">
-				<div
-					v-for="award in userAwards"
-					:key="award.id"
-					style="display: flex; flex-direction: column; align-items: center"
-				>
-					<img :src="award.img" :alt="award.name" />
+				<div v-for="award in userAwards" :key="award.id" class="home__profile-awards__container">
+					<Award class="home__profile-awards__img" />
 					{{ award.name }}
 				</div>
 			</div>
 		</div>
 
-		<div class="home__profile-promocode">
+		<form class="home__profile-promocode" @submit.prevent="sendPromocode">
 			<h2>У вас есть промокод, введите его здесь</h2>
 			<input
-				@keyup.enter="fetchData"
-				v-model="promocode"
+				:style="promocodeStyle"
+				@input="clearInput"
 				placeholder="PROMOCODE"
 				type="text"
-				name="promocode"
-				id="promocode"
+				v-model="promocode"
 			/>
-		</div>
+			<span v-if="error">{{ error }}</span>
+			<button
+				type="submit"
+				class="home__profile-promocode__button"
+				:disabled="promocode.length < 4"
+				:style="disabledButton"
+			>
+				Проверить
+			</button>
+		</form>
+
+		<Teleport to="body">
+			<div class="overlay" v-if="success"></div>
+			<Transition name="fade">
+				<div class="popup" v-if="success">
+					<div class="popup__content">
+						<p>Вы получили</p>
+						<h1>{{ success }} <Coin /></h1>
+					</div>
+					<button @click="closePopup" class="popup__button">OK</button>
+				</div>
+			</Transition>
+		</Teleport>
 
 		<div class="home__profile-links">
 			<h2>Реферальная ссылка</h2>
-			<p>Чтобы добавить сотрудников вашей аптеки в систему, отправьте ему эту ссылку</p>
-			<button @click="copyToClipboard" style="background: #4b96dc" class="custom__button">
-				<a href="https://go.pharmiq.uz/register/ref/2659948313928074"
-					>Нажмите на кнопку и ссылка скопируется</a
-				>
+			<p>Чтобы добавить сотрудников вашей аптеки в систему, отправьте им эту ссылку</p>
+			<button
+				class="custom__button"
+				@click="copyToClipboard('https://go.pharmiq.uz/register/ref/2659948313928074')"
+			>
 				Нажмите на кнопку и ссылка скопируется
-				<img :src="link" alt="link" />
+				<CopyLink />
 			</button>
-			<p style="font-size: 1rem">По вашей ссылке прошли регистрацию: 0</p>
+			<p class="home__profile-links__smallp">
+				По вашей ссылке прошли регистрацию: {{ clickedLinks[0] }}
+			</p>
 			<p>Реферальная ссылка фармацевта</p>
-			<button @click="copyToClipboard" class="custom__button">
-				<a href="https://go.pharmiq.uz/inviteTo520">Нажмите на кнопку и ссылка скопируется</a>
+			<button class="custom__button" @click="copyToClipboard('https://go.pharmiq.uz/inviteTo520')">
 				Нажмите на кнопку и ссылка скопируется
-				<img :src="link" alt="link" />
+				<CopyLink />
 			</button>
-			<p style="font-size: 1rem">По вашей ссылке прошли регистрацию: 0</p>
+			<p class="home__profile-links__smallp">
+				По вашей ссылке прошли регистрацию: {{ clickedLinks[1] }}
+			</p>
 		</div>
 	</div>
 </template>
 
 <script setup>
-/* Pinia */
-import { useAppStore } from '../appStore.js';
-const appStore = useAppStore();
-
 import axios from 'axios';
-import env from '../env.js';
-import { onMounted, ref } from 'vue';
-import avatar from '../assets/avatar.svg';
-import locked from '../assets/icons/award-locked.svg';
-import link from '../assets/icons/copy-link.svg';
-import coin from '../assets/icons/coin-icon.svg';
-import pen from '../assets/icons/pen.svg';
+import { computed, ref } from 'vue';
+import { useAppStore } from '../appStore.js';
+import { Pen, CopyLink, Coin, Award } from '../assets/icons';
+import Avatar from '../assets/Avatar.vue';
 
-const userAwards = [
-	{
-		id: 0,
-		name: 'Name',
-		img: locked,
-	},
-	{
-		id: 1,
-		name: 'Name',
-		img: locked,
-	},
-	{
-		id: 2,
-		name: 'Name',
-		img: locked,
-	},
-];
-const user = ref({});
-const iqc = ref({});
+const appStore = useAppStore();
 const promocode = ref('');
+const error = ref('');
+const success = ref('');
+const clickedLinks = ref([0, 0]);
+const userAwards = [
+	{ id: 0, name: 'Name' },
+	{ id: 1, name: 'Name' },
+	{ id: 2, name: 'Name' },
+];
 
-function copyToClipboard() {
-	const linkElement = document.querySelector('.custom__button a');
-	const link = linkElement.getAttribute('href');
+const closePopup = () => {
+	success.value = '';
+};
+const clearInput = () => {
+	if (error.value) promocode.value = '';
+	error.value = '';
+};
+const sendPromocode = async () => {
+	promocode.value = promocode.value.toUpperCase();
+	const token = appStore.token;
+	const formData = new FormData();
+	const URL = 'http://api.pharmiq.uz/api/v1-1/spa-users/user-promocode';
+	const config = {
+		headers: { Authorization: `Bearer ${token}` },
+	};
+	formData.append('promocode', promocode.value);
+	formData.append('platform', 'academy');
+	formData.append('browser', getBrowser());
+	formData.append('device', getDevice());
+	formData.append('timeZone', '500');
 
-	// Create a temporary input element to copy the link to the clipboard
+	if (promocode.value.length < 4 || error.value) return;
+
+	try {
+		const { data } = await axios.post(URL, formData, config);
+		console.log('Promocode successfully confirmed: ', data);
+		success.value = data.message;
+
+		/* Update IQC  */
+		const iqcUrl = 'https://api.pharmiq.uz/api/v1-1/mobile-user';
+		const { data: userData } = await axios.get(iqcUrl, config);
+		appStore.iqc = userData.iqc;
+	} catch (err) {
+		console.log('Error sending promocode: ', err);
+		error.value = err.response.data.message.ru;
+		if (err.response.status == 500) error.value = 'Ошибка сервера. Повторите через некоторое время';
+	}
+};
+const copyToClipboard = (link) => {
 	const tempInput = document.createElement('input');
 	tempInput.value = link;
 	document.body.appendChild(tempInput);
@@ -120,89 +151,60 @@ function copyToClipboard() {
 	document.body.removeChild(tempInput);
 
 	alert('Ссылка скопирована в буфер обмена!');
-}
-const revealEdit = () => {
-	const editContainer = document.querySelector('.home__profile-edit_button');
-	editContainer.style.transform = 'translateX(0)';
-	editContainer.querySelector('p').style.opacity = '1';
-};
-const hideEdit = () => {
-	const editContainer = document.querySelector('.home__profile-edit_button');
-	editContainer.style.transform = 'translateX(8rem)';
-	editContainer.querySelector('p').style.opacity = '0';
+	if (link.includes('ref')) clickedLinks.value[0]++;
+	else clickedLinks.value[1]++;
 };
 const getBrowser = () => {
-	const userAgent = navigator.userAgent;
-	const browserNames = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera', 'IE'];
-	let detectedBrowser = 'Unknown';
-	for (var i = 0; i < browserNames.length; i++) {
-		if (userAgent.indexOf(browserNames[i]) !== -1) {
-			detectedBrowser = browserNames[i];
-			break;
-		}
-	}
-	return detectedBrowser;
+	const userAgent = navigator.userAgent.toLowerCase();
+	if (userAgent.includes('chrome')) return 'Chrome';
+	else if (userAgent.includes('firefox')) return 'Firefox';
+	else if (userAgent.includes('safari') && !userAgent.includes('chrome')) return 'Safari';
+	else if (userAgent.includes('edge')) return 'Edge';
+	else if (userAgent.includes('opr') || userAgent.includes('opera')) return 'Opera';
+	else return 'Chrome';
+};
+const getDevice = () => {
+	const userAgent = navigator.userAgent.toLowerCase();
+	if (userAgent.includes('mobile') || userAgent.includes('android')) return 'Mobile device';
+	else if (userAgent.includes('tablet')) return 'Tablet device';
+	else return 'Desktop device';
 };
 
-/* Fetch Data */
-const headers = {
-	Accept: 'application/json',
-	'Content-Type': 'application/json',
-	Authorization: `Bearer ${env.apikey}`,
-};
-
-// Define a utility function to send the promocode
-const sendPromocode = async (formData) => {
-	try {
-		const promocodeData = await axios.post(env.promocodeUrl, formData, {
-			headers: { Authorization: `Bearer ${env.apikey}` },
-		});
-		console.log(promocodeData);
-		if (promocodeData.data.error) {
-			console.log('Error:', response.data.message.uz);
-		} else {
-			console.log('Promocode used successfully.');
-		}
-	} catch (error) {
-		console.error('Error:', error.message);
-	}
-};
-
-// Fetch user data and send promocode
-const fetchData = async () => {
-	try {
-		const [userData, promocodeResponse] = await Promise.all([
-			axios.get(env.url.users, { headers }),
-			promocode.value
-				? sendPromocode({
-						promocode: `${promocode}`,
-						platform: 'academy',
-						browser: `${getBrowser()}`,
-						device: 'Device name',
-						timeZone: '500',
-				  })
-				: null,
-		]);
-
-		user.value = userData.data.user;
-		iqc.value = userData.data.iqc;
-	} catch (error) {
-		console.error('Error:', error.message);
-	}
-};
-
-onMounted(() => {
-	fetchData();
-});
+const userFullName = computed(() => `${appStore.user.firstName} ${appStore.user.lastName}`);
+const formattedIqcAmount = computed(() => (appStore.iqc ? `${appStore.iqc.amountofIQC}` : '3000'));
+const profileStyle = computed(() => ({
+	transform: appStore.showPreloader ? 'translateX(40%)' : 'translateX(0)',
+	zIndex: appStore.showPreloader ? '-1' : '10',
+	background: appStore.isDark ? '#000' : '#fff',
+	boxShadow: appStore.isDark
+		? '-8px 0px 20px 0px rgba(255, 255, 255, 0.10)'
+		: '-8px 0px 20px 0px rgba(0, 0, 0, 0.05)',
+	color: appStore.isDark ? '#fff' : '#545454',
+}));
+const headingStyle = computed(() => ({
+	color: appStore.isDark ? '#fff' : '#131313',
+}));
+const promocodeStyle = computed(() => ({
+	background: appStore.isDark ? '#000' : '#fff',
+	color: error.value ? '#FF736E' : appStore.isDark ? '#fff' : '#000',
+	border: error.value ? '1px solid #FF736E' : '1px solid #b3b3b3',
+}));
+const disabledButton = computed(() => ({
+	cursor: promocode.value.length < 4 || error.value ? 'not-allowed' : 'pointer',
+	background:
+		promocode.value.length < 4 || error.value
+			? '#E6F0F0'
+			: 'var(--Richard-Gradient, linear-gradient(102deg, #61C1C0 -0.69%, #358184 100%))',
+	color: promocode.value.length < 4 || error.value ? '#B3B3B3' : '#fff',
+}));
 </script>
+
 <style lang="scss" scoped>
 p {
-	color: #545454;
 	font-size: 1.2rem;
 	font-weight: 400;
 }
 h2 {
-	color: #545454;
 	font-size: 1.6rem;
 	font-weight: 600;
 }
@@ -224,16 +226,16 @@ h2 {
 	padding: 1.8rem 3rem;
 	height: 100vh;
 	border-radius: 3rem 0rem 0rem 3rem;
-	background-color: #fff;
-	box-shadow: -8px 0px 20px 0px rgba(0, 0, 0, 0.05);
 	text-align: center;
 	&-edit {
 		width: 100%;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		& p {
+			font-size: 1rem;
+		}
 		& h1 {
-			color: #131313;
 			font-weight: 500;
 			font-size: 1.6rem;
 			font-weight: 500;
@@ -249,6 +251,16 @@ h2 {
 			gap: 4px;
 			transition: transform 0.5s;
 			transform: translateX(8rem);
+			&:hover {
+				transform: translateX(0);
+			}
+			&:hover p {
+				opacity: 1;
+			}
+			& svg {
+				width: 1.6rem;
+				height: 1.6rem;
+			}
 			& p {
 				transition: opacity 0.5s;
 				opacity: 0;
@@ -261,21 +273,20 @@ h2 {
 		grid-template-columns: 40% 60%;
 		align-items: center;
 		column-gap: 1rem;
-		& img:first-child {
+		&__avatar {
 			width: 12rem;
 			height: 12rem;
 			grid-column: 1 / span 1;
 			grid-row: 1 / span 3;
 		}
+
 		& h1 {
 			grid-column: 2 / span 1;
-			color: #545454;
 			font-size: 2rem;
 		}
 		& p {
 			grid-column: 2 / span 1;
 			grid-row: 2 / span 1;
-			color: #545454;
 			font-size: 1.4rem;
 			font-weight: 400;
 		}
@@ -286,19 +297,42 @@ h2 {
 		justify-content: center;
 		align-items: center;
 		gap: 0.8rem;
-		color: var(--color-primary);
 		font-size: 2rem;
 		font-weight: 600;
 
-		& img {
-			width: 2.4rem !important;
-			height: 2.4rem !important;
+		& svg {
+			width: 2.4rem;
+			height: 2.4rem;
 		}
 	}
 	&-promocode {
 		display: flex;
 		flex-direction: column;
 		gap: 1vh;
+		& span {
+			color: var(--brand-solid-primary-pink, #ff736e);
+			text-align: center;
+			font-size: 1.2rem;
+			font-weight: 600;
+		}
+		&__button {
+			margin-top: 0.5rem;
+			align-self: center;
+			cursor: pointer;
+			font-family: var(--font-base);
+			color: #fff;
+			border: none;
+			display: flex;
+			width: 20rem;
+			padding: 1.2rem 1rem;
+			justify-content: center;
+			align-items: center;
+			gap: 0.8rem;
+			border-radius: 1rem;
+			background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
+			font-size: 1.2rem;
+			font-weight: 600;
+		}
 	}
 
 	& input {
@@ -308,7 +342,6 @@ h2 {
 		justify-content: center;
 		align-items: center;
 		border-radius: 1rem;
-		border: 1px solid #b3b3b3;
 		background: #fff;
 		font-family: var(--font-base);
 		font-size: 1.6rem;
@@ -321,6 +354,10 @@ h2 {
 			font-size: 1.6rem;
 			font-weight: 600;
 		}
+		&:focus {
+			outline: none;
+			border: none;
+		}
 	}
 	&-rewards {
 		display: flex;
@@ -331,13 +368,12 @@ h2 {
 		width: 100%;
 		display: inline-flex;
 		gap: 3rem;
-		color: #545454;
 		font-size: 1.2rem;
 		font-weight: 500;
 		@media only screen and (max-height: 600px) {
 			gap: 1.5rem;
 		}
-		& img {
+		&__img {
 			width: 6.4rem;
 			height: 6.4rem;
 
@@ -346,27 +382,112 @@ h2 {
 				height: 5rem;
 			}
 		}
+		&__container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
 	}
 	&-links {
 		display: flex;
 		flex-direction: column;
 		gap: 1.5vh;
-	}
-	& button {
-		width: 100%;
-		border-radius: 1rem;
-		padding: 1rem;
-		color: #fff;
-		text-align: center;
-		font-size: 0.9rem;
-		font-weight: 400;
-		& img {
+		& button {
+			width: 100%;
+			border-radius: 1rem;
+			padding: 1rem;
+			color: #fff;
+			text-align: center;
+			font-size: 0.9rem;
+			font-weight: 400;
+			&:nth-child(3) {
+				background: var(--color-secondary);
+			}
+			& svg {
+				width: 2.4rem;
+				height: 2.4rem;
+			}
+		}
+		&__img {
 			width: 2.4rem;
 			height: 2.4rem;
 		}
-		& a {
-			display: none;
+		&__smallp {
+			font-size: 1rem;
 		}
 	}
+}
+.popup {
+	z-index: 2001;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) scale(1);
+	display: flex;
+	width: 32rem;
+	height: 18rem;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 1.6rem;
+	border-radius: 1.6rem;
+	background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+	&__button {
+		border: none;
+		cursor: pointer;
+		display: flex;
+		width: 20rem;
+		padding: 1rem;
+		justify-content: center;
+		align-items: center;
+		gap: 0.8rem;
+		border-radius: 1rem;
+		background: #fff;
+
+		color: #4db1b1;
+		font-family: var(--font-base);
+		font-size: 1.2rem;
+		font-weight: 600;
+	}
+	&__content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.6rem;
+		& p {
+			color: #fff;
+			text-align: center;
+			font-size: 2rem;
+			font-weight: 600;
+		}
+		& h1 {
+			color: #fff;
+			font-size: 3.2rem;
+			font-weight: 600;
+
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+	}
+}
+.overlay {
+	z-index: 2000;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+.fade-leave-active,
+.fade-enter-active {
+	transition: all 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+	transform: translate(-50%, -50%) scale(0.5);
+	opacity: 0;
 }
 </style>

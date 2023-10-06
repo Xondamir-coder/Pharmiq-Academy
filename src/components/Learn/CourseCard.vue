@@ -2,72 +2,49 @@
 	<div class="courses__card">
 		<img
 			class="courses__card-banner"
-			:src="'https://api.pharmiq.uz/files/course/' + JSON.parse(course.getinfo.courseBanner).ru"
+			:src="`https://api.pharmiq.uz/files/course/${bannerUrl}`"
 			alt="bg"
 		/>
-		<h6>{{ JSON.parse(course.category.categoryName).ru }}</h6>
-		<p class="courses__card-title">{{ JSON.parse(course.getinfo.courseTitleName).ru }}</p>
-		<p class="courses__card-text">{{ JSON.parse(course.getinfo.courseInfo).ru }}</p>
-		<CourseInfo
-			:number-of-vids="course.lessons.length"
-			:time="Math.round(JSON.parse(course.lessons[0].videoLength).ru / 60)"
-			:font-size="1.6"
-		/>
-		<button style="width: 100%; padding: 1rem; font-size: 1rem" class="custom__button">
-			ПРОЙТИ КУРС И ПОЛУЧИТЬ {{ course.lessons[0].quizes.prizeIQC }}
-			<img v-bind:srcset="coin" alt="coin" />
+		<h6>{{ categoryName }}</h6>
+		<p class="courses__card-title">{{ courseTitle }}</p>
+		<p class="courses__card-text">{{ courseDescription }}</p>
+		<div class="info__box">
+			<div class="info">
+				<Video />
+				<span>{{ numberOfVideos }} видеоурок</span>
+				<p>{{ videoLength }} минут</p>
+			</div>
+			<div class="info__bar"></div>
+		</div>
+		<button class="custom__button">
+			ПРОЙТИ КУРС И ПОЛУЧИТЬ {{ prizeIqc }}
+			<Coin />
 		</button>
 	</div>
 </template>
 
 <script setup>
-import CourseInfo from '../CourseInfo.vue';
-import coin from '../../assets/icons/coin-icon.svg';
+import { computed } from 'vue';
+import { Coin, Video } from '../../assets/icons';
 
 const props = defineProps({
 	course: Object,
 });
+
+const getInfo = computed(() => props.course.getinfo);
+const bannerUrl = computed(() => JSON.parse(getInfo.value.courseBanner).ru);
+const categoryName = computed(() => JSON.parse(props.course.category.categoryName).ru);
+const courseTitle = computed(() => JSON.parse(getInfo.value.courseTitleName).ru);
+const courseDescription = computed(() => JSON.parse(getInfo.value.courseInfo).ru);
+const numberOfVideos = computed(() => props.course.lessons.length);
+const videoLength = computed(() => {
+	let videoLength = '';
+	props.course.lessons.forEach((lesson) => (videoLength += JSON.parse(lesson.videoLength).ru / 60));
+	return Math.round(videoLength);
+});
+const prizeIqc = computed(() => {
+	let prizeIqc = '';
+	props.course.lessons.forEach((lesson) => (prizeIqc += lesson.quizes.prizeIQC));
+	return prizeIqc;
+});
 </script>
-
-<style lang="scss">
-.courses__card {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	width: 100%;
-	padding: 1rem;
-	border-radius: 1rem;
-	background: #fff;
-	box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
-	gap: 1rem;
-	color: var(--color-secondary-green);
-	cursor: pointer;
-	&-banner {
-		border-radius: 1.5rem;
-		box-shadow: 0px 0px 5px 0px rgba(53, 129, 132, 0.25);
-		object-fit: cover;
-		width: 100%;
-		height: 16.5rem;
-	}
-	&-title {
-		color: var(--brand-solid-primary-green, #007382);
-
-		font-size: 1.4rem;
-		font-weight: 600;
-	}
-	&-text {
-		font-size: 1.2rem;
-		font-weight: 400;
-	}
-	& h6 {
-		color: #61c1c0;
-		font-size: 1rem;
-		font-weight: 500;
-		line-height: 150%; /* 1.5rem */
-	}
-	& button img {
-		width: 2rem;
-		height: 2rem;
-	}
-}
-</style>

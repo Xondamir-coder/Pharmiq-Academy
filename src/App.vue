@@ -1,25 +1,27 @@
 <template>
 	<Preloader />
-	<div class="container">
+	<div class="container" :style="bodyDarkMode">
 		<Sidebar />
-		<main><RouterView /></main>
+		<main :style="mainDarkMode"><RouterView /></main>
 		<Profile />
 	</div>
 </template>
 
 <script setup>
-import { useAppStore } from './appStore.js';
+import { computed } from 'vue';
 import Sidebar from './components/Sidebar.vue';
 import Preloader from './components/Preloader.vue';
-import { RouterView } from 'vue-router';
 import Profile from './components/Profile.vue';
-import { onMounted } from 'vue';
+import { useAppStore } from './appStore';
 
-const store = useAppStore();
+const appStore = useAppStore();
 
-onMounted(() => {
-	store.fetchAPI();
-});
+const bodyDarkMode = computed(() => ({
+	backgroundColor: appStore.isDark ? '#000' : '#F7F7F7',
+}));
+const mainDarkMode = computed(() => ({
+	backgroundColor: appStore.isDark ? '#000' : '#fff',
+}));
 </script>
 
 <style lang="scss" scoped>
@@ -29,7 +31,7 @@ onMounted(() => {
 main {
 	@media only screen and (max-width: 1450px) {
 		width: calc(100vw - 20rem - 25rem);
-		transform: translateX(22rem);
+		transform: translateX(23rem);
 	}
 	height: 100vh;
 	padding: 0 3rem;

@@ -65,6 +65,29 @@ a {
 	cursor: pointer;
 	border: none;
 }
+.learn__button {
+	cursor: pointer;
+	display: flex;
+	padding: 1.2rem 2.4rem;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+
+	color: var(--color-secondary-green);
+	font-family: var(--font-base);
+	font-size: 2rem;
+	font-weight: 400;
+
+	border-radius: 1rem;
+	border: 1px solid #e6e6e6;
+	background: #fff;
+	&--active {
+		border: none;
+		color: #fff;
+		border-radius: 1rem;
+		background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
+	}
+}
 .learn--link {
 	color: var(--color-secondary-green);
 	padding: 1.2rem 2.4rem;
@@ -76,4 +99,106 @@ a {
 ::selection {
 	background-color: var(--color-primary);
 	color: white;
+}
+
+.courses__card {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-auto-rows: max-content;
+	align-content: space-between;
+	width: 100%;
+	padding: 1rem;
+	border-radius: 1rem;
+	background: #fff;
+	box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
+	gap: 1rem;
+	color: var(--color-secondary-green);
+	cursor: pointer;
+	&-banner {
+		border-radius: 1.5rem;
+		box-shadow: 0px 0px 5px 0px rgba(53, 129, 132, 0.25);
+		object-fit: cover;
+		width: 100%;
+		height: 16.5rem;
+	}
+	&-title {
+		color: var(--brand-solid-primary-green, #007382);
+
+		font-size: 1.4rem;
+		font-weight: 600;
+	}
+	&-text {
+		font-size: 1.2rem;
+		font-weight: 400;
+	}
+	& h6 {
+		color: #61c1c0;
+		font-size: 1rem;
+		font-weight: 500;
+		line-height: 150%; /* 1.5rem */
+	}
+	& button {
+		width: 100%;
+		padding: 1rem;
+		font-size: 1rem;
+		& img {
+			width: 2rem;
+			height: 2rem;
+		}
+	}
+}
+
+.info {
+	display: grid;
+	grid-template-columns: repeat(2, max-content) 1fr;
+	gap: 0.52rem;
+	align-items: center;
+	color: #61c1c0;
+	font-size: 1.2rem;
+	font-weight: 500;
+	& span {
+		font-size: 1rem;
+		font-weight: 500;
+	}
+	& p {
+		justify-self: flex-end;
+		font-weight: 700;
+	}
+	&__bar {
+		margin-top: 1rem;
+		width: 100%;
+		height: 0.7rem;
+		border-radius: 0.5rem;
+		border: 1px solid #61c1c0;
+		background: #effffe;
+		&::before {
+			content: '';
+			display: block;
+			width: 60%;
+			height: 100%;
+			border-radius: 0.5rem;
+			background-color: #61c1c0;
+		}
+	}
+}
+.learn__container {
+	padding: 1rem;
+	display: grid;
+	height: calc(100vh - 18rem);
+	grid-template-columns: repeat(3, 31%);
+	overflow-y: auto;
+	gap: 2rem;
+}
+.courses__nav {
+	display: flex;
+	margin-left: 1rem;
+	margin-bottom: 1rem;
+	gap: 2rem;
+}
+.courses__empty {
+	width: 100%;
+	margin-left: 1rem;
+	color: #000;
+	font-size: 2.2rem;
+	font-weight: 500;
 }

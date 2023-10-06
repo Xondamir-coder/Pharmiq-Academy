@@ -1,32 +1,40 @@
 <template>
-	<section class="home" :style="{ opacity: showHome ? '1' : '0' }">
-		<div style="align-self: flex-end">
-			<h1 style="font-weight: 600; width: max-content" class="home__username">
-				С возращением, {{ store.name }}!
+	<section class="home" :style="showHome">
+		<div class="home__head">
+			<h1 :style="textColor" class="home__username">
+				С возращением, {{ appStore.user.firstName }}!
 			</h1>
-			<p class="home__date">{{ getFormattedDate() }}</p>
+			<p class="home__date" :style="textColor">{{ getFormattedDate }}</p>
 		</div>
 
 		<div class="home__slider">
-			<Slide v-for="slide in slides" :key="slide.id" :props="slide" />
+			<Slide v-for="news in appStore.news" :key="news.id" :news="news" />
 		</div>
 
 		<div class="home__course">
 			<div class="home__course-bg">
-				<img :src="books" alt="Books" />
+				<img src="../assets/books.webp" alt="Books" />
 				<p>Базовый курс по PharmIQ</p>
 			</div>
 			<p class="home__course-category">Категория</p>
 			<h2>КУРС: НАЗВАНИЕ КУРСА</h2>
-			<CourseInfo :number-of-vids="1" :time="15" :font-size="1.6" />
-			<button style="width: 100%" class="custom__button">
+			<div class="info__box">
+				<div class="info">
+					<Video />
+					<span>1 видеоурок</span>
+					<p>15 минут</p>
+				</div>
+				<div class="info__bar"></div>
+			</div>
+
+			<button class="custom__button">
 				ПРОЙТИ КУРС И ПОЛУЧИТЬ 200
-				<img style="width: 3.6rem; height: 3.6rem" :src="coin" alt="Money" />
+				<Coin />
 			</button>
 		</div>
 
 		<div class="home__leaders">
-			<h1>Таблица лидеров</h1>
+			<h1 :style="textColor">Таблица лидеров</h1>
 			<div>
 				<div class="home__leaders-box">
 					<p class="home__leaders-title">Место</p>
@@ -35,11 +43,11 @@
 					<p class="home__leaders-title">Показатель обучения</p>
 				</div>
 
-				<div v-for="(user, id) in store.users" :key="id" class="home__leaders-box">
+				<div v-for="(user, id) in appStore.leaders" :key="id" class="home__leaders-box">
 					<p class="home__leaders-detail">{{ id + 1 }}</p>
 					<p class="home__leaders-detail">{{ user.user }}</p>
 					<p class="home__leaders-detail">{{ user.company }}</p>
-					<p class="home__leaders-detail">{{ user.iqc }} <img :src="coin" alt="coin" /></p>
+					<p class="home__leaders-detail">{{ user.iqc }} <Coin /></p>
 				</div>
 
 				<div class="home__leaders-box">
@@ -53,7 +61,7 @@
 					<p class="home__leaders-detail">101</p>
 					<p class="home__leaders-detail">Очкин Р.</p>
 					<p class="home__leaders-detail">PIQ</p>
-					<p class="home__leaders-detail">2350 <img :src="coin" alt="coin" /></p>
+					<p class="home__leaders-detail">2350 <Coin /></p>
 				</div>
 			</div>
 		</div>
@@ -61,24 +69,19 @@
 </template>
 
 <script setup>
+import { computed, onMounted, ref } from 'vue';
 import { useAppStore } from '../appStore.js';
-import { onMounted, ref } from 'vue';
-import books from '../assets/books.webp';
-import coin from '../assets/icons/coin-icon.svg';
+import { textColor } from '../composables/useColor';
+import useAppear from '../composables/useAppear';
+import { Coin, Video } from '../assets/icons';
 import Slide from '../components/Home/Slide.vue';
-import slides from '../data/slide.js';
-import CourseInfo from '../components/CourseInfo.vue';
 
-const store = useAppStore();
-const showHome = ref(false);
+const appStore = useAppStore();
+const appear = ref(false);
 
-onMounted(() => {
-	setTimeout(() => {
-		showHome.value = true;
-	}, 200);
-});
+onMounted(() => useAppear(appear));
 
-const getFormattedDate = () => {
+const getFormattedDate = computed(() => {
 	const months = [
 		'January',
 		'February',
@@ -98,7 +101,10 @@ const getFormattedDate = () => {
 		months[currentDate.getMonth()]
 	} ${currentDate.getFullYear()}`;
 	return formattedDate;
-};
+});
+const showHome = computed(() => ({
+	opacity: appear.value ? '1' : '0',
+}));
 </script>
 
 <style lang="scss" scoped>
@@ -127,6 +133,13 @@ const getFormattedDate = () => {
 	grid-template-columns: 45% 50%;
 	row-gap: 3rem;
 	column-gap: 3rem;
+	&__head {
+		align-self: flex-end;
+		& h1 {
+			font-weight: 600;
+			width: max-content;
+		}
+	}
 	&__leaders {
 		grid-column: 2 / span 1;
 		display: flex;
@@ -134,6 +147,9 @@ const getFormattedDate = () => {
 		gap: 1rem;
 		height: 100%;
 
+		& h1 {
+			font-weight: 400;
+		}
 		&-box {
 			width: 100%;
 			&:not(:last-child) {
@@ -165,13 +181,10 @@ const getFormattedDate = () => {
 			font-size: 1rem;
 			font-weight: 500;
 		}
-		& img {
+		& svg {
 			width: 1.5rem;
 			height: 1.5rem;
 		}
-	}
-	& h1 {
-		font-weight: 400;
 	}
 	&__slider {
 		grid-column: 1/-1;
@@ -195,7 +208,6 @@ const getFormattedDate = () => {
 		grid-column: 1 / span 1;
 		width: 100%;
 		max-width: 520px;
-		overflow: hidden;
 		display: flex;
 		justify-content: space-between;
 		flex-direction: column;
@@ -216,6 +228,7 @@ const getFormattedDate = () => {
 				margin-bottom: 0;
 			}
 			& img {
+				transform: translateY(3%);
 				width: 50%;
 				height: 120%;
 			}
@@ -235,6 +248,9 @@ const getFormattedDate = () => {
 			font-size: 1rem;
 			font-weight: 500;
 			line-height: 150%;
+		}
+		& button {
+			width: 100%;
 		}
 	}
 	& button {

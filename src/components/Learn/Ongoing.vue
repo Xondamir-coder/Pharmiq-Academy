@@ -29,7 +29,7 @@
 			Вы изучили эти курсы!
 		</h1>
 	</div>
-	<h1 class="courses__empty" v-else>Вы прошли все курсы!</h1>
+	<h1 class="courses__empty" v-else>Вы изучили все курсы!</h1>
 </template>
 
 <script setup>
@@ -56,7 +56,7 @@ const filterSecondary = (label) => {
 const filteredCourses = computed(() => {
 	if (mainFilter.value == 'Курсы')
 		if (secondaryFilter.value == 'Все')
-			return appStore.passed.filter(
+			return appStore.ongoing.filter(
 				(course) =>
 					course.category_id == 0 ||
 					course.category_id == 1 ||
@@ -64,15 +64,16 @@ const filteredCourses = computed(() => {
 					course.category_id == 3
 			);
 		else
-			return appStore.passed.filter(
+			return appStore.ongoing.filter(
 				(course) => JSON.parse(course.category.categoryName).ru == secondaryFilter.value
 			);
 	else
-		return appStore.passed.filter(
+		return appStore.ongoing.filter(
 			(course) => JSON.parse(course.category.categoryName).ru == secondaryFilter.value
 		);
 });
-// appStore.passed = [
+
+// appStore.ongoing = [
 // 	{
 // 		id: 146,
 // 		category_id: 2,
@@ -289,7 +290,7 @@ const filteredCourses = computed(() => {
 // 	},
 // ];
 const isEmpty = computed(() => {
-	if (appStore.passed.length > 0) return false;
+	if (appStore.ongoing.length > 0) return false;
 	return true;
 });
 </script>
