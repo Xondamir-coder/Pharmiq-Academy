@@ -58,32 +58,16 @@
 
 				<div class="stats__courses--system">
 					<div>
-						<p>В системе с</p>
-						<span
-							style="
-								background: var(
-									--richard-gradient,
-									linear-gradient(136deg, #61c1c0 0%, #358184 100%)
-								);
-							"
-							>20 .09.2022</span
-						>
+						<p :style="textColor">В системе с</p>
+						<span class="bg-dark-blue">20 .09.2022</span>
 					</div>
 					<div>
-						<p>В системе</p>
-						<span style="background: var(--brand-solid-secondary-blue, #4b96dc)">354 дней</span>
+						<p :style="textColor">В системе</p>
+						<span class="bg-blue">354 дней</span>
 					</div>
 					<div>
-						<p>Статус</p>
-						<span
-							style="
-								background: var(
-									--richard-gradient,
-									linear-gradient(136deg, #61c1c0 0%, #358184 100%)
-								);
-							"
-							>Активный
-						</span>
+						<p :style="textColor">Статус</p>
+						<span class="bg-green">Активный </span>
 					</div>
 				</div>
 			</div>
@@ -97,6 +81,7 @@ import { Doughnut } from 'vue-chartjs';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Coin } from '../assets/icons';
 import stats from '../data/stats.js';
+import { textColor } from '../composables/useColor';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -225,7 +210,6 @@ setTimeout(() => {
 			line-height: 150%; /* 1.8rem */
 			border-radius: 10px;
 			border: 1px solid var(--brand-solid-primary-white, #e6f0f0);
-			background-color: #fff;
 			display: flex;
 			align-items: center;
 			flex-direction: column;
@@ -237,16 +221,15 @@ setTimeout(() => {
 			@media only screen and (max-height: 700px) {
 				padding: 0;
 			}
-			color: #fff;
 			display: flex;
-			width: 25.2rem;
-			padding: 1rem;
 			flex-direction: column;
 			align-items: flex-start;
+			color: #fff;
+			width: 25.2rem;
+			padding: 1rem;
 			gap: 1rem;
 			border-radius: 1rem;
 			border: 1px solid var(--brand-solid-primary-white, #e6f0f0);
-			background: #fff;
 			& div {
 				@media only screen and (max-height: 830px) {
 					padding: 0.4rem;
@@ -254,7 +237,9 @@ setTimeout(() => {
 				@media only screen and (max-height: 700px) {
 					padding: 0;
 				}
-				display: flex;
+				width: 100%;
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
 				padding: 1rem;
 				gap: 1rem;
 			}
@@ -282,7 +267,6 @@ setTimeout(() => {
 			padding: 2rem;
 			border-radius: 1rem;
 			border: 1px solid var(--brand-solid-primary-white, #e6f0f0);
-			background-color: #fff;
 			display: grid;
 			grid-template-columns: 12rem 20rem 12rem;
 			column-gap: 3rem;
@@ -352,5 +336,14 @@ setTimeout(() => {
 		font-weight: 500;
 		line-height: 150%;
 	}
+}
+.bg-green {
+	background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
+}
+.bg-dark-blue {
+	background: var(--brand-solid-secondary-blue, #4b96dc);
+}
+.bg-blue {
+	background: var(--brand-solid-secondary-light-blue, #96d2f5);
 }
 </style>

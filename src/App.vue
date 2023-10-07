@@ -8,11 +8,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
+import { useAppStore } from './appStore';
 import Sidebar from './components/Sidebar.vue';
 import Preloader from './components/Preloader.vue';
 import Profile from './components/Profile.vue';
-import { useAppStore } from './appStore';
 
 const appStore = useAppStore();
 
@@ -22,6 +22,8 @@ const bodyDarkMode = computed(() => ({
 const mainDarkMode = computed(() => ({
 	backgroundColor: appStore.isDark ? '#000' : '#fff',
 }));
+
+onMounted(() => appStore.fetchData());
 </script>
 
 <style lang="scss" scoped>

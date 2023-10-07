@@ -5,6 +5,8 @@ import StoreView from '../views/StoreView.vue';
 import MailboxView from '../views/MailboxView.vue';
 import SettingsView from '../views/SettingsView.vue';
 import PharmacyView from '../views/PharmacyView.vue';
+import NewsView from '../views/NewsView.vue';
+import CourseView from '../views/CourseView.vue';
 
 /* Components for Learn View */
 import LearnView from '../views/LearnView.vue';
@@ -70,8 +72,18 @@ const router = createRouter({
 		},
 		{
 			path: '/settings',
-			name: 'settigns',
+			name: 'settings',
 			component: SettingsView,
+		},
+		{
+			path: '/news/:id',
+			name: 'news',
+			component: NewsView,
+		},
+		{
+			path: '/course/:id',
+			name: 'course',
+			component: CourseView,
 		},
 	],
 });

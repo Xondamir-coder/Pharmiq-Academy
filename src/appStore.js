@@ -1,6 +1,6 @@
+import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
 
 export const useAppStore = defineStore('app', () => {
 	const isDark = ref(false);
@@ -9,6 +9,7 @@ export const useAppStore = defineStore('app', () => {
 	/* Data */
 	const user = ref({});
 	const iqc = ref({});
+	const company = ref({});
 	const news = ref([]);
 	const leaders = ref([]);
 	const courses = ref([]);
@@ -55,35 +56,33 @@ export const useAppStore = defineStore('app', () => {
 			]);
 
 			user.value = userData.user;
+			iqc.value = userData.iqc;
+			company.value = userData.company;
 			news.value = newsData.data;
 			leaders.value = leaderboardData;
 			courses.value = coursesData.courses.data;
 			ongoing.value = ongoingData.data;
 			passed.value = passedData.data;
-			iqc.value = userData.iqc;
 			pharmacy.value = pharmacyData.courses.data;
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	};
-	const setShowPreloader = (value) => {
-		showPreloader.value = value;
-	};
-
-	onMounted(() => fetchData());
+	const setShowPreloader = (value) => (showPreloader.value = value);
 
 	return {
 		isDark,
 		showPreloader,
+		token,
 		user,
+		iqc,
+		company,
 		news,
 		leaders,
 		courses,
 		ongoing,
 		passed,
 		pharmacy,
-		iqc,
-		token,
 		fetchData,
 		setShowPreloader,
 	};

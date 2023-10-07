@@ -15,3 +15,7 @@ export { default as Settings } from './Settings.vue';
 export { default as Logout } from './Logout.vue';
 export { default as Sun } from './Sun.vue';
 export { default as Moon } from './Moon.vue';
+export { default as FindMe } from './FindMe.vue';
+export { default as ArrowDown } from './ArrowDown.vue';
+export { default as Infinity } from './Infinity.vue';
+export { default as Play } from './Play.vue';

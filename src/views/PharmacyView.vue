@@ -1,14 +1,16 @@
 <template>
-	<section class="pharmacy">
-		<h1 style="font-weight: 500">Аптека</h1>
+	<section class="pharmacy" :style="appear">
+		<h1>Аптека</h1>
+
 		<h2>Название</h2>
 		<div class="pharmacy__box--1 pharmacy__box">
-			<div class="pharmacy__text--wrapper">DORIDARMON</div>
+			<div class="pharmacy__text--wrapper">{{ companyName }}</div>
 			<div class="pharmacy__box--edit">
 				<Pen />
 				<span>Редактировать</span>
 			</div>
 		</div>
+
 		<h2>Адрес</h2>
 		<div class="pharmacy__box--2 pharmacy__box">
 			<div class="pharmacy__box--2_left">
@@ -45,24 +47,22 @@
 						allowfullscreen=""
 						loading="lazy"
 						referrerpolicy="no-referrer-when-downgrade"
-					></iframe>
-					<a href="https://goo.gl/maps/rFE9gtS1HYUg3S3CA"><img :src="findme" alt="findme" /></a>
+					>
+					</iframe>
+					<a href="https://goo.gl/maps/rFE9gtS1HYUg3S3CA">
+						<FindMe />
+					</a>
 				</div>
 			</div>
 		</div>
+
 		<h2>Передача прав на компанию</h2>
 		<div class="pharmacy__box--3 pharmacy__box">
 			<p>Выберите нового владельца компании</p>
 			<div class="pharmacy__box--3_form">
-				<div @click="revealDropdown" class="pharmacy__box--3__dropdown">
+				<div class="pharmacy__box--3__dropdown">
 					<p>Выберите сотрудника</p>
-					<img :src="arrowDown" alt="arrow down" />
-				</div>
-				<div class="pharmacy__box--3__people hidden">
-					<p @click="revealDropdown">Xondamir</p>
-					<p @click="revealDropdown">Bositkhon</p>
-					<p @click="revealDropdown">Jasur</p>
-					<p @click="revealDropdown">Jakhongir</p>
+					<ArrowDown />
 				</div>
 				<button class="pharmacy__box--button">ПОКИНУТЬ КОМПАНИЮ</button>
 			</div>
@@ -71,15 +71,20 @@
 </template>
 
 <script setup>
-import { Pen } from '../assets/icons';
-import findme from '../assets/icons/find-me.svg';
-import arrowDown from '../assets/icons/arrow-down.svg';
-const revealDropdown = () => {
-	document.querySelector('.pharmacy__box--3__people').classList.toggle('hidden');
-};
-setTimeout(() => {
-	document.querySelector('.pharmacy').style.transform = 'scale(1)';
-}, 100);
+import { ref, computed, onMounted } from 'vue';
+import { Pen, FindMe, ArrowDown } from '../assets/icons';
+import useAppear from '../composables/useAppear';
+import { useAppStore } from '../appStore';
+
+const show = ref(false);
+const appStore = useAppStore();
+
+const appear = computed(() => ({
+	transform: show.value ? 'scale(1)' : 'scale(0.3)',
+}));
+const companyName = computed(() => appStore.company.companyName);
+
+onMounted(() => useAppear(show));
 </script>
 
 <style lang="scss" scoped>
@@ -91,12 +96,8 @@ h3 {
 	font-size: 1.4rem;
 	font-weight: 400;
 }
-.hidden {
-	opacity: 0;
-}
 .pharmacy {
 	transition: all 0.6s;
-	transform: scale(0.3);
 	height: 100%;
 	padding: 3rem 0;
 	display: flex;
@@ -248,6 +249,9 @@ h3 {
 		padding: 1.2rem 0rem;
 		font-size: 1.6rem;
 		font-weight: 400;
+	}
+	& h1 {
+		font-weight: 500;
 	}
 }
 </style>

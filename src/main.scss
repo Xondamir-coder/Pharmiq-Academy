@@ -6,6 +6,7 @@
 	--color-secondary: #4b96dc;
 	--color-secondary-green: #4db1b1;
 	--color-grey: #858597;
+	--Richard-Gradient: linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%);
 }
 *,
 *::before,
@@ -48,6 +49,10 @@ a {
 		color: #000;
 	}
 }
+button {
+	cursor: pointer;
+	font-family: var(--font-base);
+}
 
 .custom__button {
 	display: flex;
@@ -87,6 +92,14 @@ a {
 		border-radius: 1rem;
 		background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
 	}
+	&--dark {
+		color: #fff;
+		background-color: #000;
+		&--active {
+			border: 1px solid var(--color-primary-pink);
+			background-color: #000;
+		}
+	}
 }
 .learn--link {
 	color: var(--color-secondary-green);
@@ -109,7 +122,6 @@ a {
 	width: 100%;
 	padding: 1rem;
 	border-radius: 1rem;
-	background: #fff;
 	box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
 	gap: 1rem;
 	color: var(--color-secondary-green);
@@ -122,12 +134,14 @@ a {
 		height: 16.5rem;
 	}
 	&-title {
-		color: var(--brand-solid-primary-green, #007382);
+		color: var(--color-primary);
 
 		font-size: 1.4rem;
 		font-weight: 600;
 	}
 	&-text {
+		color: var(--color-secondary-green);
+
 		font-size: 1.2rem;
 		font-weight: 400;
 	}

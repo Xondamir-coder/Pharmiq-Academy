@@ -5,7 +5,7 @@
 				class="learn__button"
 				v-for="mainLabel in mainLabels"
 				:key="mainLabel"
-				:class="{ 'learn__button--active': mainFilter == mainLabel }"
+				:class="[mainFilter == mainLabel ? darkActiveBtn : '', darkBtn]"
 				@click="filterMain(mainLabel)"
 			>
 				{{ mainLabel }}
@@ -16,7 +16,7 @@
 				class="learn__button"
 				v-for="secondaryLabel in secondaryLabels"
 				:key="secondaryLabel"
-				:class="{ 'learn__button--active': secondaryFilter == secondaryLabel }"
+				:class="[secondaryFilter == secondaryLabel ? darkActiveBtn : '', darkBtn]"
 				@click="filterSecondary(secondaryLabel)"
 			>
 				{{ secondaryLabel }}
@@ -25,17 +25,22 @@
 	</div>
 	<div class="learn__container" v-if="!isEmpty">
 		<CourseCard v-for="course in filteredCourses" :key="course.id" :course="course" />
-		<h1 class="courses__empty" v-if="!filteredCourses || !filteredCourses.length > 0">
+		<h1
+			class="courses__empty"
+			:style="textColor"
+			v-if="!filteredCourses || !filteredCourses.length > 0"
+		>
 			Вы изучили эти курсы!
 		</h1>
 	</div>
-	<h1 class="courses__empty" v-else>Вы изучили все курсы!</h1>
+	<h1 :style="textColor" class="courses__empty" v-else>Вы изучили все курсы!</h1>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
 import { useAppStore } from '../../appStore';
 import CourseCard from './CourseCard.vue';
+import { textColor } from '../../composables/useColor';
 
 const appStore = useAppStore();
 const mainLabels = ref(['Курсы', 'Моя Аптека']);
@@ -289,10 +294,15 @@ const filteredCourses = computed(() => {
 // 		],
 // 	},
 // ];
+console.log(appStore.ongoing);
 const isEmpty = computed(() => {
 	if (appStore.ongoing.length > 0) return false;
 	return true;
 });
+const darkBtn = computed(() => (appStore.isDark ? 'learn__button--dark' : 'learn__button'));
+const darkActiveBtn = computed(() =>
+	appStore.isDark ? 'learn__button--dark--active' : 'learn__button--active'
+);
 </script>
 
 <style lang="scss" scoped>

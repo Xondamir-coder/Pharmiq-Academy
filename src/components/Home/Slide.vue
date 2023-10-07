@@ -1,26 +1,35 @@
 <template>
-	<div class="home__slide">
+	<RouterLink :to="`news/${news.id}`" class="home__slide">
 		<div class="home__slide-img">
 			<img :src="`https://api.pharmiq.uz/files/news/${news.banner}`" alt="bg" />
 		</div>
-		<h3 class="home__slide-title" :style="textColor">Lorem ipsum doler amet</h3>
-		<div class="home__slide-text" :style="textColor">Some description ...</div>
-	</div>
+		<p class="home__slide-title" :style="textColor">
+			{{ title }}
+		</p>
+	</RouterLink>
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { textColor } from '../../composables/useColor';
 const props = defineProps({
 	news: Object,
 });
+const title = computed(() => JSON.parse(props.news.title).ru);
 </script>
 
 <style lang="scss" scoped>
 .home__slide {
+	cursor: pointer;
+	height: 22rem;
 	width: 32rem;
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 
 	&-img {
 		width: 100%;
@@ -45,6 +54,7 @@ const props = defineProps({
 		}
 	}
 	&-title {
+		font-size: 1.6rem;
 		font-weight: 400;
 	}
 	& p {
