@@ -1,3 +1,4 @@
+import { getFormData } from './composables/useFormData';
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
@@ -12,23 +13,21 @@ export const useAppStore = defineStore('app', () => {
 	const company = ref({});
 	const news = ref([]);
 	const leaders = ref([]);
-	const courses = ref([]);
+	const courses = ref();
 	const ongoing = ref([]);
 	const passed = ref([]);
 	const pharmacy = ref([]);
+	const transactions = ref([]);
 
 	//Bositkhonaka token = 11511|iN2tBOLIxrjp0z6b3KIer0hI8zXXvissfD4p2k7D
 	//My token = 10638|kw7JpzOBtw1Hig3w2bkCEsboQxS8FT9XDK4UcPbB
-	let token = localStorage.getItem('token');
+
+	let token = new URL(window.location.href).searchParams.get('token');
 	if (!token) {
-		const urlToken = new URL(window.location.href).searchParams.get('token');
-		if (urlToken) {
-			localStorage.setItem('token', urlToken);
-			token = urlToken;
-		} else {
-			token = '10638|kw7JpzOBtw1Hig3w2bkCEsboQxS8FT9XDK4UcPbB';
-		}
-	}
+		const localToken = localStorage.getItem('token');
+		token = localToken;
+		if (!token) window.location.href = 'https://go.pharmiq.uz/login';
+	} else localStorage.setItem('token', token);
 	const BASE_URL = 'https://api.pharmiq.uz/api/v1-1';
 	const NEWS_URL = 'https://api.pharmiq.uz/api/v1-1/spa-news';
 	const USERS_URL = 'https://api.pharmiq.uz/api/v1-1/spa-users';
@@ -45,6 +44,7 @@ export const useAppStore = defineStore('app', () => {
 				{ data: ongoingData },
 				{ data: passedData },
 				{ data: pharmacyData },
+				{ data: transactionsData },
 			] = await Promise.all([
 				axios.get(`${BASE_URL}/mobile-user`, config),
 				axios.get(`${NEWS_URL}?page=1`, config),
@@ -53,6 +53,7 @@ export const useAppStore = defineStore('app', () => {
 				axios.get(`${COURSES_URL}/mycoursesNew?category_id=0&params=free`, config),
 				axios.get(`${COURSES_URL}/mycoursesPassedNew?category_id=0&params=free`, config),
 				axios.get(`${COURSES_URL}/coursesNew?params=special`, config),
+				axios.get(`${USERS_URL}/user-transactions`, config),
 			]);
 
 			user.value = userData.user;
@@ -64,12 +65,55 @@ export const useAppStore = defineStore('app', () => {
 			ongoing.value = ongoingData.data;
 			passed.value = passedData.data;
 			pharmacy.value = pharmacyData.courses.data;
+			transactions.value = transactionsData;
+		} catch (error) {
+			handleError(error);
+		}
+	};
+	const updateProfile = async (newUser) => {
+		const { firstName, lastName, birthDate, gender } = newUser;
+		const URL = `${USERS_URL}/user-info-change`;
+		const formData = getFormData();
+		formData.append('firstName', firstName);
+		formData.append('lastName', lastName);
+		formData.append('birthDate', birthDate);
+		formData.append('gender', gender);
+		try {
+			const { data } = await axios.post(URL, formData, config);
+			console.log('Profile successfully updated! ', data);
+			getUser();
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	};
+	const getUser = async () => {
+		const URL = `${BASE_URL}/mobile-user`;
+		try {
+			const { data } = await axios.get(URL, config);
+			user.value = data.user;
+			console.log('User refreshed: ', data);
+		} catch (error) {
+			handleError(error);
+		}
+	};
+	const getIqc = async () => {
+		const URL = `${BASE_URL}/mobile-user`;
+		try {
+			const { data } = await axios.get(URL, config);
+			iqc.value = data.iqc;
+			console.log('Iqc refreshed: ', data);
+		} catch (error) {
+			handleError(error);
+		}
+	};
+	const handleError = (error) => {
+		console.error('Error:', error);
+		if (error.response.status == 401) {
+			localStorage.removeItem('token');
+			window.location.href = 'https://go.pharmiq.uz/login';
+		}
+	};
 	const setShowPreloader = (value) => (showPreloader.value = value);
-
 	return {
 		isDark,
 		showPreloader,
@@ -83,7 +127,11 @@ export const useAppStore = defineStore('app', () => {
 		ongoing,
 		passed,
 		pharmacy,
+		transactions,
 		fetchData,
+		getUser,
+		getIqc,
+		updateProfile,
 		setShowPreloader,
 	};
 });

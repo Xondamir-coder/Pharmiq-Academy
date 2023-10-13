@@ -1,24 +1,63 @@
 <template>
 	<div class="home__profile" :style="profileStyle">
-		<div class="home__profile-edit">
+		<div class="home__profile-edit" v-if="!isEditingName">
 			<h1 :style="headingStyle">Мой профиль</h1>
-			<div class="home__profile-edit_button">
+			<div class="home__profile-edit_button" @click="editName">
 				<Pen />
 				<p>Редактировать</p>
 			</div>
 		</div>
 
-		<div class="home__profile-details">
+		<div class="home__profile-details" v-if="!isEditingName">
 			<Avatar class="home__profile-details__avatar" />
 			<h1>{{ userFullName }}</h1>
+
 			<p>{{ appStore.user.role }} в Аптеке SPACE LABS</p>
 			<div class="home__profile-budget">
 				{{ formattedIqcAmount }}
 				<Coin />
 			</div>
 		</div>
+		<Transition name="slide">
+			<form class="profile__form" @submit.prevent="updateProfile" v-if="isEditingName">
+				<span :style="opacityto1" @click="closeEditing">&times;</span>
+				<input
+					:style="textColor"
+					placeholder="Введите новое имя"
+					type="text"
+					v-model="newUser.firstName"
+					@input="closeEditError"
+				/>
+				<input
+					:style="textColor"
+					placeholder="Введите новую фамилию"
+					type="text"
+					v-model="newUser.lastName"
+					@input="closeEditError"
+				/>
+				<div class="profile__buttons">
+					<div class="profile__button--active" :style="genderButton"></div>
+					<button
+						type="button"
+						class="profile__button"
+						:style="{ color: btn.data == newUser.gender ? '#fff' : '' }"
+						@click="toggleGender(btn.data)"
+						v-for="btn in [
+							{ label: 'Женщина', data: 1 },
+							{ label: 'Мужчина', data: 0 },
+						]"
+					>
+						{{ btn.label }}
+					</button>
+				</div>
+				<label for="date">Введите новую дату рождения</label>
+				<input type="date" name="date" v-model="newUser.birthDate" :style="textColor" />
+				<p v-if="isEditingError">Пожалуйста, заполните все поля.</p>
+				<button class="custom__button" type="submit">OK</button>
+			</form>
+		</Transition>
 
-		<div class="home__profile-rewards">
+		<div class="home__profile-rewards" v-if="!isEditingName">
 			<h2>Достижения</h2>
 			<div class="home__profile-awards">
 				<div v-for="award in userAwards" :key="award.id" class="home__profile-awards__container">
@@ -28,7 +67,7 @@
 			</div>
 		</div>
 
-		<form class="home__profile-promocode" @submit.prevent="sendPromocode">
+		<form class="home__profile-promocode" @submit.prevent="sendPromocode" v-if="!isEditingName">
 			<h2>У вас есть промокод, введите его здесь</h2>
 			<input
 				:style="promocodeStyle"
@@ -61,7 +100,7 @@
 			</Transition>
 		</Teleport>
 
-		<div class="home__profile-links">
+		<div class="home__profile-links" v-if="!isEditingName">
 			<h2>Реферальная ссылка</h2>
 			<p>Чтобы добавить сотрудников вашей аптеки в систему, отправьте им эту ссылку</p>
 			<button
@@ -72,7 +111,8 @@
 				<CopyLink />
 			</button>
 			<p class="home__profile-links__smallp">
-				По вашей ссылке прошли регистрацию: {{ clickedLinks[0] }}
+				По вашей ссылке прошли регистрацию:
+				{{ referralLinks[0] }}
 			</p>
 			<p>Реферальная ссылка фармацевта</p>
 			<button class="custom__button" @click="copyToClipboard('https://go.pharmiq.uz/inviteTo520')">
@@ -80,7 +120,8 @@
 				<CopyLink />
 			</button>
 			<p class="home__profile-links__smallp">
-				По вашей ссылке прошли регистрацию: {{ clickedLinks[1] }}
+				По вашей ссылке прошли регистрацию:
+				{{ referralLinks[1] }}
 			</p>
 		</div>
 	</div>
@@ -92,18 +133,47 @@ import { computed, ref } from 'vue';
 import { useAppStore } from '../appStore.js';
 import { Pen, CopyLink, Coin, Award } from '../assets/icons';
 import Avatar from '../assets/Avatar.vue';
+import { getFormData } from '../composables/useFormData';
+import { textColor } from '../composables/useColor';
 
 const appStore = useAppStore();
+const isEditingName = ref(false);
+const isEditingError = ref(false);
+const referralLinks = computed(() => [
+	computed(() => appStore.transactions.iqcTransactionsReferralCompany).value,
+	computed(() => appStore.transactions.iqcTransactionsReferral).value,
+]);
+const newUser = ref({
+	firstName: '',
+	lastName: '',
+	birthDate: '',
+	gender: 1,
+});
 const promocode = ref('');
 const error = ref('');
 const success = ref('');
-const clickedLinks = ref([0, 0]);
 const userAwards = [
 	{ id: 0, name: 'Name' },
 	{ id: 1, name: 'Name' },
 	{ id: 2, name: 'Name' },
 ];
 
+const updateProfile = () => {
+	if (!newUser.value.firstName || !newUser.value.lastName) {
+		isEditingError.value = true;
+		return;
+	}
+	/* Format a date before submitting */
+	dateFormatter();
+	appStore.updateProfile(newUser.value);
+	isEditingName.value = false;
+};
+const closeEditError = () => (isEditingError.value = false);
+const editName = () => {
+	isEditingName.value = true;
+	newUser.value.birthDate = appStore.user.birthDate;
+	newUser.value.gender = appStore.user.gender;
+};
 const closePopup = () => {
 	success.value = '';
 };
@@ -113,17 +183,14 @@ const clearInput = () => {
 };
 const sendPromocode = async () => {
 	promocode.value = promocode.value.toUpperCase();
+
 	const token = appStore.token;
-	const formData = new FormData();
-	const URL = 'http://api.pharmiq.uz/api/v1-1/spa-users/user-promocode';
+	const URL = 'https://api.pharmiq.uz/api/v1-1/spa-users/user-promocode';
 	const config = {
 		headers: { Authorization: `Bearer ${token}` },
 	};
+	const formData = getFormData();
 	formData.append('promocode', promocode.value);
-	formData.append('platform', 'academy');
-	formData.append('browser', getBrowser());
-	formData.append('device', getDevice());
-	formData.append('timeZone', '500');
 
 	if (promocode.value.length < 4 || error.value) return;
 
@@ -132,10 +199,8 @@ const sendPromocode = async () => {
 		console.log('Promocode successfully confirmed: ', data);
 		success.value = data.message;
 
-		/* Update IQC  */
-		const iqcUrl = 'https://api.pharmiq.uz/api/v1-1/mobile-user';
-		const { data: userData } = await axios.get(iqcUrl, config);
-		appStore.iqc = userData.iqc;
+		/* Update IQC */
+		appStore.getIqc();
 	} catch (err) {
 		console.log('Error sending promocode: ', err);
 		error.value = err.response.data.message.ru;
@@ -154,21 +219,24 @@ const copyToClipboard = (link) => {
 	if (link.includes('ref')) clickedLinks.value[0]++;
 	else clickedLinks.value[1]++;
 };
-const getBrowser = () => {
-	const userAgent = navigator.userAgent.toLowerCase();
-	if (userAgent.includes('chrome')) return 'Chrome';
-	else if (userAgent.includes('firefox')) return 'Firefox';
-	else if (userAgent.includes('safari') && !userAgent.includes('chrome')) return 'Safari';
-	else if (userAgent.includes('edge')) return 'Edge';
-	else if (userAgent.includes('opr') || userAgent.includes('opera')) return 'Opera';
-	else return 'Chrome';
+const dateFormatter = () => {
+	const inputDateValue = newUser.value.birthDate;
+	const inputDateParts = inputDateValue.split('-'); // Split by hyphens (YYYY-MM-DD)
+
+	if (inputDateParts.length === 3) {
+		const year = parseInt(inputDateParts[0]);
+		const month = parseInt(inputDateParts[1]);
+		const day = parseInt(inputDateParts[2]);
+
+		if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+			const inputDate = new Date(year, month - 1, day); // Month is zero-based
+			const formattedDate = inputDate.toLocaleDateString('en-GB'); // Format as DD/MM/YYYY
+			newUser.value.birthDate = formattedDate;
+		}
+	}
 };
-const getDevice = () => {
-	const userAgent = navigator.userAgent.toLowerCase();
-	if (userAgent.includes('mobile') || userAgent.includes('android')) return 'Mobile device';
-	else if (userAgent.includes('tablet')) return 'Tablet device';
-	else return 'Desktop device';
-};
+const toggleGender = (newGender) => (newUser.value.gender = newGender);
+const closeEditing = () => (isEditingName.value = false);
 
 const userFullName = computed(() => `${appStore.user.firstName} ${appStore.user.lastName}`);
 const formattedIqcAmount = computed(() => (appStore.iqc ? `${appStore.iqc.amountofIQC}` : '3000'));
@@ -196,6 +264,13 @@ const disabledButton = computed(() => ({
 			? '#E6F0F0'
 			: 'var(--Richard-Gradient, linear-gradient(102deg, #61C1C0 -0.69%, #358184 100%))',
 	color: promocode.value.length < 4 || error.value ? '#B3B3B3' : '#fff',
+}));
+const genderButton = computed(() => ({
+	transform: newUser.value.gender == 1 ? 'translateX(0)' : 'translateX(100%)',
+	background: newUser.value.gender == 0 ? '' : 'var(--color-primary-pink)',
+}));
+const opacityto1 = computed(() => ({
+	opacity: isEditingName.value ? '1' : '0',
 }));
 </script>
 
@@ -309,6 +384,30 @@ h2 {
 		display: flex;
 		flex-direction: column;
 		gap: 1vh;
+		& input {
+			display: flex;
+			width: 100%;
+			padding: 1.6rem;
+			justify-content: center;
+			align-items: center;
+			border-radius: 1rem;
+			background: #fff;
+			font-family: var(--font-base);
+			font-size: 1.6rem;
+			font-weight: 600;
+
+			&::placeholder {
+				color: #b3b3b3;
+				text-align: center;
+				font-family: var(--font-base);
+				font-size: 1.6rem;
+				font-weight: 600;
+			}
+			&:focus {
+				outline: none;
+				border: none;
+			}
+		}
 		& span {
 			color: var(--brand-solid-primary-pink, #ff736e);
 			text-align: center;
@@ -332,31 +431,6 @@ h2 {
 			background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
 			font-size: 1.2rem;
 			font-weight: 600;
-		}
-	}
-
-	& input {
-		display: flex;
-		width: 100%;
-		padding: 1.6rem;
-		justify-content: center;
-		align-items: center;
-		border-radius: 1rem;
-		background: #fff;
-		font-family: var(--font-base);
-		font-size: 1.6rem;
-		font-weight: 600;
-
-		&::placeholder {
-			color: #b3b3b3;
-			text-align: center;
-			font-family: var(--font-base);
-			font-size: 1.6rem;
-			font-weight: 600;
-		}
-		&:focus {
-			outline: none;
-			border: none;
 		}
 	}
 	&-rewards {
@@ -417,69 +491,83 @@ h2 {
 		}
 	}
 }
-.popup {
-	z-index: 2001;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%) scale(1);
-	display: flex;
-	width: 32rem;
-	height: 18rem;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 1.6rem;
-	border-radius: 1.6rem;
-	background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-	&__button {
-		border: none;
-		cursor: pointer;
-		display: flex;
-		width: 20rem;
-		padding: 1rem;
-		justify-content: center;
-		align-items: center;
-		gap: 0.8rem;
-		border-radius: 1rem;
-		background: #fff;
-
-		color: #4db1b1;
-		font-family: var(--font-base);
-		font-size: 1.2rem;
-		font-weight: 600;
-	}
-	&__content {
+.profile {
+	&__form {
+		width: 100%;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		gap: 1.6rem;
-		& p {
-			color: #fff;
-			text-align: center;
-			font-size: 2rem;
-			font-weight: 600;
+		gap: 1rem;
+		& span {
+			transition: all 0.4s 0.4s;
+			cursor: pointer;
+			font-size: 4rem;
+			color: var(--color-primary);
+			position: absolute;
+			top: 2rem;
+			right: 2rem;
 		}
-		& h1 {
-			color: #fff;
-			font-size: 3.2rem;
-			font-weight: 600;
+		& input {
+			background-color: transparent;
+			font-size: 1.6rem;
+			font-family: var(--font-base);
+			border-radius: 1rem;
+			border: 1px solid var(--color-primary);
+			padding: 1rem;
+			&:focus {
+				outline-color: var(--color-primary);
+				outline-style: solid;
+			}
+		}
+		& p {
+			color: red;
+		}
+		& button {
+			width: auto;
+		}
+	}
+	&__buttons {
+		position: relative;
+		display: flex;
+		padding-right: 0px;
+		align-items: center;
+		gap: 1rem;
 
-			display: flex;
-			align-items: center;
-			gap: 8px;
+		border-radius: 3rem;
+		border: 1px solid #b8b8d2;
+	}
+	&__button {
+		transition: color 0.3s 0.2s;
+		height: 5.2rem;
+		width: 50% !important;
+		border: none;
+		color: #858597;
+		font-size: 1.2rem;
+		font-weight: 600;
+		border-radius: 3rem;
+		background-color: transparent;
+		&--active {
+			transition: transform 0.5s, background 0.6s;
+			z-index: -2;
+			width: 50%;
+			height: 5.2rem;
+			top: 0;
+			position: absolute;
+			border-radius: 3rem;
+			background: linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%);
+			box-shadow: 0px 0px 5px 0px rgba(53, 129, 132, 0.25);
 		}
 	}
 }
-.overlay {
-	z-index: 2000;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.5);
+.slide-leave-active,
+.slide-enter-active {
+	transition: all 0.5s;
+}
+.slide-enter-from {
+	transform: translateY(-50vh);
+	opacity: 0;
+}
+.slide-leave-to {
+	display: none;
 }
 .fade-leave-active,
 .fade-enter-active {

@@ -1,34 +1,34 @@
 <template>
-	<section class="stats">
-		<h1>Моя Статистика</h1>
+	<section class="stats" :style="sectionStyle">
+		<h1 class="stats__heading">Моя Статистика</h1>
 		<div class="stats__container">
 			<div class="stats__history">
 				<h2>История кошелка</h2>
 				<div class="stats__history-grid">
-					<h3>Количество</h3>
-					<h3>Получено / Потрачено</h3>
-					<h3>Дата / Время</h3>
-					<p
-						:style="`color: ${stat.color}; grid-column: 1/2;`"
-						v-for="(stat, index) in stats"
-						:key="index"
+					<div class="stats__history--box">
+						<h3>Количество</h3>
+						<h3>Получено / Потрачено</h3>
+						<h3>Дата / Время</h3>
+					</div>
+					<div
+						v-for="transaction in appStore.transactions.iqcTransactions"
+						:key="transaction.id"
+						:style="{ color: transaction.valueType ? '#61c1c0' : 'var(--color-primary-pink)' }"
+						class="stats__history--box"
 					>
-						<Coin />
-					</p>
-					<p
-						:style="`color: ${stat.color}; grid-column: 2/3; grid-row: ${stat.id}/span 1; justify-self: left`"
-						v-for="stat in stats"
-						:key="stat.id"
-					>
-						{{ stat.text }}
-					</p>
-					<p
-						:style="`color: ${stat.color}; grid-column: 3/4; grid-row: ${stat.id}/span 1`"
-						v-for="stat in stats"
-						:key="stat.id"
-					>
-						16.03.23 / 16:52
-					</p>
+						<p>
+							<span v-if="transaction.valueType">+</span>
+							<span v-else>-</span>
+							{{ transaction.amountofIQC }}
+							<Coin />
+						</p>
+						<p>
+							{{ transaction.serviceName }}
+						</p>
+						<p>
+							{{ formatDate(transaction.updated_at) }}
+						</p>
+					</div>
 				</div>
 			</div>
 
@@ -59,11 +59,11 @@
 				<div class="stats__courses--system">
 					<div>
 						<p :style="textColor">В системе с</p>
-						<span class="bg-dark-blue">20 .09.2022</span>
+						<span class="bg-dark-blue">{{ userCreatedDate }}</span>
 					</div>
 					<div>
 						<p :style="textColor">В системе</p>
-						<span class="bg-blue">354 дней</span>
+						<span class="bg-blue">{{ userActiveDays }}</span>
 					</div>
 					<div>
 						<p :style="textColor">Статус</p>
@@ -76,21 +76,20 @@
 </template>
 
 <script setup>
-import { useAppStore } from '../appStore';
+import { computed, ref } from 'vue';
 import { Doughnut } from 'vue-chartjs';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Coin } from '../assets/icons';
-import stats from '../data/stats.js';
+import { useAppStore } from '../appStore';
 import { textColor } from '../composables/useColor';
+import { getArrayLength } from '../composables/useArray';
+import useAppear from '../composables/useAppear';
+import { Coin } from '../assets/icons';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
 const appStore = useAppStore();
-const ongoingCourses = appStore.ongoing.length;
-const passedCourses = appStore.passed.length;
-let coursesData;
-if (ongoingCourses == 0 && passedCourses == 0) coursesData = [32, 32];
-else coursesData = [ongoingCourses, passedCourses];
+const appear = ref(false);
+const ongoingLength = getArrayLength(appStore.ongoing);
+const passedLength = getArrayLength(appStore.passed);
 const options = {
 	responsive: true,
 	rotation: 80,
@@ -101,19 +100,41 @@ const options = {
 	},
 };
 const data = {
-	labels: [`${ongoingCourses} курса`, `${passedCourses} курсов`],
+	labels: [`${ongoingLength} курса`, `${passedLength} курсов`],
 	datasets: [
 		{
-			data: coursesData,
+			data: [ongoingLength, passedLength],
 			backgroundColor: ['#4DB1B1', '#007382'],
 			hoverOffset: 4,
 		},
 	],
 };
 
-setTimeout(() => {
-	document.querySelector('.stats').style.transform = 'translateY(0)';
-}, 100);
+const formatDate = (originalDate) => {
+	const date = new Date(originalDate);
+	const day = date.getDate();
+	const month = date.getMonth() + 1;
+	const year = date.getFullYear();
+
+	const hours = String(date.getUTCHours()).padStart(2, '0');
+	const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+	return `${day}.${month}.${year} / ${hours}:${minutes}`;
+};
+
+const sectionStyle = computed(() => ({
+	transform: appear.value ? 'translateY(0)' : 'translateY(-100%)',
+}));
+const userCreatedDate = computed(() => new Date(appStore.user.created_at).toLocaleDateString());
+const userActiveDays = computed(() => {
+	const currentDate = new Date();
+	const userLoggedInDate = new Date(appStore.user.created_at);
+	const timeDifference = currentDate - userLoggedInDate;
+	const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+	return `${days} дней`;
+});
+
+useAppear(appear);
 </script>
 
 <style lang="scss" scoped>
@@ -185,23 +206,23 @@ setTimeout(() => {
 }
 .stats {
 	height: 100vh;
-	padding-top: 3rem;
-	transform: translateY(-100%);
+	padding: 1rem 0;
 	transition: all 0.5s ease;
+	display: grid;
+	grid-auto-rows: max-content 1fr;
 	&__container {
-		display: flex;
-		margin-top: 1.5rem;
-		height: 90%;
-		justify-content: space-between;
-		gap: 2rem;
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		column-gap: 2rem;
 	}
 	&__courses {
-		margin-right: 3vw;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
-		gap: 1.5rem;
+		gap: 1rem;
+		@media only screen and (min-height: 700px) and (max-width: 1400px) {
+			margin-right: 5rem;
+		}
 		&--box {
 			width: 25.2rem;
 			color: #fff;
@@ -213,6 +234,7 @@ setTimeout(() => {
 			display: flex;
 			align-items: center;
 			flex-direction: column;
+			margin-bottom: auto;
 		}
 		&--system {
 			@media only screen and (max-height: 830px) {
@@ -260,22 +282,21 @@ setTimeout(() => {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		&--box {
+			display: grid;
+			grid-template-columns: 1fr 2fr 1fr;
+			justify-items: center;
+		}
 		&-grid {
 			height: 100%;
+			width: 100%;
 			overflow-y: auto;
-			width: max-content;
 			padding: 2rem;
 			border-radius: 1rem;
 			border: 1px solid var(--brand-solid-primary-white, #e6f0f0);
-			display: grid;
-			grid-template-columns: 12rem 20rem 12rem;
-			column-gap: 3rem;
-			row-gap: 0.88rem;
-			align-items: center;
-			justify-items: center;
-			@media only screen and (max-width: 1400px) and (max-height: 800px) {
-				column-gap: 0rem;
-			}
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
 			&::-webkit-scrollbar {
 				display: none;
 			}
@@ -325,6 +346,9 @@ setTimeout(() => {
 			font-weight: 700 !important;
 			font-size: 2rem;
 		}
+	}
+	&__heading {
+		margin-bottom: 1rem;
 	}
 	& h1 {
 		font-weight: 500;

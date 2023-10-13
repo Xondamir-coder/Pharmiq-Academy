@@ -19,3 +19,8 @@ export { default as FindMe } from './FindMe.vue';
 export { default as ArrowDown } from './ArrowDown.vue';
 export { default as Infinity } from './Infinity.vue';
 export { default as Play } from './Play.vue';
+export { default as Locked } from './Locked.vue';
+export { default as Timer } from './Timer.vue';
+export { default as RadioChosen } from './RadioChosen.vue';
+export { default as Correct } from './Correct.vue';
+export { default as Wrong } from './Wrong.vue';

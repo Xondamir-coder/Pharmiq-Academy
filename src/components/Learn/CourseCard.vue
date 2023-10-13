@@ -10,7 +10,14 @@
 				<span>{{ numberOfVideos }}</span>
 				<p>{{ totalVideoLength }}</p>
 			</div>
-			<div class="info__bar"></div>
+			<div class="course__info--length__outer">
+				<div
+					class="course__info--length__inner"
+					:style="`width: ${(100 / (totalLessons * 2)) * totalWatched}%; border: ${
+						totalWatched == 0 ? '0' : '1'
+					}px solid #61c1c0`"
+				></div>
+			</div>
 		</div>
 		<button class="custom__button">
 			{{ prizeIqc }}
@@ -20,11 +27,15 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { Coin, Video } from '../../assets/icons';
 import { useAppStore } from '../../appStore';
+import { useRoute } from 'vue-router';
+import useAppear from '../../composables/useAppear';
 
 const appStore = useAppStore();
+const route = useRoute();
+const appear = ref(false);
 const props = defineProps({
 	course: Object,
 });
@@ -51,5 +62,33 @@ const prizeIqc = computed(() => {
 });
 const darkDard = computed(() => ({
 	boxShadow: appStore.isDark ? '0px 0px 8px 0px rgba(255, 255, 255, 0.3)' : '',
+	transform: appear.value ? 'scale(1)' : 'scale(.9)',
+	opacity: appear.value ? '1' : '0',
 }));
+const totalWatched = computed(() => {
+	let totalWatched = 0;
+	//for now as there is no lesson log and quizlog
+	if (route.name == 'mypharmacy') return;
+	if (props.course.lessons) {
+		props.course.lessons.forEach((lesson) => {
+			/* There is no lesson log in completed thus totalWatched++ */
+			if (route.name == 'completed') totalWatched++;
+
+			/* Its for pharmacy from ongoing as there are no quizlog and lessonlog */
+			if (!lesson.lessonlog && !lesson.quizes.quizlog) return;
+			if (lesson.lessonlog) totalWatched++;
+			if (lesson.quizes.quizlog.length > 0) {
+				if (lesson.quizes.quizlog[0].status) {
+					totalWatched++;
+				}
+			}
+			return totalWatched;
+		});
+		return totalWatched;
+	}
+	return 0;
+});
+const totalLessons = computed(() => props.course.lessons.length);
+
+onMounted(() => useAppear(appear));
 </script>

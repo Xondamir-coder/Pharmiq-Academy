@@ -7,6 +7,8 @@ import SettingsView from '../views/SettingsView.vue';
 import PharmacyView from '../views/PharmacyView.vue';
 import NewsView from '../views/NewsView.vue';
 import CourseView from '../views/CourseView.vue';
+import LessonView from '../views/LessonView.vue';
+import QuizView from '../views/QuizView.vue';
 
 /* Components for Learn View */
 import LearnView from '../views/LearnView.vue';
@@ -85,6 +87,21 @@ const router = createRouter({
 			name: 'course',
 			component: CourseView,
 		},
+		{
+			path: '/lesson/:id',
+			name: 'lesson',
+			component: LessonView,
+		},
+		{
+			path: '/quiz/:id',
+			name: 'quiz',
+			component: QuizView,
+		},
 	],
 });
+
+router.beforeEach((to, from) => {
+	if (to.name == 'quiz' && from.name != 'lesson') return { path: '/' };
+});
+
 export default router;

@@ -4,7 +4,7 @@
 			<h1 :style="textColor" class="home__username">
 				С возращением, {{ appStore.user.firstName }}!
 			</h1>
-			<p class="home__date" :style="textColor">{{ getFormattedDate }}</p>
+			<p class="home__date" :style="textColor">{{ getCurrentDate() }}</p>
 		</div>
 
 		<div class="home__slider">
@@ -72,6 +72,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useAppStore } from '../appStore.js';
 import { textColor } from '../composables/useColor';
+import { getCurrentDate } from '../composables/useDate';
 import useAppear from '../composables/useAppear';
 import { Coin, Video } from '../assets/icons';
 import Slide from '../components/Home/Slide.vue';
@@ -81,27 +82,6 @@ const appear = ref(false);
 
 onMounted(() => useAppear(appear));
 
-const getFormattedDate = computed(() => {
-	const months = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December',
-	];
-	const currentDate = new Date();
-	const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')} ${
-		months[currentDate.getMonth()]
-	} ${currentDate.getFullYear()}`;
-	return formattedDate;
-});
 const showHome = computed(() => ({
 	opacity: appear.value ? '1' : '0',
 }));

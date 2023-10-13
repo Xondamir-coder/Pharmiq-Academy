@@ -56,8 +56,12 @@
 	</svg>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 svg {
 	cursor: pointer;
+	transition: all 0.4s;
+	&:hover {
+		transform: scale(1.2);
+	}
 }
 </style>

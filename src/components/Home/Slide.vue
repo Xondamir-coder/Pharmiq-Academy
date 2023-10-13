@@ -21,7 +21,6 @@ const title = computed(() => JSON.parse(props.news.title).ru);
 <style lang="scss" scoped>
 .home__slide {
 	cursor: pointer;
-	height: 22rem;
 	width: 32rem;
 	display: flex;
 	flex-direction: column;
