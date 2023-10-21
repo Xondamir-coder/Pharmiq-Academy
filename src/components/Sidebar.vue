@@ -29,7 +29,9 @@
 
 		<p :style="textColor">Скачивайте наше мобильное приложение</p>
 		<img class="sidebar__qrcode" src="../assets/qr-code.webp" alt="qr code" />
-		<a href="javascript:void(0);" class="sidebar__link" :style="textColor"><Logout /> выход</a>
+		<a href="javascript:void(0);" class="sidebar__link" :style="textColor" @click="logout"
+			><Logout /> выход</a
+		>
 	</div>
 </template>
 <script setup>
@@ -66,6 +68,10 @@ const navLinks = ref([
 const toggleDarkMode = () => {
 	appStore.isDark = !appStore.isDark;
 };
+const logout = () => {
+	localStorage.removeItem('token');
+	window.location.href = 'https://go.pharmiq.uz/login';
+};
 // const setPointer = (index) => {
 // 	console.log(index);
 // };
@@ -85,9 +91,6 @@ const linkActive = computed(() => {
 	if (appStore.isDark) return 'link--active--black';
 	return 'link--active';
 });
-const pointerStyle = computed(() => ({
-	top: `${curPosition.value}%`,
-}));
 </script>
 
 <style lang="scss" scoped>

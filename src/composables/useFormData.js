@@ -17,7 +17,7 @@ export const getBrowser = () => {
 export const getFormData = () => {
 	const formData = new FormData();
 	/* Clear FormData */
-	formData.forEach((data) => formData.delete(data));
+	for (const data of formData) formData.delete(data);
 	/* Essential FormData */
 	formData.append('platform', 'academy');
 	formData.append('browser', getBrowser());

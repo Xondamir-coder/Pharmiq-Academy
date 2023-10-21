@@ -1,5 +1,5 @@
 <template>
-	<div class="quiz">
+	<div class="quiz" :style="quizStyle">
 		<div class="quiz__head">
 			<div class="quiz__head--left">
 				<h1>Тестирование</h1>
@@ -22,7 +22,7 @@
 			<div class="quiz__card--options">
 				<div
 					class="quiz__card--option"
-					v-for="option in quiz.variants"
+					v-for="option in quizQuestions"
 					ref="options"
 					:style="{
 						color: showAnswer
@@ -102,11 +102,13 @@ import { useAppStore } from '../appStore';
 import { Timer, RadioChosen, Coin } from '../assets/icons';
 import Popup from '../components/Popup.vue';
 import { getFormData } from '../composables/useFormData';
+import useAppear from '../composables/useAppear';
 
 const route = useRoute();
 const router = useRouter();
 const appStore = useAppStore();
 
+const reqAnswers = [];
 const lesson = ref(false);
 const quizes = ref(false);
 const time = ref();
@@ -117,7 +119,9 @@ const selectedAnswer = ref('');
 const showAnswer = ref(false);
 const options = ref(null);
 const checked = ref(false);
+const isReset = ref(false);
 const showPopup = ref(false);
+const appear = ref(false);
 const popupTitle = ref('');
 const success = ref();
 
@@ -165,27 +169,24 @@ const fetchLesson = async (course_id) => {
 		const foundLesson = data.lessons.find((lesson) => lesson.id == route.params.id);
 		lesson.value = foundLesson;
 		quizes.value = foundLesson.quizes;
+		quizes.value.questions = shuffleArray(quizes.value.questions);
 		countdown(quizes.value.timeLimits);
 	} catch (error) {
 		console.log('Error: ', error);
 	}
 };
 const checkAnswer = () => {
-	showAnswer.value ? (checked.value = true) : null;
-
+	showAnswer.value && (checked.value = true);
 	showAnswer.value = true;
 
 	/* If answer is true increment numOfCorrectAnswers */
-	selectedAnswer.value == correctAnswer.value && checked.value
-		? increment(numOfCorrectAnswers)
-		: null;
-
+	selectedAnswer.value == correctAnswer.value && checked.value && increment(numOfCorrectAnswers);
 	/* If user selected next then increment currentQuestion */
-	btnText.value == 'Дальше' && checked.value ? increment(currentQuestion) : null;
-	checked.value ? clearState() : null;
+	btnText.value == 'Дальше' && checked.value && (addToReqAnswers() || increment(currentQuestion));
+	checked.value && clearState();
 
-	btnText.value == 'Завершить' ? displayPopup() : null;
-	btnText.value == 'Завершить' && !fail.value ? postQuiz() : null;
+	btnText.value == 'Завершить' && displayPopup();
+	btnText.value == 'Завершить' && !fail.value && postQuiz();
 };
 const countdown = (minutes) => {
 	let seconds = minutes * 60;
@@ -206,6 +207,10 @@ const countdown = (minutes) => {
 			showPopup.value = true;
 			popupTitle.value = 'Время вышло';
 		}
+		if (isReset.value) {
+			clearInterval(countdownInterval);
+			isReset.value = false;
+		}
 		seconds--;
 	}, 1000); // Update every 1 second
 };
@@ -225,14 +230,22 @@ const closePopup = (again) => {
 	currentQuestion.value = 0;
 	numOfCorrectAnswers.value = 0;
 	stateOfTime.value = 'full';
+	isReset.value = true;
 	countdown(quizes.value.timeLimits);
 };
 const postQuiz = async () => {
+	stringifyVariants();
 	const URL = 'https://api.pharmiq.uz/api/v1-1/spa-courses/lessonQuizPost';
+	const formData = getFormData();
+	formData.append('quiz_id', quizes.value.id);
+	formData.append('lesson_id', lesson.value.id);
+	formData.append('question', JSON.stringify(reqAnswers));
+	formData.append('timeLeft', time.value);
 
 	try {
 		const { data } = await axios.post(URL, formData, config);
-		success.value = data;
+		success.value = data.iqc;
+		appStore.getUser();
 	} catch (error) {
 		console.log('Error:', error);
 	}
@@ -241,7 +254,7 @@ const removeActiveClass = () =>
 	options.value.forEach((option) =>
 		option.classList.contains(activeClass) ? option.classList.remove(activeClass) : null
 	);
-const preventClick = () => (showAnswer.value ? event.preventDefault() : null);
+const preventClick = () => showAnswer.value && event.preventDefault();
 const clearState = () => {
 	selectedAnswer.value = '';
 	showAnswer.value = false;
@@ -249,10 +262,46 @@ const clearState = () => {
 	removeActiveClass();
 };
 const increment = (el) => el.value++;
+const shuffleArray = (array) => {
+	const shuffled = [...array]; // Create a copy of the original array
+	for (let i = shuffled.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled; // Return the shuffled array
+};
+const addToReqAnswers = () => {
+	reqAnswers.push({
+		question_ru: question.value,
+		variants: [
+			{
+				id: quiz.value.variants[0].id,
+				choose: JSON.parse(quiz.value.variants[0].variantText).ru == selectedAnswer.value,
+				rightAnswer: quiz.value.variants[0].rightAnswer,
+			},
+			{
+				id: quiz.value.variants[1].id,
+				choose: JSON.parse(quiz.value.variants[1].variantText).ru == selectedAnswer.value,
+				rightAnswer: quiz.value.variants[1].rightAnswer,
+			},
+			{
+				id: quiz.value.variants[2].id,
+				choose: JSON.parse(quiz.value.variants[2].variantText).ru == selectedAnswer.value,
+				rightAnswer: quiz.value.variants[2].rightAnswer,
+			},
+		],
+	});
+};
+const stringifyVariants = () => {
+	for (const [i, { variants }] of reqAnswers.entries()) {
+		reqAnswers[i].variants = JSON.stringify(variants);
+	}
+};
 
-const title = computed(() => (lesson.value ? JSON.parse(lesson.value.lessonTitleName).ru : ''));
-const maxNumOfQuestions = computed(() => (quizes.value ? quizes.value.questions.length : ''));
-const quiz = computed(() => (quizes.value ? quizes.value.questions[currentQuestion.value] : {}));
+const title = computed(() => lesson.value && JSON.parse(lesson.value.lessonTitleName).ru);
+const maxNumOfQuestions = computed(() => quizes.value && quizes.value.questions.length);
+const quiz = computed(() => quizes.value && quizes.value.questions[currentQuestion.value]);
+const quizQuestions = computed(() => quiz.value && shuffleArray(quiz.value.variants));
 const question = computed(() => {
 	if (lesson.value && quizes.value && quiz.value) return JSON.parse(quiz.value.question).ru;
 	return '';
@@ -284,8 +333,12 @@ const resultMessage = computed(() =>
 const countMessage = computed(
 	() => `Правильные ответы: ${numOfCorrectAnswers.value} из ${maxNumOfQuestions.value}`
 );
-const fail = computed(() => (resultMessage.value == 'Вы не прошли тестирование' ? true : false));
+const fail = computed(() => resultMessage.value == 'Вы не прошли тестирование');
 
+const quizStyle = computed(() => ({
+	opacity: appear.value ? '1' : '0',
+	transform: appear.value ? 'translateY(0)' : 'translateY(10%)',
+}));
 const timerStyle = computed(() => ({
 	color: timerColor.value,
 	border: `1px solid ${timerColor.value}`,
@@ -312,11 +365,13 @@ const popupStyle = computed(() => ({
 
 onMounted(() => {
 	findLesson();
+	useAppear(appear);
 });
 </script>
 
 <style lang="scss" scoped>
 .quiz {
+	transition: all 1s 1s;
 	padding: 2rem 0;
 	padding-right: 3rem;
 	display: grid;

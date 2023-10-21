@@ -84,6 +84,7 @@
 				:style="disabledButton"
 			>
 				Проверить
+				<span class="btn-ring" :style="displayBtn"></span>
 			</button>
 		</form>
 
@@ -152,6 +153,7 @@ const newUser = ref({
 const promocode = ref('');
 const error = ref('');
 const success = ref('');
+const loading = ref(false);
 const userAwards = [
 	{ id: 0, name: 'Name' },
 	{ id: 1, name: 'Name' },
@@ -195,6 +197,7 @@ const sendPromocode = async () => {
 	if (promocode.value.length < 4 || error.value) return;
 
 	try {
+		loading.value = true;
 		const { data } = await axios.post(URL, formData, config);
 		console.log('Promocode successfully confirmed: ', data);
 		success.value = data.message;
@@ -205,6 +208,8 @@ const sendPromocode = async () => {
 		console.log('Error sending promocode: ', err);
 		error.value = err.response.data.message.ru;
 		if (err.response.status == 500) error.value = 'Ошибка сервера. Повторите через некоторое время';
+	} finally {
+		loading.value = false;
 	}
 };
 const copyToClipboard = (link) => {
@@ -268,6 +273,9 @@ const disabledButton = computed(() => ({
 const genderButton = computed(() => ({
 	transform: newUser.value.gender == 1 ? 'translateX(0)' : 'translateX(100%)',
 	background: newUser.value.gender == 0 ? '' : 'var(--color-primary-pink)',
+}));
+const displayBtn = computed(() => ({
+	display: loading.value ? 'block' : 'none',
 }));
 const opacityto1 = computed(() => ({
 	opacity: isEditingName.value ? '1' : '0',
@@ -577,5 +585,27 @@ h2 {
 .fade-leave-to {
 	transform: translate(-50%, -50%) scale(0.5);
 	opacity: 0;
+}
+.btn-ring {
+	display: none;
+	&:after {
+		content: '';
+		display: block;
+		width: 17px;
+		height: 17px;
+		margin: 8px;
+		border-radius: 50%;
+		border: 3px solid #fff;
+		border-color: #fff transparent #fff transparent;
+		animation: ring 1.2s linear infinite;
+	}
+}
+@keyframes ring {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 </style>
