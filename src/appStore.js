@@ -81,7 +81,9 @@ export const useAppStore = defineStore('app', () => {
 		try {
 			const { data } = await axios.post(URL, formData, config);
 			console.log('Profile successfully updated! ', data);
-			getUser();
+			user.value = data.user;
+			iqc.value = data.iqc;
+			company.value = data.company;
 		} catch (error) {
 			console.error('Error:', error);
 		}
@@ -91,17 +93,9 @@ export const useAppStore = defineStore('app', () => {
 		try {
 			const { data } = await axios.get(URL, config);
 			user.value = data.user;
-			console.log('User refreshed: ', data);
-		} catch (error) {
-			handleError(error);
-		}
-	};
-	const getIqc = async () => {
-		const URL = `${BASE_URL}/mobile-user`;
-		try {
-			const { data } = await axios.get(URL, config);
 			iqc.value = data.iqc;
-			console.log('Iqc refreshed: ', data);
+			company.value = data.company;
+			console.log('User refreshed: ', data);
 		} catch (error) {
 			handleError(error);
 		}
@@ -130,7 +124,6 @@ export const useAppStore = defineStore('app', () => {
 		transactions,
 		fetchData,
 		getUser,
-		getIqc,
 		updateProfile,
 		setShowPreloader,
 	};

@@ -24,3 +24,6 @@ export { default as Timer } from './Timer.vue';
 export { default as RadioChosen } from './RadioChosen.vue';
 export { default as Correct } from './Correct.vue';
 export { default as Wrong } from './Wrong.vue';
+export { default as Back } from './Back.vue';
+export { default as Save } from './Save.vue';
+export { default as InputOkay } from './InputOkay.vue';

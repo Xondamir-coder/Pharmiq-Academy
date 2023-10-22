@@ -1,6 +1,8 @@
 <template>
 	<div class="sidebar" :style="sidebarStyle">
-		<a href="/"><Logo class="sidebar__logo" /></a>
+		<RouterLink to="/">
+			<Logo class="sidebar__logo" />
+		</RouterLink>
 
 		<div class="sidebar__search" :style="darkSearch">
 			<Search />
@@ -252,6 +254,9 @@ label {
 			border-radius: 1.6rem;
 			@media only screen and (max-height: 650px) {
 				font-size: 1.3rem;
+			}
+			&::placeholder {
+				opacity: 1;
 			}
 			&:focus {
 				outline: none;

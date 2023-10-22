@@ -3,7 +3,7 @@
 		<img :style="bannerAppear" :src="bannerUrl" alt="news bg" />
 		<h2 :style="[textColor, titleAppear]">{{ title }}</h2>
 		<div :style="[textColor, titleAppear]" v-html="desc"></div>
-		<RouterLink to="/" class="custom__button" :style="titleAppear">Назад</RouterLink>
+		<RouterLink to="/" class="custom__button" :style="titleAppear">Назад <Back /></RouterLink>
 	</div>
 </template>
 
@@ -11,6 +11,7 @@
 import { useRoute } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import { useAppStore } from '../appStore';
+import { Back } from '../assets/icons';
 import { textColor } from '../composables/useColor';
 import useAppear from '../composables/useAppear';
 
@@ -67,8 +68,11 @@ onMounted(() => useAppear(showNews));
 		transition: all 1s 0.5s;
 	}
 	& a {
+		width: 25.8rem;
 		color: #fff;
-		width: 12rem;
+		font-size: 1.2rem;
+		font-weight: 600;
+		text-transform: uppercase;
 		align-self: flex-start;
 		transition: all 1s 1s;
 	}
