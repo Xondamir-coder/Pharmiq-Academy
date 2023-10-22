@@ -115,6 +115,7 @@ button {
 }
 
 .courses__card {
+	max-height: 45rem;
 	transition: all 0.6s;
 	display: grid;
 	grid-template-columns: 1fr;

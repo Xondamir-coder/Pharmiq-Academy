@@ -2,8 +2,8 @@
 	<RouterLink :to="`/course/${course.id}`" class="courses__card" :style="darkDard">
 		<img class="courses__card-banner" :src="bannerUrl" alt="bg" />
 		<h6>{{ categoryName }}</h6>
-		<p class="courses__card-title">{{ courseTitle }}</p>
-		<p class="courses__card-text">{{ courseDescription }}</p>
+		<p class="courses__card-title">{{ slicedTitle }}</p>
+		<p class="courses__card-text">{{ slicedDescription }}</p>
 		<div class="info__box">
 			<div class="info">
 				<Video />
@@ -47,6 +47,14 @@ const bannerUrl = computed(
 const categoryName = computed(() => JSON.parse(props.course.category.categoryName).ru);
 const courseTitle = computed(() => JSON.parse(getInfo.value.courseTitleName).ru);
 const courseDescription = computed(() => JSON.parse(getInfo.value.courseInfo).ru);
+const slicedDescription = computed(() =>
+	courseDescription.value.length > 50
+		? `${courseDescription.value.slice(0, 50)} ...`
+		: courseDescription.value
+);
+const slicedTitle = computed(() =>
+	courseTitle.value.length > 70 ? `${courseTitle.value.slice(0, 70)} ...` : courseTitle.value
+);
 const numberOfVideos = computed(() => `${props.course.lessons.length} видеоурок`);
 const totalVideoLength = computed(() => {
 	let totalVideoLength = '';

@@ -3,6 +3,7 @@
 		<img :style="bannerAppear" :src="bannerUrl" alt="news bg" />
 		<h2 :style="[textColor, titleAppear]">{{ title }}</h2>
 		<div :style="[textColor, titleAppear]" v-html="desc"></div>
+		<RouterLink to="/" class="custom__button" :style="titleAppear">Назад</RouterLink>
 	</div>
 </template>
 
@@ -64,6 +65,12 @@ onMounted(() => useAppear(showNews));
 	}
 	& div {
 		transition: all 1s 0.5s;
+	}
+	& a {
+		color: #fff;
+		width: 12rem;
+		align-self: flex-start;
+		transition: all 1s 1s;
 	}
 }
 </style>

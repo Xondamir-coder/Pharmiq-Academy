@@ -210,6 +210,7 @@ const textAppear = computed(() => ({
 
 <style lang="scss" scoped>
 .course {
+	overflow-y: auto;
 	padding: 2rem 0;
 	padding-right: 4rem;
 	display: grid;
@@ -218,6 +219,9 @@ const textAppear = computed(() => ({
 	row-gap: 2rem;
 	column-gap: 2rem;
 	height: 100vh;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 
 	&__banner {
 		transition: all 0.6s;
@@ -282,8 +286,9 @@ const textAppear = computed(() => ({
 			width: 100%;
 			display: grid;
 			align-items: center;
+			grid-template-columns: max-content 1fr max-content;
 			column-gap: 0.8rem;
-			row-gap: 0.4rem;
+			row-gap: 0.5rem;
 			& p {
 				grid-column: 2 / span 1;
 				color: #358184;
@@ -292,10 +297,15 @@ const textAppear = computed(() => ({
 				letter-spacing: 0.1rem;
 			}
 			&__coin {
+				justify-self: center;
 				grid-row: 1 / span 1;
 				grid-column: 3 / span 1;
 				width: 2rem;
 				height: 2rem;
+			}
+			& a {
+				align-self: flex-start;
+				grid-row: 1 / span 3;
 			}
 			&__play {
 				width: 4rem;
