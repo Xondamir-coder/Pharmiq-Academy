@@ -245,7 +245,7 @@ const postQuiz = async () => {
 	try {
 		const { data } = await axios.post(URL, formData, config);
 		success.value = data.iqc;
-		appStore.getUser();
+		appStore.getIqc();
 	} catch (error) {
 		console.log('Error:', error);
 	}

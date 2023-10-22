@@ -67,8 +67,7 @@ const darkDard = computed(() => ({
 }));
 const totalWatched = computed(() => {
 	let totalWatched = 0;
-	//for now as there is no lesson log and quizlog
-	if (route.name == 'mypharmacy') return;
+
 	if (props.course.lessons) {
 		props.course.lessons.forEach((lesson) => {
 			/* There is no lesson log in completed thus totalWatched++ */
@@ -91,4 +90,5 @@ const totalWatched = computed(() => {
 const totalLessons = computed(() => props.course.lessons.length);
 
 onMounted(() => useAppear(appear));
+appStore.iqc.amountOfIQC = 50;
 </script>

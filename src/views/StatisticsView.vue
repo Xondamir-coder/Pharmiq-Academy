@@ -19,7 +19,7 @@
 						<p>
 							<span v-if="transaction.valueType">+</span>
 							<span v-else>-</span>
-							{{ transaction.amountofIQC }}
+							{{ transaction.value }}
 							<Coin />
 						</p>
 						<p>
