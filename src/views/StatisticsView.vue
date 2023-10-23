@@ -48,8 +48,8 @@
 				<h2>Средняя оценка</h2>
 
 				<div class="stats__average stats__courses--box">
-					<div>
-						<h1>81</h1>
+					<div :style="scoreStyle">
+						<h1>{{ userAverageScore }}</h1>
 						<span>/100</span>
 					</div>
 				</div>
@@ -76,20 +76,30 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { Doughnut } from 'vue-chartjs';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { useAppStore } from '../appStore';
 import { textColor } from '../composables/useColor';
-import { getArrayLength } from '../composables/useArray';
 import useAppear from '../composables/useAppear';
 import { Coin } from '../assets/icons';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+const ongoingLength = computed(() => appStore.stats && appStore.stats.ongoing);
+const passedLength = computed(() => appStore.stats && appStore.stats.passed);
+const userCreatedDate = computed(() => new Date(appStore.user.created_at).toLocaleDateString());
+const userActiveDays = computed(() => {
+	const currentDate = new Date();
+	const userLoggedInDate = new Date(appStore.user.created_at);
+	const timeDifference = currentDate - userLoggedInDate;
+	const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+	return `${days} дней`;
+});
+const userAverageScore = computed(() => appStore.stats && appStore.stats.rate);
+
 const appStore = useAppStore();
 const appear = ref(false);
-const ongoingLength = getArrayLength(appStore.ongoing);
-const passedLength = getArrayLength(appStore.passed);
 const options = {
 	responsive: true,
 	rotation: 80,
@@ -100,10 +110,10 @@ const options = {
 	},
 };
 const data = {
-	labels: [`${ongoingLength} курса`, `${passedLength} курсов`],
+	labels: [`${ongoingLength.value} курса`, `${passedLength.value} курсов`],
 	datasets: [
 		{
-			data: [ongoingLength, passedLength],
+			data: [ongoingLength.value, passedLength.value],
 			backgroundColor: ['#4DB1B1', '#007382'],
 			hoverOffset: 4,
 		},
@@ -125,16 +135,22 @@ const formatDate = (originalDate) => {
 const sectionStyle = computed(() => ({
 	transform: appear.value ? 'translateY(0)' : 'translateY(-100%)',
 }));
-const userCreatedDate = computed(() => new Date(appStore.user.created_at).toLocaleDateString());
-const userActiveDays = computed(() => {
-	const currentDate = new Date();
-	const userLoggedInDate = new Date(appStore.user.created_at);
-	const timeDifference = currentDate - userLoggedInDate;
-	const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-	return `${days} дней`;
-});
+const scoreStyle = computed(() => ({
+	color:
+		userAverageScore.value >= 81
+			? 'var(--color-secondary-green)'
+			: userAverageScore.value > 55
+			? 'var(--Not-yet)'
+			: 'var(--color-primary-pink)',
+	textShadow:
+		userAverageScore.value >= 81
+			? '0px 0px 10px rgba(77, 177, 177, 0.3)'
+			: userAverageScore.value > 55
+			? '0px 0px 10px #f2c94c30'
+			: '0px 0px 10px #ff736e75 ',
+}));
 
-useAppear(appear);
+onMounted(() => useAppear(appear));
 </script>
 
 <style lang="scss" scoped>
@@ -328,8 +344,6 @@ useAppear(appear);
 		grid-template-columns: repeat(2, max-content);
 		justify-content: center;
 
-		color: var(--brand-solid-secondary-green, #4db1b1);
-		text-shadow: 0px 0px 10px rgba(77, 177, 177, 0.3);
 		& div {
 			display: flex;
 			align-items: baseline;

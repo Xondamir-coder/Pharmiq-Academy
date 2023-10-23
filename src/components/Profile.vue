@@ -1,6 +1,6 @@
 <template>
 	<div class="home__profile" :style="profileStyle">
-		<div class="home__profile-update" v-if="isEditing">
+		<form class="home__profile-update" v-if="isEditing" @submit.prevent="updateProfile">
 			<div class="home__profile-edit">
 				<h1 :style="headingStyle">Изменить профиль</h1>
 				<div class="home__profile-edit_button" @click="toggleEdit">
@@ -29,7 +29,13 @@
 
 			<div class="home__profile-update_input">
 				<label for="name">Имя</label>
-				<input type="text" id="name" v-model="newUser.firstName" @input="checkInput" />
+				<input
+					type="text"
+					id="name"
+					v-model="newUser.firstName"
+					@input="checkName"
+					:style="textColor"
+				/>
 				<label v-if="editingError == 'fname' || editingError == 'name'" for="name">
 					Введите имя
 				</label>
@@ -37,7 +43,13 @@
 
 			<div class="home__profile-update_input">
 				<label for="lastname">Фамилия</label>
-				<input type="text" id="lastname" v-model="newUser.lastName" @input="checkInput" />
+				<input
+					type="text"
+					id="lastname"
+					v-model="newUser.lastName"
+					@input="checkName"
+					:style="textColor"
+				/>
 				<label v-if="editingError == 'lname' || editingError == 'name'" for="name">
 					Введите фамилию
 				</label>
@@ -54,18 +66,39 @@
 
 			<div class="home__profile-update_input">
 				<label for="tel" :style="telLabelStyle">Номер телефона</label>
-				<input type="tel" id="tel" v-model="newUser.phoneNumber" :step="telInputStyle" />
+				<input
+					type="tel"
+					id="tel"
+					v-model.trim="newUser.phoneNumber"
+					:style="telInputStyle"
+					@click="!newUser.phoneNumber && (newUser.phoneNumber = '+998 ')"
+					@keydown.space.prevent=""
+					@keyup="formatTel"
+					@input="checkTel"
+				/>
+				<InputOkay v-if="telSuccess" />
+				<label v-if="telError" :style="telLabelStyle">
+					{{ telError }}
+				</label>
 			</div>
 
-			<button
-				class="custom__button"
-				:style="saveButtonStyle"
-				:disabled="!isOkaySave"
-				@click="updateProfile"
-			>
+			<div class="home__profile-update_input" v-if="telSuccess">
+				<label for="code" :style="codeLabelStyle"> CМС код </label>
+				<input
+					type="text"
+					id="code"
+					v-model="newUser.code"
+					:style="codeInputStyle"
+					@input="checkCode"
+				/>
+				<InputOkay v-if="codeSuccess" />
+				<label v-if="codeError" :style="codeLabelStyle">{{ codeError }}</label>
+			</div>
+
+			<button type="submit" class="custom__button" :style="saveButtonStyle" :disabled="!isOkaySave">
 				Сохранить <Save :active="isOkaySave" />
 			</button>
-		</div>
+		</form>
 
 		<div class="home__profile-main" v-else>
 			<div class="home__profile-edit">
@@ -168,37 +201,137 @@ import { computed, ref, reactive } from 'vue';
 import { useAppStore } from '../appStore.js';
 import { Pen, CopyLink, Coin, Award, Save, InputOkay } from '../assets/icons';
 import { getFormData } from '../composables/useFormData';
+import { textColor } from '../composables/useColor';
 
 const appStore = useAppStore();
+/* Reactive variables for Promocode */
+const error = ref('');
+const success = ref('');
+const promocode = ref('');
+const loading = ref(false);
+
+/* is editing the profile? */
+const isEditing = ref(false);
+
+/* Reactive variables for filling input */
 const newUser = reactive({
 	firstName: '',
 	lastName: '',
 	birthDate: '',
 	phoneNumber: '',
+	code: '',
 	gender: 0,
 });
-const promocode = ref('');
-const error = ref('');
-const success = ref('');
-const loading = ref(false);
-const isEditing = ref(false);
 const editingError = ref('');
+const telError = ref('');
+const telSuccess = ref(false);
+const codeError = ref('');
+const codeSuccess = ref(false);
+/* Plain variables */
+const config = {
+	headers: { Authorization: `Bearer ${appStore.token}` },
+};
 const userAwards = [
 	{ id: 0, name: 'Name' },
 	{ id: 1, name: 'Name' },
 	{ id: 2, name: 'Name' },
 ];
 
+/* Functions for updating profile */
 const updateProfile = () => {
-	dateFormatter();
-	appStore.updateProfile(newUser);
-	toggleEdit();
+	if (newUser.phoneNumber) {
+		!telSuccess.value && verifyPhoneNumber();
+		if (telSuccess.value) {
+			verifyCode();
+			if (codeSuccess.value) {
+				dateFormatter();
+				appStore.updateProfile(newUser);
+				toggleEdit();
+			}
+		}
+	} else {
+		dateFormatter();
+		appStore.updateProfile(newUser);
+		toggleEdit();
+	}
 };
-const closePopup = () => {
-	success.value = '';
+const verifyPhoneNumber = async () => {
+	try {
+		const URL = 'https://api.pharmiq.uz/api/v1-1/spa-users/user-phoneNumber-update';
+		const formData = getFormData();
+		const cleanedPhoneNumber = newUser.phoneNumber.replace(/\s+/g, '').replace('+', '');
+		formData.append('phoneNumber', cleanedPhoneNumber);
+
+		const { data } = await axios.post(URL, formData, config);
+		console.log('Code is sent', data);
+		telSuccess.value = true;
+	} catch (error) {
+		telError.value = error.response.data.message.ru;
+	}
 };
+const verifyCode = async () => {
+	try {
+		const URL = 'https://api.pharmiq.uz/api/v1-1/spa-users/user-phoneNumber-code-confirm';
+		const formData = getFormData();
+		formData.append('code', newUser.code);
+		const { data } = await axios.post(URL, formData, config);
+		console.log('Response: ', data);
+		codeSuccess.value = true;
+	} catch (error) {
+		codeError.value = 'Неправильный код';
+		console.log('Error: ', error);
+	}
+};
+const checkName = () => {
+	newUser.firstName = newUser.firstName.replace(/[\s\d]/g, '');
+	newUser.lastName = newUser.lastName.replace(/[\s\d]/g, '');
+};
+const checkTel = () => {
+	if (telError.value) {
+		telError.value = false;
+		newUser.phoneNumber = '+998 ';
+	}
+	newUser.phoneNumber = newUser.phoneNumber.replace(/[^+\d\s]/g, '');
+	newUser.phoneNumber.length < 5 && (newUser.phoneNumber = '+998 ');
+	if (newUser.phoneNumber.length > 17) {
+		newUser.phoneNumber = newUser.phoneNumber.slice(0, 17);
+	}
+};
+const checkCode = () => {
+	newUser.code = newUser.code.replace(/[ \t\n\r\f\v]|[a-zA-Z]/g, '');
+};
+const formatTel = () => {
+	const phone = document.getElementById('tel');
+
+	let inputMatched = phone.value
+		.replace(/[^\d+]/g, '')
+		.match(/(\+\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
+
+	let formatted = !inputMatched[2]
+		? inputMatched[1]
+		: '' +
+		  inputMatched[1] +
+		  ' ' +
+		  inputMatched[2] +
+		  ' ' +
+		  inputMatched[3] +
+		  ' ' +
+		  inputMatched[4] +
+		  ' ' +
+		  inputMatched[5];
+
+	phone.value = formatted;
+
+	let lastIndex = lastIndexOfLastNumber(formatted);
+
+	phone.selectionStart = lastIndex + 1;
+	phone.selectionEnd = lastIndex + 1;
+};
+
+/* Functions for promocode */
+const closePopup = () => (success.value = '');
 const clearInput = () => {
-	if (error.value) promocode.value = '';
+	error.value && (promocode.value = '');
 	error.value = '';
 };
 const sendPromocode = async () => {
@@ -230,6 +363,8 @@ const sendPromocode = async () => {
 		loading.value = false;
 	}
 };
+
+/* Ordinary Functions */
 const copyToClipboard = (link) => {
 	const tempInput = document.createElement('input');
 	tempInput.value = link;
@@ -258,10 +393,15 @@ const dateFormatter = () => {
 		}
 	}
 };
-const checkInput = () => {
-	newUser.firstName = newUser.firstName.replace(/[\s\d]/g, '');
-	newUser.lastName = newUser.lastName.replace(/[\s\d]/g, '');
+const lastIndexOfLastNumber = (str) => {
+	for (let i = str.length - 1; i >= 0; i--) {
+		if (!isNaN(parseInt(str[i]))) {
+			return i;
+		}
+	}
+	return -1;
 };
+/* Toggle functions */
 const toggleGender = (newGender) => (newUser.gender = newGender);
 const toggleEdit = () => {
 	isEditing.value = !isEditing.value;
@@ -273,10 +413,11 @@ const toggleEdit = () => {
 };
 const toggleError = (val) => (editingError.value = val);
 
+/* Computed Values */
 const avatarSrc = computed(() => {
-	if (appStore.user.role == 'Employee')
+	if (appStore.user?.role == 'Employee')
 		return appStore.user.gender == 1 ? '/female-employee.png' : '/male-employee.png';
-	else if (appStore.user.role == 'Owner')
+	else if (appStore.user?.role == 'Owner')
 		return appStore.user.gender == 1 ? '/female-owner.png' : '/male-owner.png';
 	else return '/creator.png';
 });
@@ -300,6 +441,7 @@ const role = computed(() =>
 		: appStore.user.role
 );
 const formattedIqcAmount = computed(() => (appStore.iqc ? appStore.iqc.amountofIQC : '0'));
+const telLength = computed(() => newUser.phoneNumber.length);
 const isOkaySave = computed(() => {
 	if (!newUser.firstName && !newUser.lastName) {
 		toggleError('name');
@@ -313,24 +455,35 @@ const isOkaySave = computed(() => {
 	} else if (2023 - parseInt(newUser.birthDate.slice(0, 4)) < 18 || !newUser.birthDate) {
 		toggleError('date');
 		return false;
-	}
+	} else if (telError.value) return false;
+	else if (codeError.value) return false;
+	else if (telLength.value != 0 && telLength.value < 17) return false;
+
 	editingError.value = '';
 	return true;
 });
 
+/* Computed Styles */
 const dateLabelStyle = computed(() => ({
 	color: editingError.value == 'date' ? 'var(--color-primary-pink)' : '',
 }));
 const dateInputStyle = computed(() => ({
-	color: editingError.value == 'date' ? 'var(--color-primary-pink)' : '',
+	color: editingError.value == 'date' ? 'var(--color-primary-pink)' : appStore.isDark ? '#fff' : '',
 	borderColor: editingError.value == 'date' ? 'var(--color-primary-pink)' : '',
 }));
 const telLabelStyle = computed(() => ({
-	color: editingError.value == 'tel' ? 'var(--color-primary-pink)' : '',
+	color: telError.value ? 'var(--color-primary-pink)' : '',
 }));
 const telInputStyle = computed(() => ({
-	color: editingError.value == 'tel' ? 'var(--color-primary-pink)' : '',
-	borderColor: editingError.value == 'tel' ? 'var(--color-primary-pink)' : '',
+	color: telError.value ? 'var(--color-primary-pink)' : appStore.isDark ? '#fff' : '',
+	borderColor: telError.value ? 'var(--color-primary-pink)' : '',
+}));
+const codeLabelStyle = computed(() => ({
+	color: codeError.value ? 'var(--color-primary-pink)' : '',
+}));
+const codeInputStyle = computed(() => ({
+	color: codeError.value ? 'var(--color-primary-pink)' : appStore.isDark ? '#fff' : '',
+	borderColor: codeError.value ? 'var(--color-primary-pink)' : '',
 }));
 const profileStyle = computed(() => ({
 	transform: appStore.showPreloader ? 'translateX(40%)' : 'translateX(0)',
@@ -396,7 +549,7 @@ h2 {
 	&-update {
 		display: flex;
 		flex-direction: column;
-		gap: 2.4rem;
+		justify-content: space-between;
 		&_avatar {
 			align-self: center;
 			width: 10rem;
@@ -411,11 +564,12 @@ h2 {
 			& svg {
 				position: absolute;
 				top: 40%;
-				right: 20%;
+				right: 15%;
 				width: 3rem;
 				height: 3rem;
 			}
 			& input {
+				background: transparent;
 				display: flex;
 				width: 28rem;
 				padding: 1.2rem 1rem;

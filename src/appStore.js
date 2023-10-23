@@ -18,6 +18,7 @@ export const useAppStore = defineStore('app', () => {
 	const passed = ref([]);
 	const pharmacy = ref([]);
 	const transactions = ref([]);
+	const stats = ref();
 
 	//Bositkhonaka token = 11511|iN2tBOLIxrjp0z6b3KIer0hI8zXXvissfD4p2k7D
 	//My token = 10638|kw7JpzOBtw1Hig3w2bkCEsboQxS8FT9XDK4UcPbB
@@ -45,15 +46,17 @@ export const useAppStore = defineStore('app', () => {
 				{ data: passedData },
 				{ data: pharmacyData },
 				{ data: transactionsData },
+				{ data: statsData },
 			] = await Promise.all([
 				axios.get(`${BASE_URL}/mobile-user`, config),
 				axios.get(`${NEWS_URL}?page=1`, config),
-				axios.get(`${USERS_URL}/users-top-iqc-statistics`, config),
+				axios.get(`${USERS_URL}/users-top-iqc-statistics?count=10`, config),
 				axios.get(`${COURSES_URL}/coursesNew?params=free`, config),
 				axios.get(`${COURSES_URL}/mycoursesNew?category_id=0&params=free`, config),
 				axios.get(`${COURSES_URL}/mycoursesPassedNew?category_id=0&params=free`, config),
 				axios.get(`${COURSES_URL}/coursesNew?params=special`, config),
 				axios.get(`${USERS_URL}/user-transactions`, config),
+				axios.get(`${USERS_URL}/user-course-count`, config),
 			]);
 
 			user.value = userData.user;
@@ -66,6 +69,7 @@ export const useAppStore = defineStore('app', () => {
 			passed.value = passedData.data;
 			pharmacy.value = pharmacyData.courses.data;
 			transactions.value = transactionsData;
+			stats.value = statsData;
 		} catch (error) {
 			handleError(error);
 		}
@@ -81,9 +85,7 @@ export const useAppStore = defineStore('app', () => {
 		try {
 			const { data } = await axios.post(URL, formData, config);
 			console.log('Profile successfully updated! ', data);
-			user.value = data.user;
-			iqc.value = data.iqc;
-			company.value = data.company;
+			getUser();
 		} catch (error) {
 			console.error('Error:', error);
 		}
@@ -122,6 +124,7 @@ export const useAppStore = defineStore('app', () => {
 		passed,
 		pharmacy,
 		transactions,
+		stats,
 		fetchData,
 		getUser,
 		updateProfile,

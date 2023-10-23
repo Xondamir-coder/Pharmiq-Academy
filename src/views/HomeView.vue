@@ -49,20 +49,6 @@
 					<p class="home__leaders-detail">{{ user.company }}</p>
 					<p class="home__leaders-detail">{{ user.iqc }} <Coin /></p>
 				</div>
-
-				<div class="home__leaders-box">
-					<p class="home__leaders-detail">............</p>
-					<p class="home__leaders-detail">..........................</p>
-					<p class="home__leaders-detail">..........................</p>
-					<p class="home__leaders-detail">..........................</p>
-				</div>
-
-				<div class="home__leaders-box home__leaders-box_last">
-					<p class="home__leaders-detail">101</p>
-					<p class="home__leaders-detail">Очкин Р.</p>
-					<p class="home__leaders-detail">PIQ</p>
-					<p class="home__leaders-detail">2350 <Coin /></p>
-				</div>
 			</div>
 		</div>
 	</section>
@@ -138,14 +124,6 @@ const showHome = computed(() => ({
 			display: grid;
 			grid-template-columns: repeat(4, 25%);
 			justify-items: center;
-			&_last {
-				background: var(--richard-gradient, linear-gradient(136deg, #61c1c0 0%, #358184 100%));
-				padding: 0.4rem 0rem;
-				border-radius: 0.4rem;
-				& p {
-					color: white;
-				}
-			}
 		}
 		&-title {
 			color: #358184;

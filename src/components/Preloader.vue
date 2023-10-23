@@ -1,6 +1,6 @@
 <template>
 	<div v-if="appStore.showPreloader" class="preloader">
-		<img id="logo" :src="logo" alt="logo" />
+		<img id="logo" src="/favicon.ico" alt="logo" />
 		<div id="name">
 			<h1>PharmIQ</h1>
 			<h2>ACADEMY</h2>
@@ -14,19 +14,15 @@ import { useAppStore } from '../appStore.js';
 const appStore = useAppStore();
 
 import { onBeforeMount, onBeforeUnmount } from 'vue';
-import logo from '../../public/favicon.ico';
 
 onBeforeMount(() => {
-	// Use Vue's reactive system to control the overflow property
 	document.body.style.overflow = 'hidden';
 
-	// Use Vue's reactive properties to control the preloader visibility
 	setTimeout(() => {
 		appStore.setShowPreloader(false);
 	}, 3500);
 });
 
-// Reset the overflow property and other cleanup when component unmounts
 onBeforeUnmount(() => {
 	document.body.style.overflow = 'visible';
 });
