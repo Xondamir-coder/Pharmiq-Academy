@@ -275,19 +275,17 @@ const toggleError = (val) => (editingError.value = val);
 
 const avatarSrc = computed(() => {
 	if (appStore.user.role == 'Employee')
-		return appStore.user.gender == 1
-			? 'src/assets/female-employee.png'
-			: 'src/assets/male-employee.png';
+		return appStore.user.gender == 1 ? 'public/female-employee.png' : 'public/male-employee.png';
 	else if (appStore.user.role == 'Owner')
-		return appStore.user.gender == 1 ? 'src/assets/female-owner.png' : 'src/assets/male-owner.png';
-	else return 'src/assets/creator.png';
+		return appStore.user.gender == 1 ? 'public/female-owner.png' : 'public/male-owner.png';
+	else return 'public/creator.png';
 });
 const dynamicAvatar = computed(() => {
 	if (appStore.user.role == 'Employee')
-		return newUser.gender == 1 ? 'src/assets/female-employee.png' : 'src/assets/male-employee.png';
+		return newUser.gender == 1 ? 'public/female-employee.png' : 'public/male-employee.png';
 	else if (appStore.user.role == 'Owner')
-		return newUser.gender == 1 ? 'src/assets/female-owner.png' : 'src/assets/male-owner.png';
-	else return 'src/assets/creator.png';
+		return newUser.gender == 1 ? 'public/female-owner.png' : 'public/male-owner.png';
+	else return 'public/creator.png';
 });
 const referralLinks = computed(() => [
 	computed(() => appStore.transactions.iqcTransactionsReferralCompany).value,
