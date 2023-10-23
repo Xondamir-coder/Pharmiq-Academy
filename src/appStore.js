@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 
 export const useAppStore = defineStore('app', () => {
-	const isDark = ref(false);
+	const isDark = ref(localStorage.getItem('isDark') || false);
 	const showPreloader = ref(true);
 
 	/* Data */

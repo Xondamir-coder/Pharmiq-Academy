@@ -22,7 +22,12 @@
 				<component :is="link.icon"></component>
 				{{ link.label }}
 			</RouterLink>
-			<input type="checkbox" name="darkmode-toggle" id="darkmode-toggle" />
+			<input
+				type="checkbox"
+				name="darkmode-toggle"
+				id="darkmode-toggle"
+				:checked="appStore.isDark"
+			/>
 			<label for="darkmode-toggle" @click="toggleDarkMode">
 				<Sun class="sun" />
 				<Moon class="moon" />
@@ -69,6 +74,7 @@ const navLinks = ref([
 ]);
 const toggleDarkMode = () => {
 	appStore.isDark = !appStore.isDark;
+	localStorage.setItem('isDark', appStore.isDark);
 };
 const logout = () => {
 	localStorage.removeItem('token');
