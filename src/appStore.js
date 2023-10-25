@@ -30,9 +30,9 @@ export const useAppStore = defineStore('app', () => {
 		if (!token) window.location.href = 'https://go.pharmiq.uz/login';
 	} else localStorage.setItem('token', token);
 	const BASE_URL = 'https://api.pharmiq.uz/api/v1-1';
-	const NEWS_URL = 'https://api.pharmiq.uz/api/v1-1/spa-news';
-	const USERS_URL = 'https://api.pharmiq.uz/api/v1-1/spa-users';
-	const COURSES_URL = 'https://api.pharmiq.uz/api/v1-1/spa-courses';
+	const NEWS_URL = `${BASE_URL}/spa-news`;
+	const USERS_URL = `${BASE_URL}/spa-users`;
+	const COURSES_URL = `${BASE_URL}/spa-courses`;
 	const config = { headers: { Authorization: `Bearer ${token}` } };
 
 	const fetchData = async () => {
@@ -58,7 +58,6 @@ export const useAppStore = defineStore('app', () => {
 				axios.get(`${USERS_URL}/user-transactions`, config),
 				axios.get(`${USERS_URL}/user-course-count`, config),
 			]);
-
 			user.value = userData.user;
 			iqc.value = userData.iqc;
 			company.value = userData.company;

@@ -266,7 +266,7 @@ const verifyPhoneNumber = async () => {
 		console.log('Code is sent', data);
 		telSuccess.value = true;
 	} catch (error) {
-		telError.value = error.response.data.message.ru;
+		telError.value = error.response.data.message.ru || error.response.data.ru;
 	}
 };
 const verifyCode = async () => {

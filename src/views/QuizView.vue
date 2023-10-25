@@ -1,7 +1,7 @@
 <template>
 	<div class="quiz" :style="quizStyle">
 		<div class="quiz__head">
-			<div class="quiz__head--left">
+			<div class="quiz__head--left" :style="textColor">
 				<h1>Тестирование</h1>
 				<p>{{ title }}</p>
 				<div class="quiz__head--quantity">
@@ -17,8 +17,8 @@
 			</div>
 		</div>
 
-		<div class="quiz__card">
-			<h3>{{ question }}</h3>
+		<div class="quiz__card" :style="[textColor, cardStyle]">
+			<h3 :style="darkHeadingStyle">{{ question }}</h3>
 			<div class="quiz__card--options">
 				<div
 					class="quiz__card--option"
@@ -103,6 +103,7 @@ import { Timer, RadioChosen, Coin } from '../assets/icons';
 import Popup from '../components/Popup.vue';
 import { getFormData } from '../composables/useFormData';
 import useAppear from '../composables/useAppear';
+import { textColor } from '../composables/useColor';
 
 const route = useRoute();
 const router = useRouter();
@@ -362,6 +363,12 @@ const popupStyle = computed(() => ({
 	padding: '2rem',
 	background: fail.value ? 'linear-gradient(102deg, #FF736E -0.69%, #FF4D46 100%)' : '',
 }));
+const darkHeadingStyle = computed(() => ({
+	color: appStore.isDark ? '#fff' : '',
+}));
+const cardStyle = computed(() => ({
+	boxShadow: appStore.isDark ? '0px 0px 8px 0px rgba(255, 255, 255, 0.1)' : '',
+}));
 
 onMounted(() => {
 	findLesson();
@@ -420,7 +427,7 @@ onMounted(() => {
 		align-items: center;
 		gap: 1rem;
 		border-radius: 1.5rem;
-		background: #fff;
+		background: transparent;
 		box-shadow: 0px 0px 5px 0px rgba(53, 129, 132, 0.25) inset;
 	}
 	&__bar {
@@ -446,12 +453,9 @@ onMounted(() => {
 		padding: 2.5rem 2rem;
 		flex-direction: column;
 		gap: 1.6rem;
-		border-radius: 1.6rem;
-		background: #fff;
-		box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
 
 		border-radius: 1.6rem;
-		background: #fff;
+		background: transparent;
 		box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
 		& h3 {
 			color: var(--Text-Primary, #131313);
