@@ -1,7 +1,93 @@
 <template>
 	<div class="home__profile" :style="profileStyle">
-		<form class="home__profile-update" v-if="isEditing" @submit.prevent="updateProfile">
-			<div class="home__profile-edit">
+		<Transition name="slide">
+			<div class="home__profile-main" v-if="!isEditing">
+				<div class="home__profile-edit" :style="appear">
+					<h1 :style="headingStyle">Мой профиль</h1>
+					<div class="home__profile-edit_button" @click="toggleEdit">
+						<Pen />
+						<p>Редактировать</p>
+					</div>
+				</div>
+
+				<div class="home__profile-details">
+					<img :src="avatarSrc" class="home__profile-details__avatar" alt="avatar" />
+					<h1>{{ userFullName }}</h1>
+
+					<p>{{ role }} в Аптеке SPACE LABS</p>
+					<div class="home__profile-budget">
+						{{ formattedIqcAmount }}
+						<Coin />
+					</div>
+				</div>
+
+				<div class="home__profile-rewards">
+					<h2>Достижения</h2>
+					<div class="home__profile-awards">
+						<div
+							v-for="award in userAwards"
+							:key="award.id"
+							class="home__profile-awards__container"
+						>
+							<Award class="home__profile-awards__img" />
+							{{ award.name }}
+						</div>
+					</div>
+				</div>
+
+				<form class="home__profile-promocode" @submit.prevent="sendPromocode">
+					<h2>У вас есть промокод, введите его здесь</h2>
+					<input
+						:style="promocodeStyle"
+						@input="clearInput"
+						placeholder="PROMOCODE"
+						type="text"
+						v-model="promocode"
+					/>
+					<span v-if="error">{{ error }}</span>
+					<button
+						type="submit"
+						class="home__profile-promocode__button"
+						:disabled="promocode.length < 4"
+						:style="disabledButton"
+					>
+						Проверить
+						<span class="btn-ring" :style="displayBtn"></span>
+					</button>
+				</form>
+
+				<div class="home__profile-links">
+					<h2>Реферальная ссылка</h2>
+					<p>Чтобы добавить сотрудников вашей аптеки в систему, отправьте им эту ссылку</p>
+					<button
+						class="custom__button"
+						@click="copyToClipboard('https://go.pharmiq.uz/register/ref/2659948313928074')"
+					>
+						Нажмите на кнопку и ссылка скопируется
+						<CopyLink />
+					</button>
+					<p class="home__profile-links__smallp">
+						По вашей ссылке прошли регистрацию:
+						{{ referralLinks[0] }}
+					</p>
+					<p>Реферальная ссылка фармацевта</p>
+					<button
+						class="custom__button"
+						@click="copyToClipboard('https://go.pharmiq.uz/inviteTo520')"
+					>
+						Нажмите на кнопку и ссылка скопируется
+						<CopyLink />
+					</button>
+					<p class="home__profile-links__smallp">
+						По вашей ссылке прошли регистрацию:
+						{{ referralLinks[1] }}
+					</p>
+				</div>
+			</div>
+		</Transition>
+
+		<form class="home__profile-update" @submit.prevent="updateProfile">
+			<div class="home__profile-edit" :style="appearForm">
 				<h1 :style="headingStyle">Изменить профиль</h1>
 				<div class="home__profile-edit_button" @click="toggleEdit">
 					<Pen />
@@ -9,9 +95,14 @@
 				</div>
 			</div>
 
-			<img :src="dynamicAvatar" alt="avatar" class="home__profile-update_avatar" />
+			<img
+				:src="dynamicAvatar"
+				alt="avatar"
+				class="home__profile-update_avatar"
+				:style="appearForm"
+			/>
 
-			<div class="profile__buttons">
+			<div class="profile__buttons" :style="appearForm">
 				<div class="profile__button--active" :style="genderButton"></div>
 				<button
 					type="button"
@@ -27,7 +118,7 @@
 				</button>
 			</div>
 
-			<div class="home__profile-update_input">
+			<div class="home__profile-update_input" :style="appearForm">
 				<label for="name">Имя</label>
 				<input
 					type="text"
@@ -41,7 +132,7 @@
 				</label>
 			</div>
 
-			<div class="home__profile-update_input">
+			<div class="home__profile-update_input" :style="appearForm" style="transition: all 0.7s 0.8s">
 				<label for="lastname">Фамилия</label>
 				<input
 					type="text"
@@ -55,7 +146,7 @@
 				</label>
 			</div>
 
-			<div class="home__profile-update_input">
+			<div class="home__profile-update_input" :style="appearForm" style="transition: all 0.7s 1s">
 				<label for="date" :style="dateLabelStyle">Дата рождения</label>
 				<input type="date" id="date" v-model="newUser.birthDate" :style="dateInputStyle" />
 				<InputOkay v-if="editingError != 'date'" />
@@ -64,7 +155,7 @@
 				</label>
 			</div>
 
-			<div class="home__profile-update_input">
+			<div class="home__profile-update_input" :style="appearForm" style="transition: all 0.7s 1.2s">
 				<label for="tel" :style="telLabelStyle">Номер телефона</label>
 				<input
 					type="tel"
@@ -82,7 +173,12 @@
 				</label>
 			</div>
 
-			<div class="home__profile-update_input" v-if="telSuccess">
+			<div
+				class="home__profile-update_input"
+				v-if="telSuccess"
+				:style="appearForm"
+				style="transition: all 0.7s 1.4s"
+			>
 				<label for="code" :style="codeLabelStyle"> CМС код </label>
 				<input
 					type="text"
@@ -95,90 +191,15 @@
 				<label v-if="codeError" :style="codeLabelStyle">{{ codeError }}</label>
 			</div>
 
-			<button type="submit" class="custom__button" :style="saveButtonStyle" :disabled="!isOkaySave">
+			<button
+				type="submit"
+				class="custom__button"
+				:style="[saveButtonStyle, appearForm]"
+				:disabled="!isOkaySave"
+			>
 				Сохранить <Save :active="isOkaySave" />
 			</button>
 		</form>
-
-		<div class="home__profile-main" v-else>
-			<div class="home__profile-edit">
-				<h1 :style="headingStyle">Мой профиль</h1>
-				<div class="home__profile-edit_button" @click="toggleEdit">
-					<Pen />
-					<p>Редактировать</p>
-				</div>
-			</div>
-
-			<div class="home__profile-details">
-				<img :src="avatarSrc" class="home__profile-details__avatar" alt="avatar" />
-				<h1>{{ userFullName }}</h1>
-
-				<p>{{ role }} в Аптеке SPACE LABS</p>
-				<div class="home__profile-budget">
-					{{ formattedIqcAmount }}
-					<Coin />
-				</div>
-			</div>
-
-			<div class="home__profile-rewards">
-				<h2>Достижения</h2>
-				<div class="home__profile-awards">
-					<div v-for="award in userAwards" :key="award.id" class="home__profile-awards__container">
-						<Award class="home__profile-awards__img" />
-						{{ award.name }}
-					</div>
-				</div>
-			</div>
-
-			<form class="home__profile-promocode" @submit.prevent="sendPromocode">
-				<h2>У вас есть промокод, введите его здесь</h2>
-				<input
-					:style="promocodeStyle"
-					@input="clearInput"
-					placeholder="PROMOCODE"
-					type="text"
-					v-model="promocode"
-				/>
-				<span v-if="error">{{ error }}</span>
-				<button
-					type="submit"
-					class="home__profile-promocode__button"
-					:disabled="promocode.length < 4"
-					:style="disabledButton"
-				>
-					Проверить
-					<span class="btn-ring" :style="displayBtn"></span>
-				</button>
-			</form>
-
-			<div class="home__profile-links">
-				<h2>Реферальная ссылка</h2>
-				<p>Чтобы добавить сотрудников вашей аптеки в систему, отправьте им эту ссылку</p>
-				<button
-					class="custom__button"
-					@click="copyToClipboard('https://go.pharmiq.uz/register/ref/2659948313928074')"
-				>
-					Нажмите на кнопку и ссылка скопируется
-					<CopyLink />
-				</button>
-				<p class="home__profile-links__smallp">
-					По вашей ссылке прошли регистрацию:
-					{{ referralLinks[0] }}
-				</p>
-				<p>Реферальная ссылка фармацевта</p>
-				<button
-					class="custom__button"
-					@click="copyToClipboard('https://go.pharmiq.uz/inviteTo520')"
-				>
-					Нажмите на кнопку и ссылка скопируется
-					<CopyLink />
-				</button>
-				<p class="home__profile-links__smallp">
-					По вашей ссылке прошли регистрацию:
-					{{ referralLinks[1] }}
-				</p>
-			</div>
-		</div>
 	</div>
 
 	<Teleport to="body">
@@ -227,6 +248,7 @@ const telError = ref('');
 const telSuccess = ref(false);
 const codeError = ref('');
 const codeSuccess = ref(false);
+let oldTel = '';
 /* Plain variables */
 const config = {
 	headers: { Authorization: `Bearer ${appStore.token}` },
@@ -238,12 +260,11 @@ const userAwards = [
 ];
 
 /* Functions for updating profile */
-const updateProfile = () => {
-	if (newUser.phoneNumber) {
+const updateProfile = async () => {
+	if (oldTel != newUser.phoneNumber) {
 		!telSuccess.value && verifyPhoneNumber();
 		if (telSuccess.value) {
-			verifyCode();
-			if (codeSuccess.value) {
+			if ((await verifyCode()) || codeSuccess.value) {
 				dateFormatter();
 				appStore.updateProfile(newUser);
 				toggleEdit();
@@ -277,9 +298,11 @@ const verifyCode = async () => {
 		const { data } = await axios.post(URL, formData, config);
 		console.log('Response: ', data);
 		codeSuccess.value = true;
+		return true;
 	} catch (error) {
 		codeError.value = 'Неправильный код';
 		console.log('Error: ', error);
+		return false;
 	}
 };
 const checkName = () => {
@@ -405,11 +428,29 @@ const lastIndexOfLastNumber = (str) => {
 const toggleGender = (newGender) => (newUser.gender = newGender);
 const toggleEdit = () => {
 	isEditing.value = !isEditing.value;
-	const { firstName, lastName, birthDate, gender } = appStore.user;
+	const {
+		firstName,
+		lastName,
+		birthDate,
+		gender,
+		phonebook: { phoneNumber },
+	} = appStore.user;
+	oldTel =
+		'+' +
+		phoneNumber.slice(0, 3) +
+		' ' +
+		phoneNumber.slice(3, 5) +
+		' ' +
+		phoneNumber.slice(5, 8) +
+		' ' +
+		phoneNumber.slice(8, 10) +
+		' ' +
+		phoneNumber.slice(10, 12);
 	newUser.firstName = firstName;
 	newUser.lastName = lastName;
 	newUser.birthDate = birthDate;
 	newUser.gender = gender;
+	newUser.phoneNumber = oldTel;
 };
 const toggleError = (val) => (editingError.value = val);
 
@@ -452,12 +493,12 @@ const isOkaySave = computed(() => {
 	} else if (!newUser.lastName) {
 		toggleError('lname');
 		return false;
-	} else if (2023 - parseInt(newUser.birthDate.slice(0, 4)) < 18 || !newUser.birthDate) {
+	} else if (2023 - Number(newUser.birthDate.slice(0, 4)) < 18 || !newUser.birthDate) {
 		toggleError('date');
 		return false;
 	} else if (telError.value) return false;
 	else if (codeError.value) return false;
-	else if (telLength.value != 0 && telLength.value < 17) return false;
+	else if (telLength.value < 17) return false;
 
 	editingError.value = '';
 	return true;
@@ -522,6 +563,10 @@ const genderButton = computed(() => ({
 const displayBtn = computed(() => ({
 	display: loading.value ? 'block' : 'none',
 }));
+const appearForm = computed(() => ({
+	transform: isEditing.value ? 'translateX(0)' : 'translateX(15rem)',
+	opacity: isEditing.value ? '1' : '0',
+}));
 </script>
 
 <style lang="scss" scoped>
@@ -551,11 +596,13 @@ h2 {
 		flex-direction: column;
 		justify-content: space-between;
 		&_avatar {
+			transition: all 0.7s 0.2s;
 			align-self: center;
 			width: 10rem;
 			height: 10rem;
 		}
 		&_input {
+			transition: all 0.7s 0.6s;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -600,7 +647,7 @@ h2 {
 				width: 2rem;
 				height: 2rem;
 			}
-			transition: all 0.5s;
+			transition: all 0.5s 1.5s;
 			width: auto;
 			text-transform: uppercase;
 		}
@@ -609,14 +656,14 @@ h2 {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: space-evenly;
-		gap: 1.4rem;
+		justify-content: space-between;
 	}
 	& p {
 		font-size: 1.2rem;
 		font-weight: 400;
 	}
 	&-edit {
+		transition: all 0.7s;
 		width: 100%;
 		display: flex;
 		justify-content: space-between;
@@ -840,6 +887,7 @@ h2 {
 		}
 	}
 	&__buttons {
+		transition: all 0.7s 0.4s;
 		position: relative;
 		display: flex;
 		padding-right: 0px;
