@@ -28,17 +28,17 @@
 			<div v-if="lesson.materials.length > 0">
 				{{ lesson.materials }}
 			</div>
-			<p v-else :style="textColor">Пусто</p>
+			<p v-else :style="textColor">Нет дополнительных материалов к уроку</p>
 		</div>
-
-		<RouterLink :style="textAppear" class="lesson__test" v-if="watchedVideo" :to="quizUrl">
+		<RouterLink v-if="watchedVideo" :style="textAppear" class="lesson__test" :to="quizUrl">
 			НАЧАТЬ ТЕСТИРОВАНИЕ
 		</RouterLink>
+
 		<button
+			v-else
 			:style="textAppear"
 			@click="togglePopup(true)"
 			class="lesson__test lesson__test--locked"
-			v-else
 		>
 			<Locked />
 			НАЧАТЬ ТЕСТИРОВАНИЕ
@@ -141,6 +141,7 @@ const lessonWatched = async (typeContent) => {
 	try {
 		const { data } = await axios.post(URL, formData, config);
 		console.log('Lesson learned', data);
+		watchedVideo.value = true;
 	} catch (error) {
 		console.log('Error: ', error);
 	}
