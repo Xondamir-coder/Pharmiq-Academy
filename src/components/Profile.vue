@@ -201,7 +201,14 @@
 			</button>
 		</form>
 	</div>
-
+	<Popup :success="editSuccess" :style="editPopupStyle">
+		<template #content>
+			<h1>Успешно изменено!</h1>
+		</template>
+		<template #btn>
+			<button class="popup__button" @click="toggleEditPopup">OK</button>
+		</template>
+	</Popup>
 	<Teleport to="body">
 		<div class="overlay" v-if="success"></div>
 		<Transition name="fade">
@@ -223,6 +230,7 @@ import { useAppStore } from '../appStore.js';
 import { Pen, CopyLink, Coin, Award, Save, InputOkay } from '../assets/icons';
 import { getFormData } from '../composables/useFormData';
 import { textColor } from '../composables/useColor';
+import Popup from './Popup.vue';
 
 const appStore = useAppStore();
 /* Reactive variables for Promocode */
@@ -233,6 +241,7 @@ const loading = ref(false);
 
 /* is editing the profile? */
 const isEditing = ref(false);
+const editSuccess = ref(false);
 
 /* Reactive variables for filling input */
 const newUser = reactive({
@@ -263,17 +272,17 @@ const userAwards = [
 const updateProfile = async () => {
 	if (oldTel != newUser.phoneNumber) {
 		!telSuccess.value && verifyPhoneNumber();
-		if (telSuccess.value) {
-			if ((await verifyCode()) || codeSuccess.value) {
-				dateFormatter();
-				appStore.updateProfile(newUser);
-				toggleEdit();
-			}
+		if (telSuccess.value && codeSuccess.value) {
+			dateFormatter();
+			appStore.updateProfile(newUser);
+			toggleEdit();
+			editSuccess.value = true;
 		}
 	} else {
 		dateFormatter();
 		appStore.updateProfile(newUser);
 		toggleEdit();
+		editSuccess.value = true;
 	}
 };
 const verifyPhoneNumber = async () => {
@@ -453,6 +462,7 @@ const toggleEdit = () => {
 	newUser.phoneNumber = oldTel;
 };
 const toggleError = (val) => (editingError.value = val);
+const toggleEditPopup = () => (editSuccess.value = !editSuccess.value);
 
 /* Computed Values */
 const avatarSrc = computed(() => {
@@ -567,6 +577,10 @@ const appearForm = computed(() => ({
 	transform: isEditing.value ? 'translateX(0)' : 'translateX(15rem)',
 	opacity: isEditing.value ? '1' : '0',
 }));
+const editPopupStyle = reactive({
+	width: 'auto',
+	padding: '2rem',
+});
 </script>
 
 <style lang="scss" scoped>
