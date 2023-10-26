@@ -2,7 +2,7 @@
 	<div class="home__profile" :style="profileStyle">
 		<Transition name="slide-bottom">
 			<div class="home__profile-main" v-if="!isEditing">
-				<div class="home__profile-edit" :style="appear">
+				<div class="home__profile-edit">
 					<h1 :style="headingStyle">Мой профиль</h1>
 					<div class="home__profile-edit_button" @click="toggleEdit">
 						<Pen />
@@ -272,11 +272,14 @@ const userAwards = [
 const updateProfile = async () => {
 	if (oldTel != newUser.phoneNumber) {
 		!telSuccess.value && verifyPhoneNumber();
-		if (telSuccess.value && codeSuccess.value) {
-			dateFormatter();
-			appStore.updateProfile(newUser);
-			toggleEdit();
-			editSuccess.value = true;
+		if (telSuccess.value) {
+			!codeSuccess.value && verifyCode();
+			if (codeSuccess.value) {
+				dateFormatter();
+				appStore.updateProfile(newUser);
+				toggleEdit();
+				editSuccess.value = true;
+			}
 		}
 	} else {
 		dateFormatter();
@@ -296,7 +299,10 @@ const verifyPhoneNumber = async () => {
 		console.log('Code is sent', data);
 		telSuccess.value = true;
 	} catch (error) {
-		telError.value = error.response.data.message.ru || error.response.data.ru;
+		telError.value =
+			error.response?.data?.message.ru ||
+			error.response.data?.ru ||
+			error.response.data.phoneNumber;
 	}
 };
 const verifyCode = async () => {
@@ -307,11 +313,9 @@ const verifyCode = async () => {
 		const { data } = await axios.post(URL, formData, config);
 		console.log('Response: ', data);
 		codeSuccess.value = true;
-		return true;
 	} catch (error) {
 		codeError.value = 'Неправильный код';
 		console.log('Error: ', error);
-		return false;
 	}
 };
 const checkName = () => {
@@ -331,6 +335,7 @@ const checkTel = () => {
 };
 const checkCode = () => {
 	newUser.code = newUser.code.replace(/[ \t\n\r\f\v]|[a-zA-Z]/g, '');
+	codeError.value && (codeError.value = '');
 };
 const formatTel = () => {
 	const phone = document.getElementById('tel');

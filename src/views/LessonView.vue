@@ -158,6 +158,11 @@ const title = computed(() => (lesson.value ? JSON.parse(lesson.value.lessonTitle
 const text = computed(() =>
 	lesson.value && lesson?.value?.contents ? JSON.parse(lesson.value.contents[0].body).ru : ''
 );
+// const btnText = computed(() =>
+// 	watchedVideo.value && watchedVideo.value.user_id
+// 		? 'ПЕРЕПРОЙТИ ТЕСТИРОВАНИЕ'
+// 		: 'НАЧАТЬ ТЕСТИРОВАНИЕ'
+// );
 const quizUrl = computed(() => `/quiz/${lesson.value.id}`);
 
 const textAppear = computed(() => ({

@@ -20,8 +20,8 @@
 			</div>
 		</div>
 		<button class="custom__button">
-			{{ prizeIqc }}
-			<Coin />
+			{{ btnText }}
+			<Coin v-if="isQuizPassed" />
 		</button>
 	</RouterLink>
 </template>
@@ -63,11 +63,15 @@ const totalVideoLength = computed(() => {
 	);
 	return `${Math.round(totalVideoLength)} минут`;
 });
+const isQuizPassed = computed(() => props.course.lessons[0].quizes.quizlog.length == 0);
 const prizeIqc = computed(() => {
 	let prizeIqc = '';
 	props.course.lessons.forEach((lesson) => (prizeIqc += lesson.quizes.prizeIQC));
-	return `ПРОЙТИ КУРС И ПОЛУЧИТЬ ${prizeIqc}`;
+	return prizeIqc;
 });
+const btnText = computed(() =>
+	isQuizPassed.value ? `ПРОЙТИ КУРС И ПОЛУЧИТЬ ${prizeIqc.value}` : 'ПОВТОРИТЬ КУРС'
+);
 const darkDard = computed(() => ({
 	boxShadow: appStore.isDark ? '0px 0px 8px 0px rgba(255, 255, 255, 0.3)' : '',
 	transform: appear.value ? 'scale(1)' : 'scale(.9)',
@@ -100,3 +104,10 @@ const totalLessons = computed(() => props.course.lessons.length);
 onMounted(() => useAppear(appear));
 appStore.iqc.amountOfIQC = 50;
 </script>
+
+<style scoped lang="scss">
+button svg {
+	width: 3.6rem;
+	height: 3.6rem;
+}
+</style>
