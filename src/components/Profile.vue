@@ -1,6 +1,6 @@
 <template>
 	<div class="home__profile" :style="profileStyle">
-		<Transition name="slide">
+		<Transition name="slide-bottom">
 			<div class="home__profile-main" v-if="!isEditing">
 				<div class="home__profile-edit" :style="appear">
 					<h1 :style="headingStyle">Мой профиль</h1>
@@ -939,6 +939,17 @@ h2 {
 .fade-leave-to {
 	transform: translate(-50%, -50%) scale(0.5);
 	opacity: 0;
+}
+.slide-bottom-leave-active,
+.slide-bottom-enter-active {
+	transition: all 1s;
+}
+.slide-bottom-enter-from {
+	transform: translateY(5rem);
+	opacity: 0;
+}
+.slide-bottom-leave-to {
+	display: none;
 }
 .btn-ring {
 	display: none;
