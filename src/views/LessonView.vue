@@ -31,7 +31,7 @@
 			<p v-else :style="textColor">Нет дополнительных материалов к уроку</p>
 		</div>
 		<RouterLink v-if="watchedVideo" :style="textAppear" class="lesson__test" :to="quizUrl">
-			НАЧАТЬ ТЕСТИРОВАНИЕ
+			{{ btnText }}
 		</RouterLink>
 
 		<button
@@ -158,11 +158,9 @@ const title = computed(() => (lesson.value ? JSON.parse(lesson.value.lessonTitle
 const text = computed(() =>
 	lesson.value && lesson?.value?.contents ? JSON.parse(lesson.value.contents[0].body).ru : ''
 );
-// const btnText = computed(() =>
-// 	watchedVideo.value && watchedVideo.value.user_id
-// 		? 'ПЕРЕПРОЙТИ ТЕСТИРОВАНИЕ'
-// 		: 'НАЧАТЬ ТЕСТИРОВАНИЕ'
-// );
+const btnText = computed(() =>
+	lesson.value.quizes.quizlog == 0 ? 'НАЧАТЬ ТЕСТИРОВАНИЕ' : 'ПЕРЕПРОЙТИ ТЕСТИРОВАНИЕ'
+);
 const quizUrl = computed(() => `/quiz/${lesson.value.id}`);
 
 const textAppear = computed(() => ({
