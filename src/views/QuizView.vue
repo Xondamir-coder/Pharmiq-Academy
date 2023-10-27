@@ -182,12 +182,13 @@ const checkAnswer = () => {
 
 	/* If answer is true increment numOfCorrectAnswers */
 	selectedAnswer.value == correctAnswer.value && checked.value && increment(numOfCorrectAnswers);
+
+	btnText.value == 'Завершить' && checked.value && displayPopup();
+	btnText.value == 'Завершить' && !fail.value && postQuiz();
 	/* If user selected next then increment currentQuestion */
+
 	btnText.value == 'Дальше' && checked.value && (addToReqAnswers() || increment(currentQuestion));
 	checked.value && clearState();
-
-	btnText.value == 'Завершить' && displayPopup();
-	btnText.value == 'Завершить' && !fail.value && postQuiz();
 };
 const countdown = (minutes) => {
 	let seconds = minutes * 60;
