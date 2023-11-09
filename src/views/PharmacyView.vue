@@ -91,7 +91,7 @@ const appStore = useAppStore();
 const show = ref(false);
 const selectedEmployee = ref(i18n.global.t('pharmacy_choose_employee'));
 const employees = ref();
-const BASE_URL = 'http://api.pharmiq.uz/api/v1-1/spa-users';
+const BASE_URL = 'https://api.pharmiq.uz/api/v1-1/spa-users';
 const config = {
 	headers: { Authorization: `Bearer 11664|FQYyyD4qnpMbbQWhmY1OJ3gukn3J2GNML7H7MmWP` },
 };
