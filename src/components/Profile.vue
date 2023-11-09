@@ -3,10 +3,10 @@
 		<Transition name="slide-bottom">
 			<div class="home__profile-main" v-if="!isEditing">
 				<div class="home__profile-edit">
-					<h1 :style="headingStyle">Мой профиль</h1>
+					<h1 :style="headingStyle">{{ i18n.global.t('profile_title') }}</h1>
 					<div class="home__profile-edit_button" @click="toggleEdit">
 						<Pen />
-						<p>Редактировать</p>
+						<p>{{ i18n.global.t('profile_btn') }}</p>
 					</div>
 				</div>
 
@@ -14,7 +14,7 @@
 					<img :src="avatarSrc" class="home__profile-details__avatar" alt="avatar" />
 					<h1>{{ userFullName }}</h1>
 
-					<p>{{ role }} в Аптеке SPACE LABS</p>
+					<p>{{ role }} {{ company }}</p>
 					<div class="home__profile-budget">
 						{{ formattedIqcAmount }}
 						<Coin />
@@ -22,13 +22,12 @@
 				</div>
 
 				<div class="home__profile-rewards">
-					<h2>Достижения</h2>
+					<h2>{{ i18n.global.t('profile_awards') }}</h2>
 					<div class="home__profile-awards">
 						<div
 							v-for="award in userAwards"
 							:key="award.id"
-							class="home__profile-awards__container"
-						>
+							class="home__profile-awards__container">
 							<Award class="home__profile-awards__img" />
 							{{ award.name }}
 						</div>
@@ -36,50 +35,50 @@
 				</div>
 
 				<form class="home__profile-promocode" @submit.prevent="sendPromocode">
-					<h2>У вас есть промокод, введите его здесь</h2>
+					<h2>{{ i18n.global.t('promocode_text') }}</h2>
 					<input
 						:style="promocodeStyle"
 						@input="clearInput"
 						placeholder="PROMOCODE"
 						type="text"
-						v-model="promocode"
-					/>
+						v-model="promocode" />
 					<span v-if="error">{{ error }}</span>
 					<button
 						type="submit"
 						class="home__profile-promocode__button"
 						:disabled="promocode.length < 4"
-						:style="disabledButton"
-					>
-						Проверить
+						:style="disabledButton">
+						{{ i18n.global.t('promocode_check') }}
 						<span class="btn-ring" :style="displayBtn"></span>
 					</button>
 				</form>
 
 				<div class="home__profile-links">
-					<h2>Реферальная ссылка</h2>
-					<p>Чтобы добавить сотрудников вашей аптеки в систему, отправьте им эту ссылку</p>
+					<h2>{{ i18n.global.t('profile_text') }}</h2>
+					<p>
+						{{ i18n.global.t('profile_coworker') }}
+					</p>
 					<button
 						class="custom__button"
-						@click="copyToClipboard('https://go.pharmiq.uz/register/ref/2659948313928074')"
-					>
-						Нажмите на кнопку и ссылка скопируется
+						@click="
+							copyToClipboard('https://go.pharmiq.uz/register/ref/2659948313928074')
+						">
+						{{ i18n.global.t('profile_link') }}
 						<CopyLink />
 					</button>
 					<p class="home__profile-links__smallp">
-						По вашей ссылке прошли регистрацию:
+						{{ i18n.global.t('profile_passed') }}:
 						{{ referralLinks[0] }}
 					</p>
-					<p>Реферальная ссылка фармацевта</p>
+					<p>{{ i18n.global.t('profile_link-2') }}</p>
 					<button
 						class="custom__button"
-						@click="copyToClipboard('https://go.pharmiq.uz/inviteTo520')"
-					>
-						Нажмите на кнопку и ссылка скопируется
+						@click="copyToClipboard('https://go.pharmiq.uz/inviteTo520')">
+						{{ i18n.global.t('profile_link') }}
 						<CopyLink />
 					</button>
 					<p class="home__profile-links__smallp">
-						По вашей ссылке прошли регистрацию:
+						{{ i18n.global.t('profile_passed') }}:
 						{{ referralLinks[1] }}
 					</p>
 				</div>
@@ -88,10 +87,10 @@
 
 		<form class="home__profile-update" @submit.prevent="updateProfile">
 			<div class="home__profile-edit" :style="appearForm">
-				<h1 :style="headingStyle">Изменить профиль</h1>
+				<h1 :style="headingStyle">{{ i18n.global.t('edit_title') }}</h1>
 				<div class="home__profile-edit_button" @click="toggleEdit">
 					<Pen />
-					<p>Редактировать</p>
+					<p>{{ i18n.global.t('profile_btn') }}</p>
 				</div>
 			</div>
 
@@ -99,8 +98,7 @@
 				:src="dynamicAvatar"
 				alt="avatar"
 				class="home__profile-update_avatar"
-				:style="appearForm"
-			/>
+				:style="appearForm" />
 
 			<div class="profile__buttons" :style="appearForm">
 				<div class="profile__button--active" :style="genderButton"></div>
@@ -110,53 +108,63 @@
 					:style="{ color: btn.data == newUser.gender ? '#fff' : '' }"
 					@click="toggleGender(btn.data)"
 					v-for="btn in [
-						{ label: 'Женщина', data: 1 },
-						{ label: 'Мужчина', data: 0 },
-					]"
-				>
+						{ label: i18n.global.t('edit_woman'), data: 1 },
+						{ label: i18n.global.t('edit_man'), data: 0 },
+					]">
 					{{ btn.label }}
 				</button>
 			</div>
 
 			<div class="home__profile-update_input" :style="appearForm">
-				<label for="name">Имя</label>
+				<label for="name">{{ i18n.global.t('edit_name') }}</label>
 				<input
 					type="text"
 					id="name"
 					v-model="newUser.firstName"
 					@input="checkName"
-					:style="textColor"
-				/>
+					:style="textColor" />
 				<label v-if="editingError == 'fname' || editingError == 'name'" for="name">
-					Введите имя
+					{{ i18n.global.t('edit_enter_name') }}
 				</label>
 			</div>
 
-			<div class="home__profile-update_input" :style="appearForm" style="transition: all 0.7s 0.8s">
-				<label for="lastname">Фамилия</label>
+			<div
+				class="home__profile-update_input"
+				:style="appearForm"
+				style="transition: all 0.7s 0.8s">
+				<label for="lastname">{{ i18n.global.t('edit_surname') }}</label>
 				<input
 					type="text"
 					id="lastname"
 					v-model="newUser.lastName"
 					@input="checkName"
-					:style="textColor"
-				/>
+					:style="textColor" />
 				<label v-if="editingError == 'lname' || editingError == 'name'" for="name">
-					Введите фамилию
+					{{ i18n.global.t('edit_enter_surname') }}
 				</label>
 			</div>
 
-			<div class="home__profile-update_input" :style="appearForm" style="transition: all 0.7s 1s">
-				<label for="date" :style="dateLabelStyle">Дата рождения</label>
+			<div
+				class="home__profile-update_input"
+				:style="appearForm"
+				style="transition: all 0.7s 1s">
+				<label for="date" :style="dateLabelStyle">{{ i18n.global.t('edit_birth') }}</label>
 				<input type="date" id="date" v-model="newUser.birthDate" :style="dateInputStyle" />
 				<InputOkay v-if="editingError != 'date'" />
 				<label v-if="editingError == 'date'">
-					{{ !newUser.birthDate ? 'Введите дату рождения' : 'Возраст меньше чем 18' }}
+					{{
+						!newUser.birthDate
+							? i18n.global.t('edit_enter_birth')
+							: i18n.global.t('edit_birth_error')
+					}}
 				</label>
 			</div>
 
-			<div class="home__profile-update_input" :style="appearForm" style="transition: all 0.7s 1.2s">
-				<label for="tel" :style="telLabelStyle">Номер телефона</label>
+			<div
+				class="home__profile-update_input"
+				:style="appearForm"
+				style="transition: all 0.7s 1.2s">
+				<label for="tel" :style="telLabelStyle">{{ i18n.global.t('edit_phone') }}</label>
 				<input
 					type="tel"
 					id="tel"
@@ -165,8 +173,7 @@
 					@click="!newUser.phoneNumber && (newUser.phoneNumber = '+998 ')"
 					@keydown.space.prevent=""
 					@keyup="formatTel"
-					@input="checkTel"
-				/>
+					@input="checkTel" />
 				<InputOkay v-if="telSuccess" />
 				<label v-if="telError" :style="telLabelStyle">
 					{{ telError }}
@@ -177,16 +184,14 @@
 				class="home__profile-update_input"
 				v-if="telSuccess"
 				:style="appearForm"
-				style="transition: all 0.7s 1.4s"
-			>
+				style="transition: all 0.7s 1.4s">
 				<label for="code" :style="codeLabelStyle"> CМС код </label>
 				<input
 					type="text"
 					id="code"
 					v-model="newUser.code"
 					:style="codeInputStyle"
-					@input="checkCode"
-				/>
+					@input="checkCode" />
 				<InputOkay v-if="codeSuccess" />
 				<label v-if="codeError" :style="codeLabelStyle">{{ codeError }}</label>
 			</div>
@@ -195,15 +200,14 @@
 				type="submit"
 				class="custom__button"
 				:style="[saveButtonStyle, appearForm]"
-				:disabled="!isOkaySave"
-			>
-				Сохранить <Save :active="isOkaySave" />
+				:disabled="!isOkaySave">
+				{{ i18n.global.t('edit_save') }} <Save :active="isOkaySave" />
 			</button>
 		</form>
 	</div>
 	<Popup :success="editSuccess" :style="editPopupStyle">
 		<template #content>
-			<h1>Успешно изменено!</h1>
+			<h1>{{ i18n.global.t('edit_success') }}!</h1>
 		</template>
 		<template #btn>
 			<button class="popup__button" @click="toggleEditPopup">OK</button>
@@ -214,7 +218,7 @@
 		<Transition name="fade">
 			<div class="popup" v-if="success">
 				<div class="popup__content">
-					<p>Вы получили</p>
+					<p>{{ i18n.global.t('promocode_success') }}</p>
 					<h1>{{ success }} <Coin /></h1>
 				</div>
 				<button @click="closePopup" class="popup__button">OK</button>
@@ -231,6 +235,7 @@ import { Pen, CopyLink, Coin, Award, Save, InputOkay } from '../assets/icons';
 import { getFormData } from '../composables/useFormData';
 import { textColor } from '../composables/useColor';
 import Popup from './Popup.vue';
+import i18n from '../locales';
 
 const appStore = useAppStore();
 /* Reactive variables for Promocode */
@@ -395,14 +400,15 @@ const sendPromocode = async () => {
 	} catch (err) {
 		console.log('Error sending promocode: ', err);
 		error.value = err.response.data.message.ru;
-		if (err.response.status == 500) error.value = 'Ошибка сервера. Повторите через некоторое время';
+		if (err.response.status == 500)
+			error.value = 'Ошибка сервера. Повторите через некоторое время';
 	} finally {
 		loading.value = false;
 	}
 };
 
 /* Ordinary Functions */
-const copyToClipboard = (link) => {
+const copyToClipboard = link => {
 	const tempInput = document.createElement('input');
 	tempInput.value = link;
 	document.body.appendChild(tempInput);
@@ -430,7 +436,7 @@ const dateFormatter = () => {
 		}
 	}
 };
-const lastIndexOfLastNumber = (str) => {
+const lastIndexOfLastNumber = str => {
 	for (let i = str.length - 1; i >= 0; i--) {
 		if (!isNaN(parseInt(str[i]))) {
 			return i;
@@ -439,7 +445,7 @@ const lastIndexOfLastNumber = (str) => {
 	return -1;
 };
 /* Toggle functions */
-const toggleGender = (newGender) => (newUser.gender = newGender);
+const toggleGender = newGender => (newUser.gender = newGender);
 const toggleEdit = () => {
 	isEditing.value = !isEditing.value;
 	const {
@@ -466,7 +472,7 @@ const toggleEdit = () => {
 	newUser.gender = gender;
 	newUser.phoneNumber = oldTel;
 };
-const toggleError = (val) => (editingError.value = val);
+const toggleError = val => (editingError.value = val);
 const toggleEditPopup = () => (editSuccess.value = !editSuccess.value);
 
 /* Computed Values */
@@ -491,10 +497,17 @@ const referralLinks = computed(() => [
 const userFullName = computed(() => `${appStore.user.firstName} ${appStore.user.lastName}`);
 const role = computed(() =>
 	appStore.user.role == 'Employee'
-		? 'Фармацевт'
+		? i18n.global.t('profile_pharmacist')
 		: appStore.user.role == 'Owner'
-		? 'Командир'
+		? i18n.global.t('profile_owner')
 		: appStore.user.role
+);
+const company = computed(() =>
+	appStore.company
+		? i18n.global.locale == 'ru'
+			? `в Аптеке ${appStore.company.companyName}`
+			: `${appStore.company.companyName} dorixonasida`
+		: ''
 );
 const formattedIqcAmount = computed(() => (appStore.iqc ? appStore.iqc.amountofIQC : '0'));
 const telLength = computed(() => newUser.phoneNumber.length);
@@ -524,7 +537,8 @@ const dateLabelStyle = computed(() => ({
 	color: editingError.value == 'date' ? 'var(--color-primary-pink)' : '',
 }));
 const dateInputStyle = computed(() => ({
-	color: editingError.value == 'date' ? 'var(--color-primary-pink)' : appStore.isDark ? '#fff' : '',
+	color:
+		editingError.value == 'date' ? 'var(--color-primary-pink)' : appStore.isDark ? '#fff' : '',
 	borderColor: editingError.value == 'date' ? 'var(--color-primary-pink)' : '',
 }));
 const telLabelStyle = computed(() => ({
@@ -700,6 +714,7 @@ h2 {
 			height: 1.6rem;
 		}
 		&_button {
+			width: 10rem;
 			cursor: pointer;
 			display: flex;
 			align-items: center;
@@ -808,7 +823,10 @@ h2 {
 			align-items: center;
 			gap: 0.8rem;
 			border-radius: 1rem;
-			background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
+			background: var(
+				--Richard-Gradient,
+				linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%)
+			);
 			font-size: 1.2rem;
 			font-weight: 600;
 		}

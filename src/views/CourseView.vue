@@ -23,8 +23,7 @@
 						class="course__info--length__inner"
 						:style="`width: ${(100 / (totalLessons * 2)) * totalWatched}%; border: ${
 							totalWatched == 0 ? '0' : '1'
-						}px solid #61c1c0`"
-					></div>
+						}px solid #61c1c0`"></div>
 				</div>
 			</div>
 
@@ -33,8 +32,10 @@
 					<Play class="course__info--box__play" />
 				</RouterLink>
 
-				<p>{{ JSON.parse(lesson.lessonTitleName).ru }}</p>
-				<span class="course__info--box__label">Урок {{ n + 1 }}</span>
+				<p>{{ JSON.parse(lesson.lessonTitleName)[i18n.global.locale] }}</p>
+				<span class="course__info--box__label"
+					>{{ i18n.global.t('lesson') }} {{ n + 1 }}</span
+				>
 				<Coin class="course__info--box__coin" v-if="lesson.quizes.prizeIQC" />
 				<div class="course__info--length__outer">
 					<div
@@ -52,12 +53,11 @@
 								: !lesson.quizes.quizlog.length > 0
 								? '1px solid #61c1c0'
 								: '1px solid #61c1c0',
-						}"
-					></div>
+						}"></div>
 				</div>
 
 				<span class="course__info--box__time">
-					{{ convertToMinutes(JSON.parse(lesson.videoLength).ru) }}
+					{{ convertToMinutes(JSON.parse(lesson.videoLength)[i18n.global.locale]) }}
 				</span>
 			</div>
 		</div>
@@ -71,6 +71,7 @@ import { useAppStore } from '../appStore';
 import useAppear from '../composables/useAppear';
 import { Video, Infinity, Play, Coin } from '../assets/icons';
 import axios from 'axios';
+import i18n from '../locales';
 
 onMounted(() => {
 	useAppear(show);
@@ -82,7 +83,7 @@ const appStore = useAppStore();
 const course = ref({});
 const show = ref(false);
 
-const fetchCourses = async () => {
+const fetchCourses = async function () {
 	const BASE_URL = 'https://api.pharmiq.uz/api/v1-1/spa-courses/coursesNew?';
 	const config = { headers: { Authorization: `Bearer ${appStore.token}` } };
 
@@ -98,82 +99,88 @@ const fetchCourses = async () => {
 			appStore.pharmacy = data.courses.data;
 		}
 
-		course.value = appStore.courses.find((course) => course.id == route.params.id);
+		course.value = appStore.courses.find(course => course.id == route.params.id);
 		if (!course.value)
-			course.value = appStore.pharmacy.find((course) => course.id == route.params.id);
+			course.value = appStore.pharmacy.find(course => course.id == route.params.id);
 	} catch (error) {
 		console.log('Error: ', error);
 	}
+};
+const convertToMinutes = function (seconds) {
+	let minutes = Math.floor(seconds / 60);
+	let remainingSeconds = seconds % 60;
+
+	let result =
+		minutes.toString().padStart(2, '0') + ':' + remainingSeconds.toString().padStart(2, '0');
+
+	return result;
 };
 
 const getinfo = computed(() => course.value.getinfo);
 const bannerUrl = computed(() => {
 	const getinfoValue = getinfo.value;
 	if (getinfoValue) {
-		return `https://api.pharmiq.uz/files/course/${JSON.parse(getinfoValue.courseBanner).ru}`;
+		return `https://api.pharmiq.uz/files/course/${
+			JSON.parse(getinfoValue.courseBanner)[i18n.global.locale]
+		}`;
 	}
 	return '';
 });
 const title = computed(() => {
 	const getinfoValue = getinfo.value;
 	if (getinfoValue) {
-		return JSON.parse(getinfoValue.courseTitleName).ru;
+		return JSON.parse(getinfoValue.courseTitleName)[i18n.global.locale];
 	}
 	return '';
 });
 const desc = computed(() => {
 	const getinfoValue = getinfo.value;
 	if (getinfoValue) {
-		return JSON.parse(getinfoValue.courseInfo).ru;
+		return JSON.parse(getinfoValue.courseInfo)[i18n.global.locale];
 	}
 	return '';
 });
 const startDate = computed(() => course.value.startDate);
 const endDate = computed(() => course.value.endDate);
-const numberOfVideos = computed(() => {
-	if (course.value.lessons) {
-		return `${course.value.lessons.length} видеоурока`;
-	}
-	return '';
-});
+const numberOfVideos = computed(() =>
+	course.value.lessons ? `${course.value.lessons.length} ${i18n.global.t('video_lesson')}` : ''
+);
 const totalVideoLength = computed(() => {
 	if (course.value.lessons) {
 		let totalLength = 0;
-		course.value.lessons.forEach((lesson) => {
+		course.value.lessons.forEach(lesson => {
 			const lessonInfo = JSON.parse(lesson.videoLength);
-			if (lessonInfo && lessonInfo.ru) {
-				totalLength += lessonInfo.ru / 60;
+			if (lessonInfo && lessonInfo[i18n.global.locale]) {
+				totalLength += lessonInfo[i18n.global.locale] / 60;
 			}
 		});
-		return `${Math.round(totalLength)} минут`;
+		return `${Math.round(totalLength)} ${i18n.global.t('minute')}`;
 	}
 	return '';
 });
-const btnText = computed(() => {
-	if (course.value.lessons)
-		return course.value.lessons[0].lessonlog ? 'Продолжить обучение' : 'Начать обучение';
-	return '';
-});
+const btnText = computed(() =>
+	course.value.lessons
+		? course.value.lessons[0].lessonlog
+			? i18n.global.t('continue_learning')
+			: i18n.global.t('start_learning')
+		: ''
+);
 const totalWatched = computed(() => {
 	let totalWatched = 0;
 	if (course.value.lessons) {
-		course.value.lessons.forEach((lesson) => {
-			lesson.lessonlog ? totalWatched++ : null;
-			lesson.quizes?.quizlog[0]?.status ? totalWatched++ : null;
-
+		course.value.lessons.forEach(lesson => {
+			lesson.lessonlog && totalWatched++;
+			lesson.quizes?.quizlog[0]?.status && totalWatched++;
 			return totalWatched;
 		});
 		return totalWatched;
 	}
 	return 0;
 });
-const totalLessons = computed(() => {
-	if (course.value.lessons) return course.value.lessons.length;
-	return 0;
-});
+const totalLessons = computed(() => (course.value.lessons ? course.value.lessons.length : 0));
 const lessonUrl = computed(() => {
 	if (course.value.lessons) {
-		const lessonWithNoLog = course.value.lessons.find((lesson) => !lesson.lessonlog);
+		const lessonWithNoLog = course.value.lessons.find(lesson => !lesson.lessonlog);
 		if (lessonWithNoLog) {
 			return `/lesson/${lessonWithNoLog.id}`;
 		}
@@ -181,21 +188,6 @@ const lessonUrl = computed(() => {
 	}
 	return '';
 });
-
-// const videoUrl = computed(() => {
-// 	if (lesson.value) return JSON.parse(lesson.value.videoLocId).ru;
-// 	return '/';
-// });
-
-const convertToMinutes = (seconds) => {
-	var minutes = Math.floor(seconds / 60);
-	var remainingSeconds = seconds % 60;
-
-	var result =
-		minutes.toString().padStart(2, '0') + ':' + remainingSeconds.toString().padStart(2, '0');
-
-	return result;
-};
 
 /* Styles */
 const bannerAppear = computed(() => ({

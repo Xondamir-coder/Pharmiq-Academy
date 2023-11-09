@@ -5,8 +5,7 @@
 				active-class="link--active"
 				v-for="route in routes"
 				:key="route.name"
-				:to="route.to"
-			>
+				:to="route.to">
 				{{ route.name }}
 			</RouterLink>
 		</nav>
@@ -18,32 +17,33 @@
 import { onMounted, ref, computed } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 import useAppear from '../composables/useAppear';
+import i18n from '../locales';
 
-const routes = ref([
+const routes = computed(() => [
 	{
 		to: 'ongoing',
-		name: 'На изучении',
+		name: i18n.global.t('learn_current'),
 	},
 	{
 		to: 'courses',
-		name: 'Курсы',
+		name: i18n.global.t('learn_courses'),
 	},
 	{
 		to: 'mypharmacy',
-		name: 'Моя Аптека',
+		name: i18n.global.t('learn_pharmacy'),
 	},
 	{
 		to: 'completed',
-		name: 'Пройденные',
+		name: i18n.global.t('learn_passed'),
 	},
 ]);
 const appear = ref(false);
 
-onMounted(() => useAppear(appear));
-
 const showSection = computed(() => ({
 	transform: appear.value ? 'translateY(0)' : 'translateY(100%)',
 }));
+
+onMounted(() => useAppear(appear));
 </script>
 
 <style lang="scss" scoped>

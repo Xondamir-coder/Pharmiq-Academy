@@ -2,7 +2,7 @@
 	<div class="lesson">
 		<video controls @timeupdate="trackVideo">
 			<source :src="videoUrl" type="video/mp4" />
-			Ваш браузер не поддерживает это видео
+			{{ i18n.global.t('not_support') }}
 		</video>
 
 		<div class="lesson__buttons">
@@ -11,9 +11,11 @@
 				@click="toggleBtn(btn)"
 				:style="{ color: showMaterials == i ? '#fff' : '#858597' }"
 				class="lesson__button"
-				v-for="(btn, i) in ['ТЕКСТ УРОКА', 'МАТЕРИАЛЫ УРОКА']"
-				:key="btn"
-			>
+				v-for="(btn, i) in [
+					i18n.global.t('lesson_text'),
+					i18n.global.t('lesson_materials'),
+				]"
+				:key="btn">
 				{{ btn }}
 			</button>
 		</div>
@@ -28,7 +30,7 @@
 			<div v-if="lesson.materials.length > 0">
 				{{ lesson.materials }}
 			</div>
-			<p v-else :style="textColor">Нет дополнительных материалов к уроку</p>
+			<p v-else :style="textColor">{{ i18n.global.t('no_materials') }}</p>
 		</div>
 		<RouterLink v-if="watchedVideo" :style="textAppear" class="lesson__test" :to="quizUrl">
 			{{ btnText }}
@@ -38,18 +40,17 @@
 			v-else
 			:style="textAppear"
 			@click="togglePopup(true)"
-			class="lesson__test lesson__test--locked"
-		>
+			class="lesson__test lesson__test--locked">
 			<Locked />
-			НАЧАТЬ ТЕСТИРОВАНИЕ
+			{{ i18n.global.t('start_quiz') }}
 			<Locked />
 		</button>
 
 		<Teleport to="body">
-			<div class="overlay" v-if="showPopup"></div>
+			<div class="overlay" v-if="showPopup" @click="togglePopup(false)"></div>
 			<Transition name="fade">
 				<div class="popup" v-if="showPopup">
-					<p>Для начало тестирования, надо пройти урок</p>
+					<p>{{ i18n.global.t('warning_pass') }}</p>
 					<button @click="togglePopup(false)" class="popup__button">OK</button>
 				</div>
 			</Transition>
@@ -66,6 +67,7 @@ import { useAppStore } from '../appStore';
 import useAppear from '../composables/useAppear';
 import { textColor } from '../composables/useColor';
 import { getFormData } from '../composables/useFormData';
+import i18n from '../locales';
 
 const appStore = useAppStore();
 const route = useRoute();
@@ -78,12 +80,12 @@ const isWatching = ref(false);
 const showPopup = ref(false);
 const config = { headers: { Authorization: `Bearer ${appStore.token}` } };
 
-const toggleBtn = (label) => {
-	showMaterials.value = label == 'ТЕКСТ УРОКА' ? false : true;
+const togglePopup = val => (showPopup.value = val);
+const toggleBtn = function (label) {
+	showMaterials.value = label == i18n.global.t('lesson_materials');
 	countdown(1, 120000);
 };
-const togglePopup = (val) => (showPopup.value = val);
-const findLesson = async () => {
+const findLesson = async function () {
 	const BASE_URL = 'https://api.pharmiq.uz/api/v1-1/spa-courses/coursesNew?';
 	try {
 		if (!appStore.courses) {
@@ -98,42 +100,42 @@ const findLesson = async () => {
 		}
 
 		// Find the lesson in courses
-		const foundCourseInCourses = appStore.courses.find((course) =>
-			course.lessons.find((lesson) => lesson.id == route.params.id)
+		const foundCourseInCourses = appStore.courses.find(course =>
+			course.lessons.find(lesson => lesson.id == route.params.id)
 		);
 
 		// Find the lesson in pharmacy if not found in courses
 		const foundCourseInPharmacy = !foundCourseInCourses
-			? appStore.pharmacy.find((course) =>
-					course.lessons.find((lesson) => lesson.id == route.params.id)
+			? appStore.pharmacy.find(course =>
+					course.lessons.find(lesson => lesson.id == route.params.id)
 			  )
 			: null;
 
 		// Set the lesson ref based on the found course
 		lesson.value =
-			foundCourseInCourses?.lessons.find((lesson) => lesson.id == route.params.id) ||
-			foundCourseInPharmacy?.lessons.find((lesson) => lesson.id == route.params.id);
+			foundCourseInCourses?.lessons.find(lesson => lesson.id == route.params.id) ||
+			foundCourseInPharmacy?.lessons.find(lesson => lesson.id == route.params.id);
 
 		fetchLesson(lesson.value.course_id);
 	} catch (error) {
 		console.log('Error: ', error);
 	}
 };
-const fetchLesson = async (course_id) => {
+const fetchLesson = async function (course_id) {
 	const URL = `https://api.pharmiq.uz/api/v1-1/spa-courses/getLessons?course_id=${course_id}`;
 	try {
 		const { data } = await axios.get(URL, config);
-		lesson.value = data.lessons.find((lesson) => lesson.id == route.params.id);
+		lesson.value = data.lessons.find(lesson => lesson.id == route.params.id);
 		watchedVideo.value = lesson.value.lessonlog;
 	} catch (error) {
 		console.log('Error: ', error);
 	}
 };
-const trackVideo = () => {
-	const videoLength = parseInt(JSON.parse(lesson.value.videoLength).ru) * 1000;
+const trackVideo = function () {
+	const videoLength = parseInt(JSON.parse(lesson.value.videoLength)[i18n.global.locale]) * 1000;
 	countdown(0, videoLength);
 };
-const lessonWatched = async (typeContent) => {
+const lessonWatched = async function (typeContent) {
 	const URL = 'https://api.pharmiq.uz/api/v1-1/spa-courses/saveLessonLog';
 	const formData = getFormData();
 	formData.append('lesson_id', lesson.value.id);
@@ -146,20 +148,26 @@ const lessonWatched = async (typeContent) => {
 		console.log('Error: ', error);
 	}
 };
-const countdown = (type, time) => {
+const countdown = function (type, time) {
 	if (isWatching.value || watchedVideo.value) return;
 	isWatching.value = true;
 	setTimeout(() => {
 		lessonWatched(type);
 	}, time);
 };
-const videoUrl = computed(() => (lesson.value ? JSON.parse(lesson.value.videoLocId).ru : ''));
-const title = computed(() => (lesson.value ? JSON.parse(lesson.value.lessonTitleName).ru : ''));
+const videoUrl = computed(() =>
+	lesson.value ? JSON.parse(lesson.value.videoLocId)[i18n.global.locale] : ''
+);
+const title = computed(() =>
+	lesson.value ? JSON.parse(lesson.value.lessonTitleName)[i18n.global.locale] : ''
+);
 const text = computed(() =>
-	lesson.value && lesson?.value?.contents ? JSON.parse(lesson.value.contents[0].body).ru : ''
+	lesson.value && lesson?.value?.contents
+		? JSON.parse(lesson.value.contents[0].body)[i18n.global.locale]
+		: ''
 );
 const btnText = computed(() =>
-	lesson.value.quizes.quizlog == 0 ? 'НАЧАТЬ ТЕСТИРОВАНИЕ' : 'ПЕРЕПРОЙТИ ТЕСТИРОВАНИЕ'
+	lesson.value.quizes.quizlog == 0 ? i18n.global.t('start_quiz') : i18n.global.t('restart_quiz')
 );
 const quizUrl = computed(() => `/quiz/${lesson.value.id}`);
 
@@ -230,6 +238,7 @@ onMounted(() => {
 		}
 	}
 	&__button {
+		text-transform: uppercase;
 		transition: color 0.3s 0.2s;
 		height: 5.2rem;
 		padding: 0.8rem 4rem;

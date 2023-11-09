@@ -1,21 +1,24 @@
 <template>
 	<section class="stats" :style="sectionStyle">
-		<h1 class="stats__heading">Моя Статистика</h1>
+		<h1 class="stats__heading" :style="textColor">{{ i18n.global.t('stats_title') }}</h1>
 		<div class="stats__container">
 			<div class="stats__history">
-				<h2>История кошелка</h2>
+				<h2 :style="darkText">
+					{{ i18n.global.t('stats_wallet') }}
+				</h2>
 				<div class="stats__history-grid">
 					<div class="stats__history--box">
-						<h3>Количество</h3>
-						<h3>Получено / Потрачено</h3>
-						<h3>Дата / Время</h3>
+						<h3 :style="darkText">{{ i18n.global.t('stats_amount') }}</h3>
+						<h3 :style="darkText">{{ i18n.global.t('stats_gain') }}</h3>
+						<h3 :style="darkText">{{ i18n.global.t('stats_date') }}</h3>
 					</div>
 					<div
 						v-for="transaction in appStore.transactions.iqcTransactions"
 						:key="transaction.id"
-						:style="{ color: transaction.valueType ? '#61c1c0' : 'var(--color-primary-pink)' }"
-						class="stats__history--box"
-					>
+						:style="{
+							color: transaction.valueType ? '#61c1c0' : 'var(--color-primary-pink)',
+						}"
+						class="stats__history--box">
 						<p>
 							<span v-if="transaction.valueType">+</span>
 							<span v-else>-</span>
@@ -33,19 +36,23 @@
 			</div>
 
 			<div class="stats__courses">
-				<h2>Курсы</h2>
+				<h2 :style="darkText">
+					{{ i18n.global.t('learn_courses') }}
+				</h2>
 
 				<div class="stats__courses--box">
 					<div class="chart__container--1">
 						<Doughnut :options="options" :data="data" />
 					</div>
 					<div class="chart__details">
-						<p>Пройдено</p>
-						<p>На изучении</p>
+						<p>{{ i18n.global.t('stats_passed') }}</p>
+						<p>{{ i18n.global.t('stats_ongoing') }}</p>
 					</div>
 				</div>
 
-				<h2>Средняя оценка</h2>
+				<h2 :style="darkText">
+					{{ i18n.global.t('stats_average') }}
+				</h2>
 
 				<div class="stats__average stats__courses--box">
 					<div :style="scoreStyle">
@@ -54,20 +61,22 @@
 					</div>
 				</div>
 
-				<h2>История системы</h2>
+				<h2 :style="darkText">
+					{{ i18n.global.t('stats_history') }}
+				</h2>
 
 				<div class="stats__courses--system">
 					<div>
-						<p :style="textColor">В системе с</p>
+						<p :style="textColor">{{ i18n.global.t('stats_from') }}</p>
 						<span class="bg-dark-blue">{{ userCreatedDate }}</span>
 					</div>
 					<div>
-						<p :style="textColor">В системе</p>
+						<p :style="textColor">{{ i18n.global.t('stats_system') }}</p>
 						<span class="bg-blue">{{ userActiveDays }}</span>
 					</div>
 					<div>
-						<p :style="textColor">Статус</p>
-						<span class="bg-green">Активный </span>
+						<p :style="textColor">{{ i18n.global.t('stats_status') }}</p>
+						<span class="bg-green">{{ i18n.global.t('stats_active') }}</span>
 					</div>
 				</div>
 			</div>
@@ -83,6 +92,7 @@ import { useAppStore } from '../appStore';
 import { textColor } from '../composables/useColor';
 import useAppear from '../composables/useAppear';
 import { Coin } from '../assets/icons';
+import i18n from '../locales';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -94,7 +104,7 @@ const userActiveDays = computed(() => {
 	const userLoggedInDate = new Date(appStore.user.created_at);
 	const timeDifference = currentDate - userLoggedInDate;
 	const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-	return `${days} дней`;
+	return `${days} ${i18n.global.t('stats_days')}`;
 });
 const userAverageScore = computed(() => appStore.stats && appStore.stats.rate);
 
@@ -120,7 +130,7 @@ const data = {
 	],
 };
 
-const formatDate = (originalDate) => {
+const formatDate = originalDate => {
 	const date = new Date(originalDate);
 	const day = date.getDate();
 	const month = date.getMonth() + 1;
@@ -149,6 +159,7 @@ const scoreStyle = computed(() => ({
 			? '0px 0px 10px #f2c94c30'
 			: '0px 0px 10px #ff736e75 ',
 }));
+const darkText = computed(() => ({ color: appStore.isDark ? '#fff' : '' }));
 
 onMounted(() => useAppear(appear));
 </script>
@@ -277,6 +288,7 @@ onMounted(() => useAppear(appear));
 				}
 				width: 100%;
 				display: grid;
+				align-items: center;
 				grid-template-columns: repeat(2, 1fr);
 				padding: 1rem;
 				gap: 1rem;

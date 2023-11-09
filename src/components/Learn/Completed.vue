@@ -6,8 +6,7 @@
 				v-for="mainLabel in mainLabels"
 				:key="mainLabel"
 				:class="[selectedMainLabel === mainLabel ? darkActiveBtn : '', darkBtn]"
-				@click="selectMainLabel(mainLabel)"
-			>
+				@click="selectMainLabel(mainLabel)">
 				{{ mainLabel }}
 			</button>
 		</div>
@@ -17,8 +16,7 @@
 				v-for="secondaryLabel in secondaryLabels"
 				:key="secondaryLabel"
 				:class="[selectedSecondaryLabel === secondaryLabel ? darkActiveBtn : '', darkBtn]"
-				@click="selectSecondaryLabel(secondaryLabel)"
-			>
+				@click="selectSecondaryLabel(secondaryLabel)">
 				{{ secondaryLabel }}
 			</button>
 		</div>
@@ -30,37 +28,54 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { useAppStore } from '../../appStore';
 import CourseCard from './CourseCard.vue';
 import { textColor } from '../../composables/useColor';
+import i18n from '../../locales';
 
 const appStore = useAppStore();
-const mainLabels = ref(['Курсы', 'Моя Аптека']);
-const selectedMainLabel = ref('Курсы');
-const selectedSecondaryLabel = ref('Все');
+const mainLabels = computed(() => [
+	i18n.global.t('learn_courses'),
+	i18n.global.t('learn_pharmacy'),
+]);
+const selectedMainLabel = ref(i18n.global.t('learn_courses'));
+const selectedSecondaryLabel = ref(i18n.global.t('learn_all'));
 
 const secondaryLabels = computed(() =>
-	selectedMainLabel.value === 'Курсы'
-		? ['Все', 'Нозология', 'Продажи и ассортимент', 'Фармопека']
-		: ['Препараты', 'Корпоративные']
+	selectedMainLabel.value === i18n.global.t('learn_courses')
+		? [
+				i18n.global.t('learn_all'),
+				i18n.global.t('learn_nosology'),
+				i18n.global.t('learn_sell'),
+				i18n.global.t('learn_farmopeka'),
+		  ]
+		: [i18n.global.t('learn_drugs'), i18n.global.t('learn_corporate')]
 );
 
-const selectMainLabel = (label) => {
+const selectMainLabel = function (label) {
 	selectedMainLabel.value = label;
-	if (selectedMainLabel.value == 'Курсы') selectedSecondaryLabel.value = 'Все';
-	else selectedSecondaryLabel.value = 'Препараты';
+	if (selectedMainLabel.value == i18n.global.t('learn_courses'))
+		selectedSecondaryLabel.value = i18n.global.t('learn_all');
+	else selectedSecondaryLabel.value = i18n.global.t('learn_drugs');
 };
-const selectSecondaryLabel = (label) => (selectedSecondaryLabel.value = label);
+const selectSecondaryLabel = label => (selectedSecondaryLabel.value = label);
 const filteredCourses = computed(() => {
-	if (selectedMainLabel.value == 'Курсы' && selectedSecondaryLabel.value == 'Все') {
+	if (
+		selectedMainLabel.value == i18n.global.t('learn_courses') &&
+		selectedSecondaryLabel.value == i18n.global.t('learn_all')
+	) {
 		return appStore.passed.filter(
-			(item) =>
-				item.course.category_id == 1 || item.course.category_id == 2 || item.course.category_id == 3
+			item =>
+				item.course.category_id == 1 ||
+				item.course.category_id == 2 ||
+				item.course.category_id == 3
 		);
 	} else {
 		return appStore.passed.filter(
-			(item) => JSON.parse(item.course.category.categoryName).ru == selectedSecondaryLabel.value
+			item =>
+				JSON.parse(item.course.category.categoryName)[i18n.global.locale] ==
+				selectedSecondaryLabel.value
 		);
 	}
 });
@@ -70,6 +85,11 @@ const darkBtn = computed(() => (appStore.isDark ? 'learn__button--dark' : 'learn
 const darkActiveBtn = computed(() =>
 	appStore.isDark ? 'learn__button--dark--active' : 'learn__button--active'
 );
+
+watchEffect(() => {
+	selectedMainLabel.value = i18n.global.t('learn_courses');
+	selectedSecondaryLabel.value = i18n.global.t('learn_all');
+});
 </script>
 
 <style lang="scss" scoped>

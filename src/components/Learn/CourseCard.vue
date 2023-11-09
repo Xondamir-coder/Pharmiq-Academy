@@ -15,8 +15,7 @@
 					class="course__info--length__inner"
 					:style="`width: ${(100 / (totalLessons * 2)) * totalWatched}%; border: ${
 						totalWatched == 0 ? '0' : '1'
-					}px solid #61c1c0`"
-				></div>
+					}px solid #61c1c0`"></div>
 			</div>
 		</div>
 		<button class="custom__button">
@@ -32,6 +31,7 @@ import { Coin, Video } from '../../assets/icons';
 import { useAppStore } from '../../appStore';
 import { useRoute } from 'vue-router';
 import useAppear from '../../composables/useAppear';
+import i18n from '../../locales';
 
 const appStore = useAppStore();
 const route = useRoute();
@@ -42,11 +42,16 @@ const props = defineProps({
 
 const getInfo = computed(() => props.course.getinfo);
 const bannerUrl = computed(
-	() => `https://api.pharmiq.uz/files/course/${JSON.parse(getInfo.value.courseBanner).ru}`
+	() =>
+		`https://api.pharmiq.uz/files/course/${
+			JSON.parse(getInfo.value.courseBanner)[i18n.global.locale]
+		}`
 );
-const categoryName = computed(() => JSON.parse(props.course.category.categoryName).ru);
-const courseTitle = computed(() => JSON.parse(getInfo.value.courseTitleName).ru);
-const courseDescription = computed(() => JSON.parse(getInfo.value.courseInfo).ru);
+const categoryName = computed(
+	() => JSON.parse(props.course.category.categoryName)[i18n.global.locale]
+);
+const courseTitle = computed(() => JSON.parse(getInfo.value.courseTitleName)[i18n.global.locale]);
+const courseDescription = computed(() => JSON.parse(getInfo.value.courseInfo)[i18n.global.locale]);
 const slicedDescription = computed(() =>
 	courseDescription.value.length > 50
 		? `${courseDescription.value.slice(0, 50)} ...`
@@ -55,23 +60,32 @@ const slicedDescription = computed(() =>
 const slicedTitle = computed(() =>
 	courseTitle.value.length > 70 ? `${courseTitle.value.slice(0, 70)} ...` : courseTitle.value
 );
-const numberOfVideos = computed(() => `${props.course.lessons.length} видеоурок`);
+const numberOfVideos = computed(
+	() => `${props.course.lessons.length} ${i18n.global.t('video_lesson')}`
+);
 const totalVideoLength = computed(() => {
 	let totalVideoLength = '';
 	props.course.lessons.forEach(
-		(lesson) => (totalVideoLength += JSON.parse(lesson.videoLength).ru / 60)
+		lesson => (totalVideoLength += JSON.parse(lesson.videoLength)[i18n.global.locale] / 60)
 	);
-	return `${Math.round(totalVideoLength)} минут`;
+	return `${Math.round(totalVideoLength)} ${i18n.global.t('minute')}`;
 });
 const isQuizPassed = computed(() => props.course.lessons[0].quizes.quizlog.length == 0);
 const prizeIqc = computed(() => {
 	let prizeIqc = '';
-	props.course.lessons.forEach((lesson) => (prizeIqc += lesson.quizes.prizeIQC));
+	props.course.lessons.forEach(lesson => (prizeIqc += lesson.quizes.prizeIQC));
 	return prizeIqc;
 });
-const btnText = computed(() =>
-	isQuizPassed.value ? `ПРОЙТИ КУРС И ПОЛУЧИТЬ ${prizeIqc.value}` : 'ПОВТОРИТЬ КУРС'
-);
+const btnText = computed(() => {
+	if (isQuizPassed.value)
+		if (i18n.global.locale == 'ru') return `ПРОЙТИ КУРС И ПОЛУЧИТЬ ${prizeIqc.value}`;
+		else return `Kursdan o'tib ${prizeIqc.value} yutib olish`;
+	else {
+		if (i18n.global.locale == 'ru') return `ПОВТОРИТЬ КУРС`;
+		else return `Kursni takrorlash`;
+	}
+});
+
 const darkDard = computed(() => ({
 	boxShadow: appStore.isDark ? '0px 0px 8px 0px rgba(255, 255, 255, 0.3)' : '',
 	transform: appear.value ? 'scale(1)' : 'scale(.9)',
@@ -81,7 +95,7 @@ const totalWatched = computed(() => {
 	let totalWatched = 0;
 
 	if (props.course.lessons) {
-		props.course.lessons.forEach((lesson) => {
+		props.course.lessons.forEach(lesson => {
 			/* There is no lesson log in completed thus totalWatched++ */
 			if (route.name == 'completed') totalWatched++;
 
@@ -109,5 +123,8 @@ appStore.iqc.amountOfIQC = 50;
 button svg {
 	width: 3.6rem;
 	height: 3.6rem;
+}
+button {
+	text-transform: uppercase;
 }
 </style>

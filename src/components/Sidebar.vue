@@ -6,7 +6,7 @@
 
 		<div class="sidebar__search" :style="darkSearch">
 			<Search />
-			<input type="text" placeholder="Поиск" :style="darkInput" />
+			<input type="text" :placeholder="i18n.global.t('search')" :style="darkInput" />
 		</div>
 
 		<!-- <div class="sidebar__pointer" :style="pointerStyle"></div> -->
@@ -17,8 +17,7 @@
 				:key="index"
 				:to="link.to"
 				:active-class="linkActive"
-				:style="textColor"
-			>
+				:style="textColor">
 				<component :is="link.icon"></component>
 				{{ link.label }}
 			</RouterLink>
@@ -27,22 +26,35 @@
 				name="darkmode-toggle"
 				id="darkmode-toggle"
 				:checked="appStore.isDark"
-			/>
-			<label for="darkmode-toggle" @click="toggleDarkMode">
+				@change="toggleDarkMode" />
+			<label for="darkmode-toggle" class="darkmode__label">
 				<Sun class="sun" />
 				<Moon class="moon" />
 			</label>
+			<input
+				type="checkbox"
+				name="lang-toggle"
+				id="lang-toggle"
+				@change="toggleLanguage"
+				:checked="i18n.global.locale == 'uz'" />
+			<div class="sidebar__lang" :style="textColor">
+				{{ i18n.global.t('lang_label') }}
+				<label for="lang-toggle" class="lang__label">
+					<FlagUzbek />
+					<FlagRussian />
+				</label>
+			</div>
 		</nav>
 
-		<p :style="textColor">Скачивайте наше мобильное приложение</p>
+		<p :style="textColor">{{ i18n.global.t('download_text') }}</p>
 		<img class="sidebar__qrcode" src="../assets/qr-code.webp" alt="qr code" />
 		<a href="javascript:void(0);" class="sidebar__link" :style="textColor" @click="logout"
-			><Logout /> выход</a
+			><Logout />{{ i18n.global.t('quit_link') }}</a
 		>
 	</div>
 </template>
 <script setup>
-import { ref, computed, shallowRef } from 'vue';
+import { computed } from 'vue';
 import { useAppStore } from '../appStore';
 import {
 	Logo,
@@ -53,36 +65,38 @@ import {
 	Pharmacy,
 	Store,
 	Mailbox,
-	Settings,
 	Logout,
 	Sun,
 	Moon,
+	FlagRussian,
+	FlagUzbek,
 } from '../assets/icons';
 import { textColor } from '../composables/useColor';
+import i18n from '../locales';
 
 const appStore = useAppStore();
-// const curPosition = ref(16.6);
-
-const navLinks = ref([
-	{ label: 'Главная', to: '/', icon: shallowRef(Home) },
-	{ label: 'Обучение', to: '/learn', icon: shallowRef(Learn) },
-	{ label: 'статистика', to: '/statistics', icon: shallowRef(Statistics) },
-	{ label: 'аптека', to: '/pharmacy', icon: shallowRef(Pharmacy) },
-	{ label: 'магазин', to: '/store', icon: shallowRef(Store) },
-	{ label: 'письма', to: '/mailbox', icon: shallowRef(Mailbox) },
-	{ label: 'настройки', to: '/settings', icon: shallowRef(Settings) },
+const navLinks = computed(() => [
+	{ label: i18n.global.t('home_link'), to: '/', icon: Home },
+	{ label: i18n.global.t('learn_link'), to: '/learn', icon: Learn },
+	{ label: i18n.global.t('stats_link'), to: '/statistics', icon: Statistics },
+	{ label: i18n.global.t('pharmacy_link'), to: '/pharmacy', icon: Pharmacy },
+	{ label: i18n.global.t('store_link'), to: '/store', icon: Store },
+	{ label: i18n.global.t('mailbox_link'), to: '/mailbox', icon: Mailbox },
 ]);
-const toggleDarkMode = () => {
+
+const toggleDarkMode = function () {
 	appStore.isDark = !appStore.isDark;
 	localStorage.setItem('isDark', appStore.isDark);
 };
-const logout = () => {
+const logout = function () {
 	localStorage.removeItem('token');
 	window.location.href = 'https://go.pharmiq.uz/login';
 };
-// const setPointer = (index) => {
-// 	console.log(index);
-// };
+const toggleLanguage = () => {
+	i18n.global.locale = i18n.global.locale == 'ru' ? 'uz' : 'ru';
+	localStorage.setItem('lang', i18n.global.locale);
+};
+
 /* Computed Values */
 const sidebarStyle = computed(() => ({
 	transform: appStore.showPreloader ? 'translateX(-40%)' : 'translateX(0)',
@@ -95,22 +109,50 @@ const darkInput = computed(() => ({
 	color: appStore.isDark ? '#fff' : '#000',
 	backgroundColor: appStore.isDark ? '#000' : '#fff',
 }));
-const linkActive = computed(() => {
-	if (appStore.isDark) return 'link--active--black';
-	return 'link--active';
-});
+const linkActive = computed(() => (appStore.isDark ? 'link--active--black' : 'link--active'));
 </script>
 
 <style lang="scss" scoped>
 label {
-	margin-bottom: 1rem;
-	margin-left: 1rem;
+	&.darkmode__label {
+		background: rgb(124, 202, 250);
+		margin-bottom: 1rem;
+		margin-left: 1rem;
+		& svg {
+			position: absolute;
+			width: 3.2rem;
+			height: 80%;
+			transition: all 0.6s;
+			&.sun {
+				right: 3px;
+				fill: #fff176;
+			}
+			&.moon {
+				transform: scale(0.7) translateX(6px);
+				left: 3px;
+				fill: #fff;
+			}
+		}
+	}
+	&.lang__label {
+		display: flex;
+		justify-content: space-between;
+		padding-right: 0.6rem;
+		padding-left: 0.6rem;
+		& svg {
+			width: 2.4rem;
+			height: 2.4rem;
+			transition: all 0.6s;
+			&:first-child {
+				transform: scale(0.7) translateX(6px);
+			}
+		}
+	}
 	width: 8rem;
 	height: 3rem;
 	position: relative;
 	display: block;
 	padding: 0.3rem;
-	background: rgb(124, 202, 250);
 	border-radius: 10rem;
 	box-shadow: inset 0px 5px 15px rgba(0, 0, 0, 0.4), inset 0px -5px 15px rgba(255, 255, 255, 0.4);
 	cursor: pointer;
@@ -128,28 +170,15 @@ label {
 	&:active::after {
 		width: 3.4rem;
 	}
-	& svg {
-		position: absolute;
-		width: 3.2rem;
-		height: 80%;
-		transition: all 0.6s;
-		&.sun {
-			right: 3px;
-			fill: #fff176;
-		}
-		&.moon {
-			transform: scale(0.7) translateX(6px);
-			left: 3px;
-			fill: #fff;
-		}
-	}
 }
-#darkmode-toggle {
+input[type='checkbox'] {
 	display: none;
 	width: 0;
 	height: 0;
 	visibility: hidden;
-	&:checked + label {
+}
+#darkmode-toggle {
+	&:checked + label.darkmode__label {
 		background: #242424;
 		&::after {
 			left: 7.4rem;
@@ -160,6 +189,20 @@ label {
 		}
 		& svg.moon {
 			transform: scale(1);
+		}
+	}
+}
+#lang-toggle {
+	&:checked + div label.lang__label {
+		&::after {
+			left: 7.4rem;
+			transform: translateX(-100%);
+		}
+		& svg:first-child {
+			transform: scale(1);
+		}
+		& svg:last-child {
+			transform: scale(0.7) translateX(-6px);
 		}
 	}
 }
@@ -296,7 +339,8 @@ label {
 	}
 
 	& p {
-		margin-left: 6.7rem;
+		margin-left: 6.3rem;
+		padding-right: 1rem;
 		@media only screen and (max-width: 1450px) {
 			margin-left: 3.7rem;
 		}
@@ -350,6 +394,13 @@ label {
 		flex-shrink: 0;
 		border-radius: 0.4rem;
 		background: var(--brand-solid-secondary-green, #4db1b1);
+	}
+	&__lang {
+		display: grid;
+		grid-template-columns: 22% 1fr;
+		align-items: center;
+		padding-left: 0.8rem;
+		gap: 1rem;
 	}
 }
 .link--active {

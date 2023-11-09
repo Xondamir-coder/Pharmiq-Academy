@@ -3,7 +3,9 @@
 		<img :style="bannerAppear" :src="bannerUrl" alt="news bg" />
 		<h2 :style="[textColor, titleAppear]">{{ title }}</h2>
 		<div :style="[textColor, titleAppear]" v-html="desc"></div>
-		<RouterLink to="/" class="custom__button" :style="titleAppear">Назад <Back /></RouterLink>
+		<RouterLink to="/" class="custom__button" :style="titleAppear"
+			>{{ i18n.global.t('back') }} <Back
+		/></RouterLink>
 	</div>
 </template>
 
@@ -14,13 +16,14 @@ import { useAppStore } from '../appStore';
 import { Back } from '../assets/icons';
 import { textColor } from '../composables/useColor';
 import useAppear from '../composables/useAppear';
+import i18n from '../locales';
 
 const appStore = useAppStore();
 const route = useRoute();
 const news = ref({});
 const showNews = ref(false);
 
-news.value = appStore.news.find((obj) => obj.id == route.params.id);
+news.value = appStore.news.find(obj => obj.id == route.params.id);
 
 const bannerAppear = computed(() => ({
 	opacity: showNews.value ? '1' : '0',
@@ -31,8 +34,14 @@ const titleAppear = computed(() => ({
 	transform: showNews.value ? 'translateX(0)' : 'translateX(-20rem)',
 }));
 const bannerUrl = computed(() => `https://api.pharmiq.uz/files/news/${news.value.banner}`);
-const title = computed(() => JSON.parse(news.value.title).ru);
-const desc = computed(() => JSON.parse(news.value.content).ru);
+const title = computed(() =>
+	i18n.global.locale == 'ru' ? JSON.parse(news.value.title).ru : JSON.parse(news.value.title).uz
+);
+const desc = computed(() =>
+	i18n.global.locale == 'ru'
+		? JSON.parse(news.value.content).ru
+		: JSON.parse(news.value.content).uz
+);
 onMounted(() => useAppear(showNews));
 </script>
 

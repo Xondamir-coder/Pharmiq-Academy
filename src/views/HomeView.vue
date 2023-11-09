@@ -2,7 +2,7 @@
 	<section class="home" :style="showHome">
 		<div class="home__head">
 			<h1 :style="textColor" class="home__username">
-				С возращением, {{ appStore.user.firstName }}!
+				{{ i18n.global.t('home_title') }}, {{ appStore.user.firstName }}!
 			</h1>
 			<p class="home__date" :style="textColor">{{ getCurrentDate() }}</p>
 		</div>
@@ -11,36 +11,14 @@
 			<Slide v-for="news in appStore.news" :key="news.id" :news="news" />
 		</div>
 
-		<div class="home__course">
-			<div class="home__course-bg">
-				<img src="../assets/books.webp" alt="Books" />
-				<p>Базовый курс по PharmIQ</p>
-			</div>
-			<p class="home__course-category">Категория</p>
-			<h2>КУРС: НАЗВАНИЕ КУРСА</h2>
-			<div class="info__box">
-				<div class="info">
-					<Video />
-					<span>1 видеоурок</span>
-					<p>15 минут</p>
-				</div>
-				<div class="info__bar"></div>
-			</div>
-
-			<button class="custom__button">
-				ПРОЙТИ КУРС И ПОЛУЧИТЬ 200
-				<Coin />
-			</button>
-		</div>
-
 		<div class="home__leaders">
-			<h1 :style="textColor">Таблица лидеров</h1>
+			<h1 :style="textColor">{{ i18n.global.t('board_title') }}</h1>
 			<div>
 				<div class="home__leaders-box">
-					<p class="home__leaders-title">Место</p>
-					<p class="home__leaders-title">Фамилия Имя</p>
-					<p class="home__leaders-title">Аптека</p>
-					<p class="home__leaders-title">Показатель обучения</p>
+					<p class="home__leaders-title">{{ i18n.global.t('board_place') }}</p>
+					<p class="home__leaders-title">{{ i18n.global.t('board_name') }}</p>
+					<p class="home__leaders-title">{{ i18n.global.t('board_pharmacy') }}</p>
+					<p class="home__leaders-title">{{ i18n.global.t('board_stat') }}</p>
 				</div>
 
 				<div v-for="(user, id) in appStore.leaders" :key="id" class="home__leaders-box">
@@ -62,6 +40,7 @@ import { getCurrentDate } from '../composables/useDate';
 import useAppear from '../composables/useAppear';
 import { Coin, Video } from '../assets/icons';
 import Slide from '../components/Home/Slide.vue';
+import i18n from '../locales';
 
 const appStore = useAppStore();
 const appear = ref(false);
@@ -107,7 +86,6 @@ const showHome = computed(() => ({
 		}
 	}
 	&__leaders {
-		grid-column: 2 / span 1;
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
@@ -115,6 +93,7 @@ const showHome = computed(() => ({
 
 		& h1 {
 			font-weight: 400;
+			font-size: 2rem;
 		}
 		&-box {
 			width: 100%;
@@ -160,56 +139,6 @@ const showHome = computed(() => ({
 		grid-row: 2 / span 1;
 		color: #808080;
 		margin-top: 1rem;
-	}
-	&__course {
-		height: 100%;
-		grid-column: 1 / span 1;
-		width: 100%;
-		max-width: 520px;
-		display: flex;
-		justify-content: space-between;
-		flex-direction: column;
-		gap: 1rem;
-		@media only screen and (max-height: 830px) {
-			gap: 1vh;
-		}
-
-		&-bg {
-			border-radius: 3rem;
-			background: linear-gradient(136deg, #61c1c0 0%, #358184 100%);
-			width: 100%;
-			max-width: 520px;
-			height: 50%;
-			display: flex;
-			align-items: center;
-			@media only screen and (max-height: 830px) {
-				margin-bottom: 0;
-			}
-			& img {
-				transform: translateY(3%);
-				width: 50%;
-				height: 120%;
-			}
-			& p {
-				width: 10.6rem;
-				color: #fff;
-				font-weight: 700;
-			}
-		}
-		& h2 {
-			color: #358184;
-			font-size: 1.5rem;
-			font-weight: 600;
-		}
-		&-category {
-			color: #61c1c0;
-			font-size: 1rem;
-			font-weight: 500;
-			line-height: 150%;
-		}
-		& button {
-			width: 100%;
-		}
 	}
 	& button {
 		@media only screen and (max-height: 830px) {

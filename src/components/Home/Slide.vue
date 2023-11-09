@@ -12,10 +12,13 @@
 <script setup>
 import { computed } from 'vue';
 import { textColor } from '../../composables/useColor';
+import i18n from '../../locales';
 const props = defineProps({
 	news: Object,
 });
-const title = computed(() => JSON.parse(props.news.title).ru);
+const title = computed(() =>
+	i18n.global.locale == 'ru' ? JSON.parse(props.news.title).ru : JSON.parse(props.news.title).uz
+);
 </script>
 
 <style lang="scss" scoped>

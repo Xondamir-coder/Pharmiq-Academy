@@ -5,8 +5,7 @@
 			v-for="btnLabel in btnLabels"
 			:key="btnLabel"
 			:class="[activeFilter == btnLabel ? darkActiveBtn : '', darkBtn]"
-			@click="filterCourses(btnLabel)"
-		>
+			@click="filterCourses(btnLabel)">
 			{{ btnLabel }}
 		</button>
 	</div>
@@ -16,22 +15,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import { useAppStore } from '../../appStore';
 import CourseCard from './CourseCard.vue';
+import i18n from '../../locales';
 
 const appStore = useAppStore();
-const activeFilter = ref('Препараты');
-const btnLabels = ref(['Препараты', 'Корпоративные']);
+const activeFilter = ref(i18n.global.t('learn_drugs'));
+const btnLabels = computed(() => [i18n.global.t('learn_drugs'), i18n.global.t('learn_corporate')]);
 
-const filterCourses = (label) => (activeFilter.value = label);
+const filterCourses = label => (activeFilter.value = label);
 const filteredCourses = computed(() =>
 	appStore.pharmacy.filter(
-		(course) => JSON.parse(course.category.categoryName).ru == activeFilter.value
+		course => JSON.parse(course.category.categoryName)[i18n.global.locale] == activeFilter.value
 	)
 );
 const darkBtn = computed(() => (appStore.isDark ? 'learn__button--dark' : ''));
 const darkActiveBtn = computed(() =>
 	appStore.isDark ? 'learn__button--dark--active' : 'learn__button--active'
 );
+watchEffect(() => (activeFilter.value = i18n.global.t('learn_drugs')));
 </script>

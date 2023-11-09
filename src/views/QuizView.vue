@@ -2,10 +2,10 @@
 	<div class="quiz" :style="quizStyle">
 		<div class="quiz__head">
 			<div class="quiz__head--left" :style="textColor">
-				<h1>Тестирование</h1>
+				<h1>{{ i18n.global.t('test') }}</h1>
 				<p>{{ title }}</p>
 				<div class="quiz__head--quantity">
-					<h2>ВОПРОС {{ currentQuestion + 1 }} из {{ maxNumOfQuestions }}</h2>
+					<h2>{{ questionsLeft }}</h2>
 					<div class="quiz__bar--outer">
 						<div class="quiz__bar--inner" :style="barStyle"></div>
 					</div>
@@ -26,54 +26,59 @@
 					ref="options"
 					:style="{
 						color: showAnswer
-							? option.rightAnswer || selectedAnswer == JSON.parse(option.variantText).ru
+							? option.rightAnswer ||
+							  selectedAnswer == JSON.parse(option.variantText)[i18n.global.locale]
 								? '#fff'
 								: ''
 							: '',
 						background: showAnswer
 							? option.rightAnswer
 								? 'linear-gradient(102deg, #5EBC67 -0.69%, #3E9147 100%)'
-								: selectedAnswer == JSON.parse(option.variantText).ru
+								: selectedAnswer ==
+								  JSON.parse(option.variantText)[i18n.global.locale]
 								? 'linear-gradient(102deg, #E75F5F -0.69%, #B43939 100%)'
 								: ''
 							: '',
 						border: showAnswer
 							? option.rightAnswer
 								? '#5EBC67 '
-								: selectedAnswer == JSON.parse(option.variantText).ru
+								: selectedAnswer ==
+								  JSON.parse(option.variantText)[i18n.global.locale]
 								? '#E75F5F '
 								: ''
 							: '',
-					}"
-				>
+					}">
 					<label :for="option.id" @click="preventClick"
-						>{{ JSON.parse(option.variantText).ru }}
+						>{{ JSON.parse(option.variantText)[i18n.global.locale] }}
 					</label>
 					<RadioChosen
 						:type="
 							showAnswer
 								? option.rightAnswer
 									? 'correct'
-									: selectedAnswer == JSON.parse(option.variantText).ru
+									: selectedAnswer ==
+									  JSON.parse(option.variantText)[i18n.global.locale]
 									? 'wrong'
 									: 'chosen'
 								: 'chosen'
-						"
-					>
+						">
 						<input
 							type="radio"
 							name="answer"
-							:value="JSON.parse(option.variantText).ru"
+							:value="JSON.parse(option.variantText)[i18n.global.locale]"
 							v-model="selectedAnswer"
 							:id="option.id"
-							@change="selectOption"
-						/>
+							@change="selectOption" />
 					</RadioChosen>
 				</div>
 			</div>
 		</div>
 
-		<button class="quiz__button" @click="checkAnswer" :disabled="!selectedAnswer" :style="btnStyle">
+		<button
+			class="quiz__button"
+			@click="checkAnswer"
+			:disabled="!selectedAnswer"
+			:style="btnStyle">
 			{{ btnText }}
 		</button>
 	</div>
@@ -86,10 +91,16 @@
 			<h1 v-if="!fail">{{ success }} <Coin /></h1>
 		</template>
 		<template #btn>
-			<button :style="popupBtnStyle" @click="closePopup(true)" class="popup__button" v-if="fail">
-				ПРОЙТИ ЗАНОВО
+			<button
+				:style="popupBtnStyle"
+				@click="closePopup(true)"
+				class="popup__button"
+				v-if="fail">
+				{{ i18n.global.t('restart') }}
 			</button>
-			<button class="popup__button" :style="popupBtnStyle" @click="closePopup(false)">OK</button>
+			<button class="popup__button" :style="popupBtnStyle" @click="closePopup(false)">
+				OK
+			</button>
 		</template>
 	</Popup>
 </template>
@@ -104,6 +115,7 @@ import Popup from '../components/Popup.vue';
 import { getFormData } from '../composables/useFormData';
 import useAppear from '../composables/useAppear';
 import { textColor } from '../composables/useColor';
+import i18n from '../locales';
 
 const route = useRoute();
 const router = useRouter();
@@ -129,7 +141,7 @@ const success = ref();
 const config = { headers: { Authorization: `Bearer ${appStore.token}` } };
 const activeClass = 'quiz__card--option__checked';
 
-const findLesson = async () => {
+const findLesson = async function () {
 	const BASE_URL = 'https://api.pharmiq.uz/api/v1-1/spa-courses/coursesNew?';
 	try {
 		if (!appStore.courses) {
@@ -144,30 +156,30 @@ const findLesson = async () => {
 		}
 
 		// Find the lesson in courses
-		const foundCourseInCourses = appStore.courses.find((course) =>
-			course.lessons.find((lesson) => lesson.id == route.params.id)
+		const foundCourseInCourses = appStore.courses.find(course =>
+			course.lessons.find(lesson => lesson.id == route.params.id)
 		);
 		// Find the lesson in pharmacy if not found in courses
 		const foundCourseInPharmacy = !foundCourseInCourses
-			? appStore.pharmacy.find((course) =>
-					course.lessons.find((lesson) => lesson.id == route.params.id)
+			? appStore.pharmacy.find(course =>
+					course.lessons.find(lesson => lesson.id == route.params.id)
 			  )
 			: null;
 
 		// Set the lesson ref based on the found course
 		const lesson =
-			foundCourseInCourses?.lessons.find((lesson) => lesson.id == route.params.id) ||
-			foundCourseInPharmacy?.lessons.find((lesson) => lesson.id == route.params.id);
+			foundCourseInCourses?.lessons.find(lesson => lesson.id == route.params.id) ||
+			foundCourseInPharmacy?.lessons.find(lesson => lesson.id == route.params.id);
 		fetchLesson(lesson.course_id);
 	} catch (error) {
 		console.log('Error: ', error);
 	}
 };
-const fetchLesson = async (course_id) => {
+const fetchLesson = async function (course_id) {
 	const URL = `https://api.pharmiq.uz/api/v1-1/spa-courses/getLessons?course_id=${course_id}`;
 	try {
 		const { data } = await axios.get(URL, config);
-		const foundLesson = data.lessons.find((lesson) => lesson.id == route.params.id);
+		const foundLesson = data.lessons.find(lesson => lesson.id == route.params.id);
 		lesson.value = foundLesson;
 		quizes.value = foundLesson.quizes;
 		quizes.value.questions = shuffleArray(quizes.value.questions);
@@ -176,21 +188,23 @@ const fetchLesson = async (course_id) => {
 		console.log('Error: ', error);
 	}
 };
-const checkAnswer = () => {
+const checkAnswer = function () {
 	showAnswer.value && (checked.value = true);
 	showAnswer.value = true;
 
 	/* If answer is true increment numOfCorrectAnswers */
 	selectedAnswer.value == correctAnswer.value && checked.value && increment(numOfCorrectAnswers);
 
-	btnText.value == 'Завершить' && checked.value && displayPopup();
-	btnText.value == 'Завершить' && !fail.value && postQuiz();
+	btnText.value == i18n.global.t('complete') && checked.value && displayPopup();
+	btnText.value == i18n.global.t('complete') && !fail.value && postQuiz();
 	/* If user selected next then increment currentQuestion */
 
-	btnText.value == 'Дальше' && checked.value && (addToReqAnswers() || increment(currentQuestion));
+	btnText.value == i18n.global.t('next') &&
+		checked.value &&
+		(addToReqAnswers() || increment(currentQuestion));
 	checked.value && clearState();
 };
-const countdown = (minutes) => {
+const countdown = function (minutes) {
 	let seconds = minutes * 60;
 
 	const countdownInterval = setInterval(() => {
@@ -216,13 +230,12 @@ const countdown = (minutes) => {
 		seconds--;
 	}, 1000); // Update every 1 second
 };
-const selectOption = () => {
+const selectOption = function () {
 	const target = event.target.closest('.quiz__card--option');
 	removeActiveClass();
 	target.classList.add(activeClass);
 };
-const displayPopup = () => (showPopup.value = true);
-const closePopup = (again) => {
+const closePopup = function (again) {
 	clearState();
 	showPopup.value = false;
 	if (!again) {
@@ -235,7 +248,7 @@ const closePopup = (again) => {
 	isReset.value = true;
 	countdown(quizes.value.timeLimits);
 };
-const postQuiz = async () => {
+const postQuiz = async function () {
 	stringifyVariants();
 	const URL = 'https://api.pharmiq.uz/api/v1-1/spa-courses/lessonQuizPost';
 	const formData = getFormData();
@@ -252,19 +265,13 @@ const postQuiz = async () => {
 		console.log('Error:', error);
 	}
 };
-const removeActiveClass = () =>
-	options.value.forEach((option) =>
-		option.classList.contains(activeClass) ? option.classList.remove(activeClass) : null
-	);
-const preventClick = () => showAnswer.value && event.preventDefault();
-const clearState = () => {
+const clearState = function () {
 	selectedAnswer.value = '';
 	showAnswer.value = false;
 	checked.value = false;
 	removeActiveClass();
 };
-const increment = (el) => el.value++;
-const shuffleArray = (array) => {
+const shuffleArray = function (array) {
 	const shuffled = [...array]; // Create a copy of the original array
 	for (let i = shuffled.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
@@ -272,55 +279,78 @@ const shuffleArray = (array) => {
 	}
 	return shuffled; // Return the shuffled array
 };
-const addToReqAnswers = () => {
+const addToReqAnswers = function () {
 	reqAnswers.push({
 		question_ru: question.value,
 		variants: [
 			{
 				id: quiz.value.variants[0].id,
-				choose: JSON.parse(quiz.value.variants[0].variantText).ru == selectedAnswer.value,
+				choose:
+					JSON.parse(quiz.value.variants[0].variantText)[i18n.global.locale] ==
+					selectedAnswer.value,
 				rightAnswer: quiz.value.variants[0].rightAnswer,
 			},
 			{
 				id: quiz.value.variants[1].id,
-				choose: JSON.parse(quiz.value.variants[1].variantText).ru == selectedAnswer.value,
+				choose:
+					JSON.parse(quiz.value.variants[1].variantText)[i18n.global.locale] ==
+					selectedAnswer.value,
 				rightAnswer: quiz.value.variants[1].rightAnswer,
 			},
 			{
 				id: quiz.value.variants[2].id,
-				choose: JSON.parse(quiz.value.variants[2].variantText).ru == selectedAnswer.value,
+				choose:
+					JSON.parse(quiz.value.variants[2].variantText)[i18n.global.locale] ==
+					selectedAnswer.value,
 				rightAnswer: quiz.value.variants[2].rightAnswer,
 			},
 		],
 	});
 };
-const stringifyVariants = () => {
+const stringifyVariants = function () {
 	for (const [i, { variants }] of reqAnswers.entries()) {
 		reqAnswers[i].variants = JSON.stringify(variants);
 	}
 };
+const removeActiveClass = () =>
+	options.value.forEach(option =>
+		option.classList.contains(activeClass) ? option.classList.remove(activeClass) : null
+	);
+const preventClick = () => showAnswer.value && event.preventDefault();
+const increment = el => el.value++;
+const displayPopup = () => (showPopup.value = true);
 
-const title = computed(() => lesson.value && JSON.parse(lesson.value.lessonTitleName).ru);
+const title = computed(
+	() => lesson.value && JSON.parse(lesson.value.lessonTitleName)[i18n.global.locale]
+);
+const questionsLeft = computed(() =>
+	i18n.global.locale == 'ru'
+		? `ВОПРОС ${currentQuestion.value + 1} из ${maxNumOfQuestions.value}`
+		: `${currentQuestion.value + 1}-SAVOL ${maxNumOfQuestions.value} DAN`
+);
 const maxNumOfQuestions = computed(() => quizes.value && quizes.value.questions.length);
 const quiz = computed(() => quizes.value && quizes.value.questions[currentQuestion.value]);
 const quizQuestions = computed(() => quiz.value && shuffleArray(quiz.value.variants));
 const question = computed(() => {
-	if (lesson.value && quizes.value && quiz.value) return JSON.parse(quiz.value.question).ru;
+	if (lesson.value && quizes.value && quiz.value)
+		return JSON.parse(quiz.value.question)[i18n.global.locale];
 	return '';
 });
 const correctAnswer = computed(() => {
 	if (quiz.value)
-		return JSON.parse(quiz.value.variants.find((variant) => variant.rightAnswer).variantText).ru;
+		return JSON.parse(quiz.value.variants.find(variant => variant.rightAnswer).variantText)[
+			i18n.global.locale
+		];
 	return '';
 });
 const btnText = computed(() =>
 	selectedAnswer.value && !showAnswer.value
-		? 'Ответить'
+		? i18n.global.t('answer')
 		: showAnswer.value
 		? isLastQuestion.value == maxNumOfQuestions.value
-			? 'Завершить'
-			: 'Дальше'
-		: 'Ответить'
+			? i18n.global.t('complete')
+			: i18n.global.t('next')
+		: i18n.global.t('answer')
 );
 const isLastQuestion = computed(() =>
 	currentQuestion.value == maxNumOfQuestions.value - 1
@@ -329,13 +359,15 @@ const isLastQuestion = computed(() =>
 );
 const resultMessage = computed(() =>
 	numOfCorrectAnswers.value >= quizes.value?.numberRightAnswersToPass
-		? 'Вы прошли тестирование'
-		: 'Вы не прошли тестирование'
+		? i18n.global.t('quiz_success')
+		: i18n.global.t('quiz_fail')
 );
-const countMessage = computed(
-	() => `Правильные ответы: ${numOfCorrectAnswers.value} из ${maxNumOfQuestions.value}`
+const countMessage = computed(() =>
+	i18n.global.locale == 'ru'
+		? `Правильные ответы: ${numOfCorrectAnswers.value} из ${maxNumOfQuestions.value}`
+		: `To'gri javoblar: ${numOfCorrectAnswers.value} dan ${maxNumOfQuestions.value}`
 );
-const fail = computed(() => resultMessage.value == 'Вы не прошли тестирование');
+const fail = computed(() => resultMessage.value == i18n.global.t('quiz_fail'));
 
 const quizStyle = computed(() => ({
 	opacity: appear.value ? '1' : '0',
@@ -357,6 +389,7 @@ const btnStyle = computed(() => ({
 }));
 const popupBtnStyle = computed(() => ({
 	color: fail.value ? '#FF736E' : '#4DB1B1',
+	textTransform: 'uppercase',
 }));
 const popupStyle = computed(() => ({
 	width: 'auto',
@@ -433,6 +466,7 @@ onMounted(() => {
 	}
 	&__bar {
 		&--outer {
+			transition: all 0.5s;
 			position: relative;
 			width: 14.3rem;
 			height: 0.5rem;
@@ -441,6 +475,7 @@ onMounted(() => {
 			border: 1px solid #61c1c0;
 		}
 		&--inner {
+			transition: all 0.5s;
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -465,6 +500,7 @@ onMounted(() => {
 			line-height: 150%;
 		}
 		& label {
+			transition: all 0.5s;
 			cursor: pointer;
 			height: 100%;
 			font-size: 1.2rem;
@@ -489,7 +525,10 @@ onMounted(() => {
 			border-radius: 3rem;
 			border: 1px solid #8b8b8b;
 			&__checked {
-				background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
+				background: var(
+					--Richard-Gradient,
+					linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%)
+				);
 				color: #fff;
 				border: none;
 			}
