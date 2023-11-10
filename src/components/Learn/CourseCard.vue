@@ -20,7 +20,7 @@
 		</div>
 		<button class="custom__button">
 			{{ btnText }}
-			<Coin v-if="isQuizPassed" />
+			<Coin v-if="!isQuizPassed && prizeIqc > 0" />
 		</button>
 	</RouterLink>
 </template>
@@ -70,20 +70,20 @@ const totalVideoLength = computed(() => {
 	);
 	return `${Math.round(totalVideoLength)} ${i18n.global.t('minute')}`;
 });
-const isQuizPassed = computed(() => props.course.lessons[0].quizes.quizlog.length == 0);
+const isQuizPassed = computed(() => props.course.lessons[0].quizes.quizlog.length);
 const prizeIqc = computed(() => {
 	let prizeIqc = '';
 	props.course.lessons.forEach(lesson => (prizeIqc += lesson.quizes.prizeIQC));
 	return prizeIqc;
 });
 const btnText = computed(() => {
-	if (isQuizPassed.value)
-		if (i18n.global.locale == 'ru') return `ПРОЙТИ КУРС И ПОЛУЧИТЬ ${prizeIqc.value}`;
-		else return `Kursdan o'tib ${prizeIqc.value} yutib olish`;
-	else {
-		if (i18n.global.locale == 'ru') return `ПОВТОРИТЬ КУРС`;
-		else return `Kursni takrorlash`;
-	}
+	if (!isQuizPassed.value && prizeIqc.value > 0)
+		return i18n.global.locale == 'ru'
+			? `ПРОЙТИ КУРС И ПОЛУЧИТЬ ${prizeIqc.value}`
+			: `Kursni boshlab ${prizeIqc.value} yutib olish`;
+	else if (isQuizPassed.value)
+		return i18n.global.locale == 'ru' ? `ПОВТОРИТЬ КУРС` : 'Kursni takrorlash';
+	else return i18n.global.locale == 'ru' ? 'Пройти курс' : 'Kursni boshlash';
 });
 
 const darkDard = computed(() => ({

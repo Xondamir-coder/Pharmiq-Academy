@@ -106,5 +106,6 @@
 	"mailbox_check": "Hammasini o'qildi deb belgilash",
 
 	"close_notification": "Xabarnoma yopish",
-	"not_support": "Sizning brauzeringiz ushbu videoni qo'llab-quvvatlamaydi,"
+	"not_support": "Sizning brauzeringiz ushbu videoni qo'llab-quvvatlamaydi",
+	"in_dev": "Bo'lim ishlab chiqilmoqda"
 }

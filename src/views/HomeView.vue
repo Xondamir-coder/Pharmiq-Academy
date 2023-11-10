@@ -38,7 +38,7 @@ import { useAppStore } from '../appStore.js';
 import { textColor } from '../composables/useColor';
 import { getCurrentDate } from '../composables/useDate';
 import useAppear from '../composables/useAppear';
-import { Coin, Video } from '../assets/icons';
+import { Coin } from '../assets/icons';
 import Slide from '../components/Home/Slide.vue';
 import i18n from '../locales';
 
