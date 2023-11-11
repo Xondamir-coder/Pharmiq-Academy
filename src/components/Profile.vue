@@ -14,7 +14,7 @@
 					<img :src="avatarSrc" class="home__profile-details__avatar" alt="avatar" />
 					<h1>{{ userFullName }}</h1>
 
-					<p>{{ role }} {{ company }}</p>
+					<p>{{ roleAndCompany }}</p>
 					<div class="home__profile-budget">
 						{{ formattedIqcAmount }}
 						<Coin />
@@ -498,16 +498,15 @@ const userFullName = computed(() => `${appStore.user.firstName} ${appStore.user.
 const role = computed(() =>
 	appStore.user.role == 'Employee'
 		? i18n.global.t('profile_pharmacist')
-		: appStore.user.role == 'Owner'
+		: appStore.user.role == 'Company Owner'
 		? i18n.global.t('profile_owner')
 		: appStore.user.role
 );
-const company = computed(() =>
-	appStore.company
-		? i18n.global.locale == 'ru'
-			? `в Аптеке ${appStore.company.companyName}`
-			: `${appStore.company.companyName} dorixonasida`
-		: ''
+const company = computed(() => appStore.company.companyName);
+const roleAndCompany = computed(() =>
+	i18n.global.locale == 'ru'
+		? `${role.value} в Аптеке ${company.value}`
+		: `${company.value} Dorixonasida ${role.value}`
 );
 const formattedIqcAmount = computed(() => (appStore.iqc ? appStore.iqc.amountofIQC : '0'));
 const telLength = computed(() => newUser.phoneNumber.length);
