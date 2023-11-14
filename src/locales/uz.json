@@ -50,6 +50,9 @@
 	"profile_link": "Tugma ustiga bosing va havola nusxalanadi",
 	"profile_passed": "Sizning havolangiz orqali ro'yxatdan o'tishdi",
 	"profile_link-2": "Farmasevt uchun havola",
+	"profile_award-1": "Talaba",
+	"profile_award-2": "Magistr",
+	"profile_award-3": "Professor",
 	"edit_title": "Profilni tahrirlash",
 	"edit_woman": "Ayol",
 	"edit_man": "Erkak",
@@ -107,5 +110,6 @@
 
 	"close_notification": "Xabarnoma yopish",
 	"not_support": "Sizning brauzeringiz ushbu videoni qo'llab-quvvatlamaydi",
-	"in_dev": "Bo'lim ishlab chiqilmoqda"
+	"in_dev": "Bo'lim ishlab chiqilmoqda",
+	"regime": "Rejim"
 }

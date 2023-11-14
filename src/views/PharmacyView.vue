@@ -46,7 +46,7 @@
 					<span>{{ i18n.global.t('profile_btn') }}</span>
 				</div>
 				<div class="pharmacy__box--map">
-					<span>Локация на карте</span>
+					<span><a :href="linkToMap" target="_blank">Локация на карте</a></span>
 				</div>
 			</div>
 		</div>
@@ -151,6 +151,10 @@ const street = computed(() =>
 		.toLowerCase()
 		.trim()
 		.replace(',', '')
+);
+const linkToMap = computed(
+	() =>
+		`https://www.google.com/maps/@${appStore.company.companyadress.latitude},${appStore.company.companyadress.longitude}`
 );
 
 onMounted(() => {

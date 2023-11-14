@@ -262,16 +262,17 @@ const telError = ref('');
 const telSuccess = ref(false);
 const codeError = ref('');
 const codeSuccess = ref(false);
-let oldTel = '';
+
 /* Plain variables */
+let oldTel = '';
 const config = {
 	headers: { Authorization: `Bearer ${appStore.token}` },
 };
-const userAwards = [
-	{ id: 0, name: 'Name' },
-	{ id: 1, name: 'Name' },
-	{ id: 2, name: 'Name' },
-];
+const userAwards = computed(() => [
+	{ id: 0, name: i18n.global.t('profile_award-1') },
+	{ id: 1, name: i18n.global.t('profile_award-2') },
+	{ id: 2, name: i18n.global.t('profile_award-3') },
+]);
 
 /* Functions for updating profile */
 const updateProfile = async () => {
@@ -444,6 +445,7 @@ const lastIndexOfLastNumber = str => {
 	}
 	return -1;
 };
+
 /* Toggle functions */
 const toggleGender = newGender => (newUser.gender = newGender);
 const toggleEdit = () => {
@@ -479,14 +481,14 @@ const toggleEditPopup = () => (editSuccess.value = !editSuccess.value);
 const avatarSrc = computed(() => {
 	if (appStore.user?.role == 'Employee')
 		return appStore.user.gender == 1 ? '/female-employee.png' : '/male-employee.png';
-	else if (appStore.user?.role == 'Owner')
+	else if (appStore.user?.role == 'Company Owner')
 		return appStore.user.gender == 1 ? '/female-owner.png' : '/male-owner.png';
 	else return '/creator.png';
 });
 const dynamicAvatar = computed(() => {
 	if (appStore.user.role == 'Employee')
 		return newUser.gender == 1 ? '/female-employee.png' : '/male-employee.png';
-	else if (appStore.user.role == 'Owner')
+	else if (appStore.user.role == 'Company Owner')
 		return newUser.gender == 1 ? '/female-owner.png' : '/male-owner.png';
 	else return '/creator.png';
 });

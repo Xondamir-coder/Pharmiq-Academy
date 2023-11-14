@@ -20,7 +20,7 @@ import { useAppStore } from '../../appStore.js';
 import CourseCard from './CourseCard.vue';
 import i18n from '../../locales';
 
-const store = useAppStore();
+const appStore = useAppStore();
 const activeFilter = ref(0);
 const btnLabels = computed(() => [
 	i18n.global.t('learn_all'),
@@ -28,14 +28,32 @@ const btnLabels = computed(() => [
 	i18n.global.t('learn_sell'),
 	i18n.global.t('learn_farmopeka'),
 ]);
-
 const filteredCourses = computed(() => {
-	if (activeFilter.value === 0) return store.courses;
-	return store.courses.filter(course => course.category_id === activeFilter.value);
+	if (activeFilter.value === 0)
+		return appStore.courses.filter(
+			course =>
+				JSON.parse(course.getinfo.courseInfo)
+					[i18n.global.locale].toLowerCase()
+					.includes(appStore.query.toLowerCase()) ||
+				JSON.parse(course.getinfo.courseTitleName)
+					[i18n.global.locale].toLowerCase()
+					.includes(appStore.query.toLowerCase())
+		);
+	return appStore.courses
+		.filter(course => course.category_id === activeFilter.value)
+		.filter(
+			course =>
+				JSON.parse(course.getinfo.courseInfo)
+					[i18n.global.locale].toLowerCase()
+					.includes(appStore.query.toLowerCase()) ||
+				JSON.parse(course.getinfo.courseTitleName)
+					[i18n.global.locale].toLowerCase()
+					.includes(appStore.query.toLowerCase())
+		);
 });
-const darkBtn = computed(() => (store.isDark ? 'learn__button--dark' : 'learn__button'));
+const darkBtn = computed(() => (appStore.isDark ? 'learn__button--dark' : 'learn__button'));
 const darkActiveBtn = computed(() =>
-	store.isDark ? 'learn__button--dark--active' : 'learn__button--active'
+	appStore.isDark ? 'learn__button--dark--active' : 'learn__button--active'
 );
 const filterCourses = id => (activeFilter.value = id);
 </script>

@@ -90,12 +90,29 @@ import { textColor } from '../composables/useColor';
 import { CheckAll, Back } from '../assets/icons';
 import i18n from '../locales';
 import useAppear from '../composables/useAppear';
+import { getFormData } from '../composables/useFormData';
+import axios from 'axios';
 
 const appStore = useAppStore();
 const appear = ref(false);
 const popup = ref();
 
-const showNotification = notification => (popup.value = notification);
+const showNotification = function (notification) {
+	popup.value = notification;
+	notification && notificationCheck(notification);
+};
+const notificationCheck = async function (notification) {
+	const URL = 'https://api.pharmiq.uz/api/v1-1/spa-inboxMessage/postInboxMessageLog';
+	const config = { headers: { Authorization: `Bearer ${appStore.token}` } };
+	const formData = getFormData();
+	formData.append('id', notification.id);
+	try {
+		const { data } = await axios.post(URL, formData, config);
+		console.log(data);
+	} catch (error) {
+		console.log('Error', error);
+	}
+};
 
 const notifications = computed(() => appStore.notifications.filter(notification => notification));
 const mailboxIconStyle = computed(() => ({

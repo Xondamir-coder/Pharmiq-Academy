@@ -7,6 +7,7 @@ import { getToken } from './composables/useToken';
 export const useAppStore = defineStore('app', () => {
 	const isDark = ref(localStorage.getItem('isDark') || false);
 	const showPreloader = ref(true);
+	const query = ref('');
 
 	/* Data */
 	const user = ref({});
@@ -108,6 +109,7 @@ export const useAppStore = defineStore('app', () => {
 	};
 	const setShowPreloader = value => (showPreloader.value = value);
 	return {
+		query,
 		isDark,
 		showPreloader,
 		token,

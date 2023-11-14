@@ -1,12 +1,17 @@
 <template>
-	<div class="sidebar" :style="sidebarStyle">
+	<div class="sidebar" :style="[sidebarStyle, textColor]">
 		<RouterLink to="/">
 			<Logo class="sidebar__logo" />
 		</RouterLink>
 
 		<div class="sidebar__search" :style="darkSearch">
 			<Search />
-			<input type="text" :placeholder="i18n.global.t('search')" :style="darkInput" />
+			<input
+				@input="navigateToCourses"
+				type="text"
+				:placeholder="i18n.global.t('search')"
+				:style="darkInput"
+				v-model="appStore.query" />
 		</div>
 
 		<!-- <div class="sidebar__pointer" :style="pointerStyle"></div> -->
@@ -16,44 +21,47 @@
 				v-for="(link, index) in navLinks"
 				:key="index"
 				:to="link.to"
-				:active-class="linkActive"
-				:style="textColor">
+				:active-class="linkActive">
 				<component :is="link.icon"></component>
 				{{ link.label }}
 			</RouterLink>
-			<input
-				type="checkbox"
-				name="darkmode-toggle"
-				id="darkmode-toggle"
-				:checked="appStore.isDark"
-				@change="toggleDarkMode" />
-			<label for="darkmode-toggle" class="darkmode__label">
-				<Sun class="sun" />
-				<Moon class="moon" />
-			</label>
+			<div class="darkmode">
+				<input
+					type="checkbox"
+					name="darkmode-toggle"
+					id="darkmode-toggle"
+					:checked="appStore.isDark"
+					@change="toggleDarkMode" />
+				<label for="darkmode-toggle" class="darkmode__label">
+					<Sun class="sun" />
+					<Moon class="moon" />
+				</label>
+				{{ i18n.global.t('regime') }}
+			</div>
 			<input
 				type="checkbox"
 				name="lang-toggle"
 				id="lang-toggle"
 				@change="toggleLanguage"
 				:checked="i18n.global.locale == 'uz'" />
-			<div class="sidebar__lang" :style="textColor">
-				{{ i18n.global.t('lang_label') }}
+			<div class="sidebar__lang">
 				<label for="lang-toggle" class="lang__label">
 					<FlagUzbek />
 					<FlagRussian />
 				</label>
+				{{ i18n.global.t('lang_label') }}
 			</div>
 		</nav>
 
-		<p :style="textColor">{{ i18n.global.t('download_text') }}</p>
+		<p>{{ i18n.global.t('download_text') }}</p>
 		<img class="sidebar__qrcode" src="../assets/qr-code.webp" alt="qr code" />
-		<a href="javascript:void(0);" class="sidebar__link" :style="textColor" @click="logout"
+		<a href="javascript:void(0);" class="sidebar__link" @click="logout"
 			><Logout />{{ i18n.global.t('quit_link') }}</a
 		>
 	</div>
 </template>
 <script setup>
+import { useRoute, useRouter } from 'vue-router';
 import { computed } from 'vue';
 import { useAppStore } from '../appStore';
 import {
@@ -75,6 +83,8 @@ import { textColor } from '../composables/useColor';
 import i18n from '../locales';
 
 const appStore = useAppStore();
+const router = useRouter();
+const route = useRoute();
 const navLinks = computed(() => [
 	{ label: i18n.global.t('home_link'), to: '/', icon: Home },
 	{ label: i18n.global.t('learn_link'), to: '/learn', icon: Learn },
@@ -92,11 +102,11 @@ const logout = function () {
 	localStorage.removeItem('token');
 	window.location.href = 'https://go.pharmiq.uz/login';
 };
-const toggleLanguage = () => {
+const toggleLanguage = function () {
 	i18n.global.locale = i18n.global.locale == 'ru' ? 'uz' : 'ru';
 	localStorage.setItem('lang', i18n.global.locale);
 };
-
+const navigateToCourses = () => !route.path.includes('/learn') && router.push('/learn');
 /* Computed Values */
 const sidebarStyle = computed(() => ({
 	transform: appStore.showPreloader ? 'translateX(-40%)' : 'translateX(0)',
@@ -113,11 +123,16 @@ const linkActive = computed(() => (appStore.isDark ? 'link--active--black' : 'li
 </script>
 
 <style lang="scss" scoped>
+.darkmode {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
+	align-items: center;
+}
 label {
 	&.darkmode__label {
 		background: rgb(124, 202, 250);
-		margin-bottom: 1rem;
-		margin-left: 1rem;
+
 		& svg {
 			position: absolute;
 			width: 3.2rem;
@@ -363,6 +378,7 @@ input[type='checkbox'] {
 		}
 	}
 	&__link {
+		color: currentColor;
 		text-transform: capitalize;
 		transition: all 0.5s ease;
 		width: 19rem;
@@ -397,9 +413,8 @@ input[type='checkbox'] {
 	}
 	&__lang {
 		display: grid;
-		grid-template-columns: 22% 1fr;
+		grid-template-columns: 1fr 1fr;
 		align-items: center;
-		padding-left: 0.8rem;
 		gap: 1rem;
 	}
 }

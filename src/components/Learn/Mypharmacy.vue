@@ -26,9 +26,20 @@ const btnLabels = computed(() => [i18n.global.t('learn_drugs'), i18n.global.t('l
 
 const filterCourses = label => (activeFilter.value = label);
 const filteredCourses = computed(() =>
-	appStore.pharmacy.filter(
-		course => JSON.parse(course.category.categoryName)[i18n.global.locale] == activeFilter.value
-	)
+	appStore.pharmacy
+		.filter(
+			course =>
+				JSON.parse(course.category.categoryName)[i18n.global.locale] == activeFilter.value
+		)
+		.filter(
+			course =>
+				JSON.parse(course.getinfo.courseInfo)
+					[i18n.global.locale].toLowerCase()
+					.includes(appStore.query.toLowerCase()) ||
+				JSON.parse(course.getinfo.courseTitleName)
+					[i18n.global.locale].toLowerCase()
+					.includes(appStore.query.toLowerCase())
+		)
 );
 const darkBtn = computed(() => (appStore.isDark ? 'learn__button--dark' : ''));
 const darkActiveBtn = computed(() =>
