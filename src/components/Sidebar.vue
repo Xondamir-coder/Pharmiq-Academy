@@ -25,6 +25,13 @@
 				<component :is="link.icon"></component>
 				{{ link.label }}
 			</RouterLink>
+			<RouterLink class="sidebar__link" to="/mailbox" :active-class="linkActive">
+				<Mailbox />
+				{{ i18n.global.t('mailbox_link') }}
+				<div class="link__oval">
+					{{ totalNotifications }}
+				</div>
+			</RouterLink>
 			<div class="darkmode">
 				<input
 					type="checkbox"
@@ -91,7 +98,6 @@ const navLinks = computed(() => [
 	{ label: i18n.global.t('stats_link'), to: '/statistics', icon: Statistics },
 	{ label: i18n.global.t('pharmacy_link'), to: '/pharmacy', icon: Pharmacy },
 	{ label: i18n.global.t('store_link'), to: '/store', icon: Store },
-	{ label: i18n.global.t('mailbox_link'), to: '/mailbox', icon: Mailbox },
 ]);
 
 const toggleDarkMode = function () {
@@ -107,7 +113,15 @@ const toggleLanguage = function () {
 	localStorage.setItem('lang', i18n.global.locale);
 };
 const navigateToCourses = () => !route.path.includes('/learn') && router.push('/learn');
+
 /* Computed Values */
+const totalNotifications = computed(() =>
+	appStore.notifications
+		? appStore.notifications.filter(not => not).length > 9
+			? '9+'
+			: appStore.notifications.filter(not => not).length
+		: 0
+);
 const sidebarStyle = computed(() => ({
 	transform: appStore.showPreloader ? 'translateX(-40%)' : 'translateX(0)',
 	background: appStore.isDark ? '#1A1A1A' : '#F7F7F7',
@@ -385,7 +399,6 @@ input[type='checkbox'] {
 		padding: 0.6rem 0.8rem;
 		display: flex;
 		align-items: center;
-		gap: 2.4rem;
 		@media only screen and (max-height: 700px) {
 			padding: 0.5rem 0.8rem;
 		}
@@ -398,6 +411,7 @@ input[type='checkbox'] {
 		& svg {
 			width: 2.4rem;
 			height: 2.4rem;
+			margin-right: 2.4rem;
 		}
 	}
 	&__pointer {
@@ -417,6 +431,23 @@ input[type='checkbox'] {
 		align-items: center;
 		gap: 1rem;
 	}
+}
+.link__oval {
+	margin-left: 1.2rem;
+	display: flex;
+	width: 2.4rem;
+	height: 2.4rem;
+	padding: 0.4rem;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+	border-radius: 100rem;
+	background: var(--brand-solid-secondary-green, #4db1b1);
+
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 400;
+	text-transform: capitalize;
 }
 .link--active {
 	border-radius: 1rem;

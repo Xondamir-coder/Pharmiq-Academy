@@ -3,16 +3,19 @@
 		<div class="mailbox__head" :style="mailboxHeadStyle">
 			<h1>{{ i18n.global.t('mailbox_title') }}</h1>
 			<div class="mailbox__check">
-				<CheckAll />
+				<CheckAll @click="notificationCheckAll" />
 				<p>{{ i18n.global.t('mailbox_check') }}</p>
 			</div>
 		</div>
 		<div class="mailbox__content">
 			<div
-				:style="mailboxItemStyle"
 				class="mailbox__item"
 				v-for="notification in notifications"
 				:key="notification.id"
+				:style="[
+					mailboxItemStyle,
+					{ filter: notification.inbox_log ? 'grayscale(100%)' : '' },
+				]"
 				@click="showNotification(notification)">
 				<div class="mailbox__icon" :style="mailboxIconStyle">
 					<img
@@ -111,6 +114,25 @@ const notificationCheck = async function (notification) {
 		console.log(data);
 	} catch (error) {
 		console.log('Error', error);
+	}
+};
+const notificationCheckAll = function () {
+	notifications.value.forEach(not => {
+		if (not.inbox_log) return; // Guard block
+
+		notificationCheck(not);
+	});
+	getNotifications();
+};
+const getNotifications = async function () {
+	const url = 'https://api.pharmiq.uz/api/v1-1/spa-inboxMessage';
+	const formData = getFormData();
+	const config = { headers: { Authorization: `Bearer ${appStore.token}` } };
+	try {
+		const { data } = await axios.get(url, config, formData);
+		appStore.notifications = data;
+	} catch (error) {
+		console.log('Error: ', error);
 	}
 };
 
