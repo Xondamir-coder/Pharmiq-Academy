@@ -107,9 +107,11 @@
 
 	"mailbox_title": "Xatlar",
 	"mailbox_check": "Hammasini o'qildi deb belgilash",
+	"mailbox_none": "Xatlar yo'q",
 
 	"close_notification": "Xabarnoma yopish",
 	"not_support": "Sizning brauzeringiz ushbu videoni qo'llab-quvvatlamaydi",
 	"in_dev": "Bo'lim ishlab chiqilmoqda",
-	"regime": "Rejim"
+	"regime": "Rejim",
+	"get": "Olish"
 }

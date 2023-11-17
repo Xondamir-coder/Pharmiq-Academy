@@ -48,6 +48,7 @@
 					</p>
 				</div>
 			</div>
+			<p v-if="isEmpty">{{ i18n.global.t('mailbox_none') }}</p>
 		</div>
 	</section>
 
@@ -78,8 +79,18 @@
 					</p>
 				</div>
 				<button class="mailbox__popup--btn" @click="showNotification(false)">
-					<label>{{ i18n.global.t('close_notification') }}</label>
-					<Back color="green" />
+					<label v-if="popup.promocode.prizeAmount && i18n.global.locale == 'ru'">
+						{{ i18n.global.t('get') }} {{ popup.promocode.prizeAmount }}
+					</label>
+					<label v-if="popup.promocode.prizeAmount && i18n.global.locale == 'uz'">
+						{{ popup.promocode.prizeAmount }}
+					</label>
+					<label v-else>{{ i18n.global.t('close_notification') }}</label>
+					<Coin v-if="popup.promocode.prizeAmount" />
+					<Back color="green" v-else />
+					<label v-if="popup.promocode.prizeAmount && i18n.global.locale == 'uz'">
+						{{ i18n.global.t('get') }}
+					</label>
 				</button>
 			</div>
 		</Transition>
@@ -90,7 +101,7 @@
 import { computed, ref, onMounted } from 'vue';
 import { useAppStore } from '../appStore';
 import { textColor } from '../composables/useColor';
-import { CheckAll, Back } from '../assets/icons';
+import { CheckAll, Back, Coin } from '../assets/icons';
 import i18n from '../locales';
 import useAppear from '../composables/useAppear';
 import { getFormData } from '../composables/useFormData';
@@ -137,6 +148,7 @@ const getNotifications = async function () {
 };
 
 const notifications = computed(() => appStore.notifications.filter(notification => notification));
+const isEmpty = computed(() => notifications.value.length == 0);
 const mailboxIconStyle = computed(() => ({
 	background: appStore.isDark ? '#000' : '',
 	boxShadow: appStore.isDark ? '0 0 5px 5px rgba(53, 129, 132, 0.25)' : '',

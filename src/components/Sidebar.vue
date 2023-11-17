@@ -28,7 +28,7 @@
 			<RouterLink class="sidebar__link" to="/mailbox" :active-class="linkActive">
 				<Mailbox />
 				{{ i18n.global.t('mailbox_link') }}
-				<div class="link__oval">
+				<div class="link__oval" v-if="totalNotifications">
 					{{ totalNotifications }}
 				</div>
 			</RouterLink>
