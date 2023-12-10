@@ -22,6 +22,7 @@ export const useAppStore = defineStore('app', () => {
 	const transactions = ref([]);
 	const stats = ref();
 	const notifications = ref();
+	const searchedCourses = ref();
 
 	const token = getToken();
 	const formData = getFormData();
@@ -125,6 +126,7 @@ export const useAppStore = defineStore('app', () => {
 		transactions,
 		stats,
 		notifications,
+		searchedCourses,
 		fetchData,
 		getUser,
 		updateProfile,

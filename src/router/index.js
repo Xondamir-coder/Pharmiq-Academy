@@ -16,6 +16,7 @@ import Ongoing from '../components/Learn/Ongoing.vue';
 import Courses from '../components/Learn/Courses.vue';
 import Mypharmacy from '../components/Learn/Mypharmacy.vue';
 import Completed from '../components/Learn/Completed.vue';
+import SearchCourses from '../components/Learn/SearchCourses.vue';
 const router = createRouter({
 	history: createWebHistory(import.meta.env.base_url),
 	routes: [
@@ -49,6 +50,11 @@ const router = createRouter({
 					path: 'completed',
 					name: 'completed',
 					component: Completed,
+				},
+				{
+					path: 'search',
+					name: 'search',
+					component: SearchCourses,
 				},
 			],
 		},

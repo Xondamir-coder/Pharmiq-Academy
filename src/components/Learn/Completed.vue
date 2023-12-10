@@ -65,38 +65,18 @@ const filteredCourses = computed(() => {
 		selectedMainLabel.value == i18n.global.t('learn_courses') &&
 		selectedSecondaryLabel.value == i18n.global.t('learn_all')
 	) {
-		return appStore.passed
-			.filter(
-				item =>
-					item.course.category_id == 1 ||
-					item.course.category_id == 2 ||
-					item.course.category_id == 3
-			)
-			.filter(
-				item =>
-					JSON.parse(item.course.getinfo.courseInfo)
-						[i18n.global.locale].toLowerCase()
-						.includes(appStore.query.toLowerCase()) ||
-					JSON.parse(item.course.getinfo.courseTitleName)
-						[i18n.global.locale].toLowerCase()
-						.includes(appStore.query.toLowerCase())
-			);
+		return appStore.passed.filter(
+			item =>
+				item.course.category_id == 1 ||
+				item.course.category_id == 2 ||
+				item.course.category_id == 3
+		);
 	} else {
-		return appStore.passed
-			.filter(
-				item =>
-					JSON.parse(item.course.category.categoryName)[i18n.global.locale] ==
-					selectedSecondaryLabel.value
-			)
-			.filter(
-				item =>
-					JSON.parse(item.course.getinfo.courseInfo)
-						[i18n.global.locale].toLowerCase()
-						.includes(appStore.query.toLowerCase()) ||
-					JSON.parse(item.course.getinfo.courseTitleName)
-						[i18n.global.locale].toLowerCase()
-						.includes(appStore.query.toLowerCase())
-			);
+		return appStore.passed.filter(
+			item =>
+				JSON.parse(item.course.category.categoryName)[i18n.global.locale] ==
+				selectedSecondaryLabel.value
+		);
 	}
 });
 const isEmpty = computed(() => filteredCourses.value.length == 0);

@@ -1,6 +1,6 @@
 <template>
 	<Teleport to="body" name="fade">
-		<div class="overlay" v-if="success"></div>
+		<div @click="emitToggle" class="overlay" v-if="success"></div>
 		<Transition name="fade">
 			<div class="popup" v-if="success" v-bind="$attrs">
 				<div class="popup__content">
@@ -19,6 +19,10 @@ const props = defineProps({
 defineOptions({
 	inheritAttrs: false,
 });
+const emit = defineEmits(['toggle']);
+const emitToggle = function () {
+	emit('toggle', event.target.nextElementSibling.dataset.popup);
+};
 </script>
 
 <style scoped>

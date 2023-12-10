@@ -1,10 +1,10 @@
 <template>
-	<section class="home" :style="showHome">
+	<section class="home" :style="[showHome, textColor]">
 		<div class="home__head">
-			<h1 :style="textColor" class="home__username">
+			<h1 class="home__username">
 				{{ i18n.global.t('home_title') }}, {{ appStore.user.firstName }}!
 			</h1>
-			<p class="home__date" :style="textColor">{{ getCurrentDate() }}</p>
+			<p class="home__date">{{ getCurrentDate() }}</p>
 		</div>
 
 		<div class="home__slider">
@@ -12,7 +12,7 @@
 		</div>
 
 		<div class="home__leaders">
-			<h1 :style="textColor">{{ i18n.global.t('board_title') }}</h1>
+			<h1>{{ i18n.global.t('board_title') }}</h1>
 			<div>
 				<div class="home__leaders-box">
 					<p class="home__leaders-title">{{ i18n.global.t('board_place') }}</p>

@@ -13,7 +13,7 @@
 			</div>
 			<div class="quiz__timer" :style="timerStyle">
 				<Timer :fill="timerColor" />
-				{{ time }}
+				<span>{{ time }}</span>
 			</div>
 		</div>
 
@@ -239,7 +239,7 @@ const closePopup = function (again) {
 	clearState();
 	showPopup.value = false;
 	if (!again) {
-		router.push('/');
+		router.push('/learn');
 		return;
 	}
 	currentQuestion.value = 0;
@@ -454,15 +454,21 @@ onMounted(() => {
 		line-height: 130%;
 
 		display: flex;
+		justify-content: space-between;
 		align-items: center;
 
-		display: inline-flex;
 		padding: 0.2rem 2.6rem;
-		align-items: center;
 		gap: 1rem;
 		border-radius: 1.5rem;
 		background: transparent;
 		box-shadow: 0px 0px 5px 0px rgba(53, 129, 132, 0.25) inset;
+		& span {
+			width: 10rem;
+		}
+		& svg {
+			width: 6.2rem;
+			height: 6.2rem;
+		}
 	}
 	&__bar {
 		&--outer {

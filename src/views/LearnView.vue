@@ -8,6 +8,9 @@
 				:to="route.to">
 				{{ route.name }}
 			</RouterLink>
+			<RouterLink active-class="link--active" to="/learn/search" v-if="isSearched">
+				{{ i18n.global.t('learn_search') }}
+			</RouterLink>
 		</nav>
 		<RouterView />
 	</section>
@@ -18,7 +21,9 @@ import { onMounted, ref, computed } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 import useAppear from '../composables/useAppear';
 import i18n from '../locales';
+import { useAppStore } from '../appStore';
 
+const appStore = useAppStore();
 const routes = computed(() => [
 	{
 		to: 'ongoing',
@@ -37,6 +42,7 @@ const routes = computed(() => [
 		name: i18n.global.t('learn_passed'),
 	},
 ]);
+const isSearched = computed(() => appStore.searchedCourses && appStore.searchedCourses.length > 0);
 const appear = ref(false);
 
 const showSection = computed(() => ({
@@ -50,6 +56,7 @@ onMounted(() => useAppear(appear));
 .link--active {
 	color: #fff !important;
 	padding-top: 3rem !important;
+	background-color: #ff736e;
 	z-index: -10;
 	@for $i from 1 through 4 {
 		&:nth-child(#{$i})::before {
@@ -84,7 +91,6 @@ onMounted(() => useAppear(appear));
 				left: 0;
 				width: 100%;
 				height: 0;
-				background-color: #ff736e;
 				z-index: -1;
 			}
 		}

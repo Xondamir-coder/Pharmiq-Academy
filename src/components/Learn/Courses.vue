@@ -29,27 +29,8 @@ const btnLabels = computed(() => [
 	i18n.global.t('learn_farmopeka'),
 ]);
 const filteredCourses = computed(() => {
-	if (activeFilter.value === 0)
-		return appStore.courses.filter(
-			course =>
-				JSON.parse(course.getinfo.courseInfo)
-					[i18n.global.locale].toLowerCase()
-					.includes(appStore.query.toLowerCase()) ||
-				JSON.parse(course.getinfo.courseTitleName)
-					[i18n.global.locale].toLowerCase()
-					.includes(appStore.query.toLowerCase())
-		);
-	return appStore.courses
-		.filter(course => course.category_id === activeFilter.value)
-		.filter(
-			course =>
-				JSON.parse(course.getinfo.courseInfo)
-					[i18n.global.locale].toLowerCase()
-					.includes(appStore.query.toLowerCase()) ||
-				JSON.parse(course.getinfo.courseTitleName)
-					[i18n.global.locale].toLowerCase()
-					.includes(appStore.query.toLowerCase())
-		);
+	if (activeFilter.value === 0) return appStore.courses;
+	return appStore.courses.filter(course => course.category_id === activeFilter.value);
 });
 const darkBtn = computed(() => (appStore.isDark ? 'learn__button--dark' : 'learn__button'));
 const darkActiveBtn = computed(() =>

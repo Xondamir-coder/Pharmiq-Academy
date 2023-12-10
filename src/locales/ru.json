@@ -84,6 +84,7 @@
 	"learn_farmopeka": "Фармопека",
 	"learn_drugs": "Препараты",
 	"learn_corporate": "Корпоративные",
+	"learn_search": "Поиск курсов",
 
 	"stats_title": "Моя Статистика",
 	"stats_wallet": "История кошелька",
@@ -99,6 +100,13 @@
 	"stats_status": "Статус",
 	"stats_active": "Активный",
 	"stats_days": "дней",
+	"stats_quiz": "За прохождения теста",
+	"stats_ref": "Моя реферальная ссылка",
+	"stats_course": "Покупка курса",
+	"stats_promocode": "Промокод",
+	"stats_store": "Магазин",
+	"stats_quest": "Квест",
+	"stats_others": "Другие",
 
 	"pharmacy_pass_rights": "Передача прав на компанию",
 	"pharmacy_choose_owner": "Выберите нового владельца компании",
@@ -113,5 +121,7 @@
 	"not_support": "Ваш браузер не поддерживает это видео",
 	"in_dev": "Раздел в разработке",
 	"regime": "Режим",
-	"get": "Забрать"
+	"get": "Забрать",
+	"copied": "Реферальная ссылка скопирована!",
+	"course_not_found": "Курс не найден"
 }

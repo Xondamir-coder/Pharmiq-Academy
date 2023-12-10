@@ -205,26 +205,37 @@
 			</button>
 		</form>
 	</div>
-	<Popup :success="editSuccess" :style="editPopupStyle">
+
+	<!-- Editing Popup -->
+	<Popup data-popup="edit" :success="editSuccess" :style="editPopupStyle" @toggle="togglePopup">
 		<template #content>
 			<h1>{{ i18n.global.t('edit_success') }}!</h1>
 		</template>
 		<template #btn>
-			<button class="popup__button" @click="toggleEditPopup">OK</button>
+			<button class="popup__button" @click="togglePopup">OK</button>
 		</template>
 	</Popup>
-	<Teleport to="body">
-		<div class="overlay" v-if="success"></div>
-		<Transition name="fade">
-			<div class="popup" v-if="success">
-				<div class="popup__content">
-					<p>{{ i18n.global.t('promocode_success') }}</p>
-					<h1>{{ success }} <Coin /></h1>
-				</div>
-				<button @click="closePopup" class="popup__button">OK</button>
-			</div>
-		</Transition>
-	</Teleport>
+
+	<!-- Promocode Popup -->
+	<Popup data-popup="promocode" :success="boolSuccess" @toggle="togglePopup">
+		<template #content>
+			<p>{{ i18n.global.t('promocode_success') }}</p>
+			<h1>{{ success }} <Coin /></h1>
+		</template>
+		<template #btn>
+			<button @click="togglePopup" class="popup__button">OK</button>
+		</template>
+	</Popup>
+
+	<!-- Ref Link Popup -->
+	<Popup data-popup="link" :success="isCopied" @toggle="togglePopup">
+		<template #content>
+			<p>{{ i18n.global.t('copied') }}</p>
+		</template>
+		<template #btn>
+			<button @click="togglePopup" class="popup__button">OK</button>
+		</template>
+	</Popup>
 </template>
 
 <script setup>
@@ -238,11 +249,15 @@ import Popup from './Popup.vue';
 import i18n from '../locales';
 
 const appStore = useAppStore();
+
 /* Reactive variables for Promocode */
 const error = ref('');
 const success = ref('');
 const promocode = ref('');
 const loading = ref(false);
+
+/* Ref link */
+const isCopied = ref(false);
 
 /* is editing the profile? */
 const isEditing = ref(false);
@@ -268,11 +283,14 @@ let oldTel = '';
 const config = {
 	headers: { Authorization: `Bearer ${appStore.token}` },
 };
+
+/* computed values */
 const userAwards = computed(() => [
 	{ id: 0, name: i18n.global.t('profile_award-1') },
 	{ id: 1, name: i18n.global.t('profile_award-2') },
 	{ id: 2, name: i18n.global.t('profile_award-3') },
 ]);
+const boolSuccess = computed(() => (success.value ? true : false));
 
 /* Functions for updating profile */
 const updateProfile = async () => {
@@ -372,7 +390,6 @@ const formatTel = () => {
 };
 
 /* Functions for promocode */
-const closePopup = () => (success.value = '');
 const clearInput = () => {
 	error.value && (promocode.value = '');
 	error.value = '';
@@ -417,9 +434,7 @@ const copyToClipboard = link => {
 	document.execCommand('copy');
 	document.body.removeChild(tempInput);
 
-	alert('Ссылка скопирована в буфер обмена!');
-	if (link.includes('ref')) clickedLinks.value[0]++;
-	else clickedLinks.value[1]++;
+	isCopied.value = true;
 };
 const dateFormatter = () => {
 	const inputDateValue = newUser.birthDate;
@@ -475,7 +490,14 @@ const toggleEdit = () => {
 	newUser.phoneNumber = oldTel;
 };
 const toggleError = val => (editingError.value = val);
-const toggleEditPopup = () => (editSuccess.value = !editSuccess.value);
+const togglePopup = arg => {
+	let popupType;
+	if (arg == 'link' || arg == 'edit' || arg == 'promocode') popupType = arg;
+	else popupType = event.target.parentElement.dataset.popup;
+	if (popupType == 'link') isCopied.value = false;
+	if (popupType == 'edit') editSuccess.value = false;
+	if (popupType == 'promocode') success.value = '';
+};
 
 /* Computed Values */
 const avatarSrc = computed(() => {

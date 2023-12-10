@@ -5,9 +5,9 @@
 		</RouterLink>
 
 		<div class="sidebar__search" :style="darkSearch">
-			<Search />
+			<Search @click="searchCourse" />
 			<input
-				@input="navigateToCourses"
+				@keyup.enter="searchCourse"
 				type="text"
 				:placeholder="i18n.global.t('search')"
 				:style="darkInput"
@@ -66,10 +66,18 @@
 			><Logout />{{ i18n.global.t('quit_link') }}</a
 		>
 	</div>
+	<Popup :success="searchFail" @toggle="togglePopup">
+		<template #content>
+			<h1>{{ i18n.global.t('course_not_found') }}</h1>
+		</template>
+		<template #btn>
+			<button class="popup__button" @click="togglePopup">OK</button>
+		</template>
+	</Popup>
 </template>
 <script setup>
-import { useRoute, useRouter } from 'vue-router';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAppStore } from '../appStore';
 import {
 	Logo,
@@ -88,10 +96,11 @@ import {
 } from '../assets/icons';
 import { textColor } from '../composables/useColor';
 import i18n from '../locales';
+import axios from 'axios';
+import Popup from './Popup.vue';
 
 const appStore = useAppStore();
 const router = useRouter();
-const route = useRoute();
 const navLinks = computed(() => [
 	{ label: i18n.global.t('home_link'), to: '/', icon: Home },
 	{ label: i18n.global.t('learn_link'), to: '/learn', icon: Learn },
@@ -99,7 +108,25 @@ const navLinks = computed(() => [
 	{ label: i18n.global.t('pharmacy_link'), to: '/pharmacy', icon: Pharmacy },
 	{ label: i18n.global.t('store_link'), to: '/store', icon: Store },
 ]);
+const searchFail = ref(false);
 
+const searchCourse = async function () {
+	const URL = `https://api.pharmiq.uz/api/v1-1/spa-courses/courseSearch?s=${appStore.query}`;
+	const config = { headers: { Authorization: `Bearer ${appStore.token}` } };
+	try {
+		const { data } = await axios.get(URL, config);
+
+		// Course found
+		if (data.length > 0) {
+			appStore.searchedCourses = data;
+			router.push('/learn/search');
+		} else togglePopup();
+	} catch (error) {
+		console.log('Error searching: ', error);
+	} finally {
+		appStore.query = '';
+	}
+};
 const toggleDarkMode = function () {
 	appStore.isDark = !appStore.isDark;
 	localStorage.setItem('isDark', appStore.isDark);
@@ -112,7 +139,7 @@ const toggleLanguage = function () {
 	i18n.global.locale = i18n.global.locale == 'ru' ? 'uz' : 'ru';
 	localStorage.setItem('lang', i18n.global.locale);
 };
-const navigateToCourses = () => !route.path.includes('/learn') && router.push('/learn');
+const togglePopup = () => (searchFail.value = !searchFail.value);
 
 /* Computed Values */
 const totalNotifications = computed(() =>
@@ -312,6 +339,7 @@ input[type='checkbox'] {
 			margin-bottom: 0;
 		}
 		& svg {
+			cursor: pointer;
 			width: 2.4rem;
 			height: 2.4rem;
 			@media only screen and (max-height: 650px) {

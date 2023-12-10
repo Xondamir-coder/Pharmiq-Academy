@@ -84,6 +84,7 @@
 	"learn_farmopeka": "Farmvasiylik",
 	"learn_drugs": "Dorilar",
 	"learn_corporate": "Korporativ",
+	"learn_search": "Kurs qidiruv",
 
 	"stats_title": "Mening Statistikam",
 	"stats_wallet": "Hisob qaydnomasi",
@@ -99,6 +100,13 @@
 	"stats_status": "Holat",
 	"stats_active": "Faol",
 	"stats_days": "kun",
+	"stats_quiz": "Testdan o'tganlik uchun",
+	"stats_ref": "Mening havolam",
+	"stats_course": "Darsni sotib olganlik",
+	"stats_promocode": "PromoCode",
+	"stats_store": "Do'kon",
+	"stats_quest": "Kvest",
+	"stats_others": "Boshqa",
 
 	"pharmacy_pass_rights": "Huquqlarni kompaniyaga o'tkazish",
 	"pharmacy_choose_owner": "Yangi kompaniya egasini tanlang",
@@ -113,5 +121,7 @@
 	"not_support": "Sizning brauzeringiz ushbu videoni qo'llab-quvvatlamaydi",
 	"in_dev": "Bo'lim ishlab chiqilmoqda",
 	"regime": "Rejim",
-	"get": "Olish"
+	"get": "Olish",
+	"copied": "Havola nusxalandi!",
+	"course_not_found": "Kurs topilmadi"
 }

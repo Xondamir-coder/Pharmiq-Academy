@@ -1,16 +1,16 @@
 <template>
-	<section class="stats" :style="sectionStyle">
+	<section class="stats" :style="[sectionStyle, darkText]">
 		<h1 class="stats__heading" :style="textColor">{{ i18n.global.t('stats_title') }}</h1>
 		<div class="stats__container">
 			<div class="stats__history">
-				<h2 :style="darkText">
+				<h2>
 					{{ i18n.global.t('stats_wallet') }}
 				</h2>
 				<div class="stats__history-grid">
 					<div class="stats__history--box">
-						<h3 :style="darkText">{{ i18n.global.t('stats_amount') }}</h3>
-						<h3 :style="darkText">{{ i18n.global.t('stats_gain') }}</h3>
-						<h3 :style="darkText">{{ i18n.global.t('stats_date') }}</h3>
+						<h3>{{ i18n.global.t('stats_amount') }}</h3>
+						<h3>{{ i18n.global.t('stats_gain') }}</h3>
+						<h3>{{ i18n.global.t('stats_date') }}</h3>
 					</div>
 					<div
 						v-for="transaction in appStore.transactions.iqcTransactions"
@@ -20,13 +20,13 @@
 						}"
 						class="stats__history--box">
 						<p>
+							<Coin />
 							<span v-if="transaction.valueType">+</span>
 							<span v-else>-</span>
 							{{ transaction.value }}
-							<Coin />
 						</p>
 						<p>
-							{{ transaction.serviceName }}
+							{{ getServiceName(transaction.serviceName) }}
 						</p>
 						<p>
 							{{ formatDate(transaction.updated_at) }}
@@ -36,7 +36,7 @@
 			</div>
 
 			<div class="stats__courses">
-				<h2 :style="darkText">
+				<h2>
 					{{ i18n.global.t('learn_courses') }}
 				</h2>
 
@@ -50,7 +50,7 @@
 					</div>
 				</div>
 
-				<h2 :style="darkText">
+				<h2>
 					{{ i18n.global.t('stats_average') }}
 				</h2>
 
@@ -61,7 +61,7 @@
 					</div>
 				</div>
 
-				<h2 :style="darkText">
+				<h2>
 					{{ i18n.global.t('stats_history') }}
 				</h2>
 
@@ -107,7 +107,6 @@ const userActiveDays = computed(() => {
 	return `${days} ${i18n.global.t('stats_days')}`;
 });
 const userAverageScore = computed(() => appStore.stats && appStore.stats.rate);
-
 const appStore = useAppStore();
 const appear = ref(false);
 const options = {
@@ -140,6 +139,18 @@ const formatDate = originalDate => {
 	const minutes = String(date.getUTCMinutes()).padStart(2, '0');
 
 	return `${day}.${month}.${year} / ${hours}:${minutes}`;
+};
+const getServiceName = function (name) {
+	const names = new Map([
+		['quiz', i18n.global.t('stats_quiz')],
+		['ref link', i18n.global.t('stats_ref')],
+		['promoCode', i18n.global.t('stats_promocode')],
+		['storeProduct', i18n.global.t('stats_store')],
+		['storeProductDigital', i18n.global.t('stats_store')],
+		['course', i18n.global.t('stats_course')],
+		['quest', i18n.global.t('stats_quest')],
+	]);
+	return names.get(name) || i18n.global.t('stats_others');
 };
 
 const sectionStyle = computed(() => ({
@@ -232,11 +243,9 @@ onMounted(() => useAppear(appear));
 	}
 }
 .stats {
-	height: 100vh;
+	color: #595959;
 	padding: 1rem 0;
 	transition: all 0.5s ease;
-	display: grid;
-	grid-auto-rows: max-content 1fr;
 	&__container {
 		display: grid;
 		grid-template-columns: 2fr 1fr;
@@ -261,7 +270,7 @@ onMounted(() => useAppear(appear));
 			display: flex;
 			align-items: center;
 			flex-direction: column;
-			margin-bottom: auto;
+			margin-bottom: 1rem;
 		}
 		&--system {
 			@media only screen and (max-height: 830px) {
@@ -306,14 +315,19 @@ onMounted(() => useAppear(appear));
 		}
 	}
 	&__history {
-		height: 100%;
 		display: flex;
 		flex-direction: column;
+		height: 90vh;
 		gap: 1rem;
 		&--box {
 			display: grid;
 			grid-template-columns: 1fr 2fr 1fr;
 			justify-items: center;
+			& p:first-child {
+				width: 9rem;
+				display: flex;
+				justify-content: start;
+			}
 		}
 		&-grid {
 			height: 100%;
@@ -329,7 +343,7 @@ onMounted(() => useAppear(appear));
 				display: none;
 			}
 			& h3 {
-				color: #595959;
+				color: currentColor;
 				font-size: 1.6rem;
 				font-weight: 600;
 				line-height: 150%; /* 2.4rem */
@@ -381,7 +395,7 @@ onMounted(() => useAppear(appear));
 		width: max-content;
 	}
 	& h2 {
-		color: #595959;
+		color: currentColor;
 		font-size: 2rem;
 		font-weight: 500;
 		line-height: 150%;
