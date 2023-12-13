@@ -4,11 +4,16 @@
 			<path
 				id="Stroke 1"
 				d="M11.1765 1.30679L5.98008 6.62493L0.707031 1.44336"
-				stroke="#565959"
+				:stroke="color || '#565959'"
 				stroke-width="1.2"
 				stroke-linecap="round"
-				stroke-linejoin="round"
-			/>
+				stroke-linejoin="round" />
 		</g>
 	</svg>
 </template>
+
+<script setup>
+const props = defineProps({
+	color: String,
+});
+</script>

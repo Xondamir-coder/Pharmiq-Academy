@@ -106,25 +106,14 @@ const fetchEmployees = async function () {
 		console.log('Error: ', error);
 	}
 };
-const leaveCompany = async function () {
-	const URL = `${BASE_URL}/`;
-
-	try {
-		const { data } = await axios.get(URL, formData, config);
-		console.log(data);
-	} catch (error) {
-		console.log('Error: ', error);
-	}
-};
 const changeOwner = async function () {
 	const URL = `${BASE_URL}/user-company-members-change`;
 	const formData = getFormData();
 	formData.append('member_id', selectedEmployee.value);
 
 	try {
-		const { data } = await axios.get(URL, formData, config);
+		const { data } = await axios.post(URL, formData, config);
 		console.log(data);
-		leaveCompany();
 	} catch (error) {
 		console.log('Error: ', error);
 	}
@@ -167,6 +156,7 @@ onMounted(() => {
 h2 {
 	font-size: 2rem;
 	font-weight: 400;
+	margin-bottom: 0.5rem;
 }
 h3 {
 	font-size: 1.4rem;
@@ -246,7 +236,7 @@ h3 {
 			&_form {
 				display: flex;
 				align-items: center;
-				gap: 3rem;
+				gap: 2rem;
 			}
 			&__dropdown {
 				background-color: transparent;
@@ -323,7 +313,7 @@ h3 {
 		text-align: center;
 		border-radius: 0.8rem;
 		border: 1px solid var(--brand-solid-primary-white, #e6f0f0);
-		width: 18rem;
+		width: 22rem;
 		padding: 1.2rem 0rem;
 		font-size: 1.6rem;
 		font-weight: 400;

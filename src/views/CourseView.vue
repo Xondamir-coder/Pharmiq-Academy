@@ -3,18 +3,24 @@
 		<img class="course__banner" :src="bannerUrl" :style="bannerAppear" alt="bg" />
 
 		<div class="course__content">
-			<h2 class="course__title" :style="textAppear">{{ title }}</h2>
-			<p class="course__text" :style="textAppear">{{ desc }}</p>
-			<RouterLink :to="lessonUrl" :style="textAppear">{{ btnText }}</RouterLink>
+			<h2 class="course__title" :style="[textAppear, darkmodeText]">
+				{{ title }}
+			</h2>
+			<p class="course__text" :style="[textAppear, darkmodeText]">
+				{{ desc }}
+			</p>
+			<RouterLink :to="lessonUrl" :style="[textAppear, darkmodeText]">
+				{{ btnText }}
+			</RouterLink>
 		</div>
 
 		<div class="course__info">
-			<div class="course__info--date">
+			<div class="course__info--date" :style="darkmodeText">
 				{{ startDate }} - <span v-if="endDate">{{ endDate }}</span>
 				<Infinity v-else />
 			</div>
 
-			<div class="course__info--length">
+			<div class="course__info--length" :style="darkmodeText">
 				<Video />
 				<span>{{ numberOfVideos }}</span>
 				<p>{{ totalVideoLength }}</p>
@@ -32,7 +38,9 @@
 					<Play class="course__info--box__play" />
 				</RouterLink>
 
-				<p>{{ JSON.parse(lesson.lessonTitleName)[i18n.global.locale] }}</p>
+				<p :style="darkmodeText">
+					{{ JSON.parse(lesson.lessonTitleName)[i18n.global.locale] }}
+				</p>
 				<span class="course__info--box__label"
 					>{{ i18n.global.t('lesson') }} {{ n + 1 }}</span
 				>
@@ -56,7 +64,7 @@
 						}"></div>
 				</div>
 
-				<span class="course__info--box__time">
+				<span :style="darkmodeText" class="course__info--box__time">
 					{{ convertToMinutes(JSON.parse(lesson.videoLength)[i18n.global.locale]) }}
 				</span>
 			</div>
@@ -197,6 +205,9 @@ const bannerAppear = computed(() => ({
 const textAppear = computed(() => ({
 	opacity: show.value ? '1' : '0',
 	transform: show.value ? 'translateX(0)' : 'translateX(-15rem)',
+}));
+const darkmodeText = computed(() => ({
+	color: appStore.isDark ? '#fff' : '',
 }));
 </script>
 

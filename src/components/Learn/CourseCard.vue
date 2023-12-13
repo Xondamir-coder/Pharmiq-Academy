@@ -1,11 +1,11 @@
 <template>
 	<RouterLink :to="`/course/${course.id}`" class="courses__card" :style="darkDard">
 		<img class="courses__card-banner" :src="bannerUrl" alt="bg" />
-		<h6>{{ categoryName }}</h6>
-		<p class="courses__card-title">{{ slicedTitle }}</p>
-		<p class="courses__card-text">{{ slicedDescription }}</p>
+		<h6 :style="darkmodeText">{{ categoryName }}</h6>
+		<p :style="darkmodeText" class="courses__card-title">{{ slicedTitle }}</p>
+		<p :style="darkmodeText" class="courses__card-text">{{ slicedDescription }}</p>
 		<div class="info__box">
-			<div class="info">
+			<div class="info" :style="darkmodeText">
 				<Video />
 				<span>{{ numberOfVideos }}</span>
 				<p>{{ totalVideoLength }}</p>
@@ -87,10 +87,15 @@ const btnText = computed(() => {
 });
 
 const darkDard = computed(() => ({
-	boxShadow: appStore.isDark ? '0px 0px 8px 0px rgba(255, 255, 255, 0.3)' : '',
+	boxShadow: appStore.isDark ? '0px 0px 8px 0px rgba(0, 0, 0, 0.10)' : '',
+	background: appStore.isDark ? '#1A1A1A' : '',
 	transform: appear.value ? 'scale(1)' : 'scale(.9)',
 	opacity: appear.value ? '1' : '0',
 }));
+const darkmodeText = computed(() => ({
+	color: appStore.isDark ? '#fff' : '',
+}));
+
 const totalWatched = computed(() => {
 	let totalWatched = 0;
 

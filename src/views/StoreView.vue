@@ -2,7 +2,7 @@
 	<section class="store">
 		<div>
 			<h1>{{ i18n.global.t('in_dev') }}</h1>
-			<img src="../assets/in-dev.png" alt="development process" />
+			<img src="../assets/in-dev.svg" alt="development process" />
 		</div>
 	</section>
 </template>
@@ -30,10 +30,5 @@ h1 {
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
-}
-img {
-	width: 60rem;
-	height: 53.1563rem;
-	object-fit: cover;
 }
 </style>

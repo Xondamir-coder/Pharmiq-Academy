@@ -67,12 +67,14 @@
 	"edit_enter_surname": "Familiyangizni kiriting",
 	"edit_birth_error": "Yoshingiz 18 dan kichkina",
 
+	"home_survey": "Tez so'rov",
 	"home_title": "Xush kelibsiz",
 	"board_title": "Reyting jadvali",
 	"board_place": "O'rni",
 	"board_name": "Familiya Ism",
 	"board_pharmacy": "Dorixona",
 	"board_stat": "O'quv ko'rsatkichi",
+	"home_choose_variant": "Variant tanlang",
 
 	"learn_current": "O'rganilmoqda",
 	"learn_courses": "Kurslar",

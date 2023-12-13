@@ -20,10 +20,10 @@
 			</button>
 		</div>
 
-		<h2 class="course__title" :style="textAppear">{{ title }}</h2>
+		<h2 class="course__title" :style="[textAppear, darkmodeText]">{{ title }}</h2>
 
 		<div ref="transcript" class="lesson__transcript" v-if="!showMaterials">
-			<div class="course__text lesson__text" v-html="text" :style="textAppear"></div>
+			<div class="lesson__text" v-html="text" :style="[textAppear, darkmodeText]"></div>
 		</div>
 
 		<div class="lesson__materials" v-else>
@@ -178,6 +178,9 @@ const textAppear = computed(() => ({
 const btnStyle = computed(() => ({
 	transform: showMaterials.value ? 'translateX(100%)' : 'translateX(0)',
 }));
+const darkmodeText = computed(() => ({
+	color: appStore.isDark ? '#fff' : '',
+}));
 
 onMounted(() => {
 	findLesson();
@@ -214,6 +217,14 @@ onMounted(() => {
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
+
+		transition: all 0.8s 0.6s;
+		color: var(--brand-solid-secondary-green, #4db1b1);
+		font-weight: 400;
+		font-size: 1.6rem;
+		& a {
+			color: var(--color-primary-pink);
+		}
 	}
 	&__buttons {
 		position: relative;

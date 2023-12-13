@@ -6,7 +6,9 @@
 					<h1 :style="headingStyle">{{ i18n.global.t('profile_title') }}</h1>
 					<div class="home__profile-edit_button" @click="toggleEdit">
 						<Pen />
-						<p>{{ i18n.global.t('profile_btn') }}</p>
+						<p>
+							{{ i18n.global.t('profile_btn') }}
+						</p>
 					</div>
 				</div>
 
@@ -737,26 +739,21 @@ h2 {
 			height: 1.6rem;
 		}
 		&_button {
-			width: 10rem;
 			cursor: pointer;
 			display: flex;
 			align-items: center;
 			gap: 4px;
-			transition: transform 0.5s;
-			transform: translateX(8rem);
-			&:hover {
-				transform: translateX(0);
+			&:hover > p {
+				width: 8rem;
 			}
-			&:hover p {
-				opacity: 1;
+			& p {
+				transition: all 0.4s;
+				width: 0;
+				overflow: hidden;
 			}
 			& svg {
 				width: 1.6rem;
 				height: 1.6rem;
-			}
-			& p {
-				transition: opacity 0.5s;
-				opacity: 0;
 			}
 		}
 	}

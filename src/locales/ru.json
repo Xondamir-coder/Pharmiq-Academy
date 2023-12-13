@@ -67,12 +67,14 @@
 	"edit_enter_surname": "Введите фамилию",
 	"edit_birth_error": "Возраст меньше чем 18",
 
+	"home_survey": "Быстрый опрос",
 	"home_title": "С возращением",
 	"board_title": "Таблица лидеров",
 	"board_place": "Место",
 	"board_name": "Фамилия Имя",
 	"board_pharmacy": "Аптека",
 	"board_stat": "Показатель обучения",
+	"home_choose_variant": "Выберите вариант",
 
 	"learn_current": "На изучении",
 	"learn_courses": "Курсы",

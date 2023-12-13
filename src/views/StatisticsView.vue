@@ -40,7 +40,7 @@
 					{{ i18n.global.t('learn_courses') }}
 				</h2>
 
-				<div class="stats__courses--box">
+				<div class="stats__courses--box" :style="darkBoxStyle">
 					<div class="chart__container--1">
 						<Doughnut :options="options" :data="data" />
 					</div>
@@ -54,7 +54,7 @@
 					{{ i18n.global.t('stats_average') }}
 				</h2>
 
-				<div class="stats__average stats__courses--box">
+				<div class="stats__average stats__courses--box" :style="darkBoxStyle">
 					<div :style="scoreStyle">
 						<h1>{{ userAverageScore }}</h1>
 						<span>/100</span>
@@ -65,18 +65,18 @@
 					{{ i18n.global.t('stats_history') }}
 				</h2>
 
-				<div class="stats__courses--system">
+				<div class="stats__courses--system" :style="darkBoxStyle">
 					<div>
 						<p :style="textColor">{{ i18n.global.t('stats_from') }}</p>
-						<span class="bg-dark-blue">{{ userCreatedDate }}</span>
+						<span>{{ userCreatedDate }}</span>
 					</div>
 					<div>
 						<p :style="textColor">{{ i18n.global.t('stats_system') }}</p>
-						<span class="bg-blue">{{ userActiveDays }}</span>
+						<span>{{ userActiveDays }}</span>
 					</div>
 					<div>
 						<p :style="textColor">{{ i18n.global.t('stats_status') }}</p>
-						<span class="bg-green">{{ i18n.global.t('stats_active') }}</span>
+						<span>{{ i18n.global.t('stats_active') }}</span>
 					</div>
 				</div>
 			</div>
@@ -171,6 +171,9 @@ const scoreStyle = computed(() => ({
 			: '0px 0px 10px #ff736e75 ',
 }));
 const darkText = computed(() => ({ color: appStore.isDark ? '#fff' : '' }));
+const darkBoxStyle = computed(() => ({
+	background: appStore.isDark ? '#1A1A1A' : '',
+}));
 
 onMounted(() => useAppear(appear));
 </script>
@@ -271,6 +274,9 @@ onMounted(() => useAppear(appear));
 			align-items: center;
 			flex-direction: column;
 			margin-bottom: 1rem;
+			&:nth-child(2) {
+				padding-top: 1rem;
+			}
 		}
 		&--system {
 			@media only screen and (max-height: 830px) {
@@ -305,6 +311,7 @@ onMounted(() => useAppear(appear));
 			& span {
 				padding: 0.4rem 0.8rem;
 				border-radius: 0.4rem;
+				background: var(--Richard-Gradient);
 			}
 			& p {
 				color: #000;
@@ -400,14 +407,5 @@ onMounted(() => useAppear(appear));
 		font-weight: 500;
 		line-height: 150%;
 	}
-}
-.bg-green {
-	background: var(--Richard-Gradient, linear-gradient(102deg, #61c1c0 -0.69%, #358184 100%));
-}
-.bg-dark-blue {
-	background: var(--brand-solid-secondary-blue, #4b96dc);
-}
-.bg-blue {
-	background: var(--brand-solid-secondary-light-blue, #96d2f5);
 }
 </style>

@@ -5,7 +5,7 @@
 				<h1>{{ i18n.global.t('test') }}</h1>
 				<p>{{ title }}</p>
 				<div class="quiz__head--quantity">
-					<h2>{{ questionsLeft }}</h2>
+					<h2 :style="darkHeadingStyle">{{ questionsLeft }}</h2>
 					<div class="quiz__bar--outer">
 						<div class="quiz__bar--inner" :style="barStyle"></div>
 					</div>
@@ -17,7 +17,7 @@
 			</div>
 		</div>
 
-		<div class="quiz__card" :style="[textColor, cardStyle]">
+		<div class="quiz__card" :style="[darkmodeText, cardStyle]">
 			<h3 :style="darkHeadingStyle">{{ question }}</h3>
 			<div class="quiz__card--options">
 				<div
@@ -401,7 +401,11 @@ const darkHeadingStyle = computed(() => ({
 	color: appStore.isDark ? '#fff' : '',
 }));
 const cardStyle = computed(() => ({
-	boxShadow: appStore.isDark ? '0px 0px 8px 0px rgba(255, 255, 255, 0.1)' : '',
+	boxShadow: appStore.isDark ? '0px 0px 8px 0px rgba(0, 0, 0, 0.10)' : '',
+	background: appStore.isDark ? '#121212' : '',
+}));
+const darkmodeText = computed(() => ({
+	color: appStore.isDark ? '#8B8B8B' : '',
 }));
 
 onMounted(() => {

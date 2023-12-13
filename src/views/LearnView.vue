@@ -3,6 +3,7 @@
 		<nav class="learn__nav">
 			<RouterLink
 				active-class="link--active"
+				:style="btnStyle"
 				v-for="route in routes"
 				:key="route.name"
 				:to="route.to">
@@ -48,6 +49,9 @@ const appear = ref(false);
 const showSection = computed(() => ({
 	transform: appear.value ? 'translateY(0)' : 'translateY(100%)',
 }));
+const btnStyle = computed(() => ({
+	backgroundColor: appStore.isDark ? '#1A1A1A' : '',
+}));
 
 onMounted(() => useAppear(appear));
 </script>
@@ -55,8 +59,8 @@ onMounted(() => useAppear(appear));
 <style lang="scss" scoped>
 .link--active {
 	color: #fff !important;
+	background-color: #ff736e !important;
 	padding-top: 3rem !important;
-	background-color: #ff736e;
 	z-index: -10;
 	@for $i from 1 through 4 {
 		&:nth-child(#{$i})::before {
