@@ -114,6 +114,7 @@ export const useAppStore = defineStore('app', () => {
 		isDark,
 		showPreloader,
 		token,
+		config,
 		user,
 		iqc,
 		company,

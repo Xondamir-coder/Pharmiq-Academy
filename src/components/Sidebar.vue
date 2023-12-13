@@ -62,9 +62,9 @@
 
 		<p>{{ i18n.global.t('download_text') }}</p>
 		<img class="sidebar__qrcode" src="../assets/qr-code.webp" alt="qr code" />
-		<a href="javascript:void(0);" class="sidebar__link" @click="logout"
-			><Logout />{{ i18n.global.t('quit_link') }}</a
-		>
+		<a href="javascript:void(0);" class="sidebar__link" @click="logout">
+			<Logout />{{ i18n.global.t('quit_link') }}
+		</a>
 	</div>
 	<Popup :success="searchFail" @toggle="togglePopup">
 		<template #content>
@@ -98,6 +98,7 @@ import { textColor } from '../composables/useColor';
 import i18n from '../locales';
 import axios from 'axios';
 import Popup from './Popup.vue';
+import { getFormData } from '../composables/useFormData';
 
 const appStore = useAppStore();
 const router = useRouter();
@@ -131,9 +132,18 @@ const toggleDarkMode = function () {
 	appStore.isDark = !appStore.isDark;
 	localStorage.setItem('isDark', appStore.isDark);
 };
-const logout = function () {
-	localStorage.removeItem('token');
-	window.location.href = 'https://go.pharmiq.uz/login';
+const logout = async function () {
+	const URL = 'https://api.pharmiq.uz/api/v1-1/logout';
+	const formData = getFormData();
+	const config = { headers: { Authorization: `Bearer ${appStore.token}` } };
+	try {
+		const { data } = await axios.post(URL, formData, config);
+		console.log(data);
+		localStorage.removeItem('token');
+		window.location.href = 'https://go.pharmiq.uz/login';
+	} catch (error) {
+		console.log('Error logging out: ', error);
+	}
 };
 const toggleLanguage = function () {
 	i18n.global.locale = i18n.global.locale == 'ru' ? 'uz' : 'ru';
