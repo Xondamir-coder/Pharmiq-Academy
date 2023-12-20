@@ -6,7 +6,7 @@ export const getToken = () => {
 	if (!token) {
 		const localToken = localStorage.getItem('token');
 		token = localToken;
-		if (!token) window.location.href = 'https://go.pharmiq.uz/login';
+		if (!token) window.location.href = 'https://go.pharmiq.uz/redirect?redirected=academy';
 		return token;
 	} else localStorage.setItem('token', token);
 	return token;

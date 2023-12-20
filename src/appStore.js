@@ -105,7 +105,7 @@ export const useAppStore = defineStore('app', () => {
 		console.error('Error:', error);
 		if (error.response.status == 401) {
 			localStorage.removeItem('token');
-			window.location.href = 'https://go.pharmiq.uz/login';
+			window.location.href = 'https://go.pharmiq.uz/redirect?redirected=academy';
 		}
 	};
 	const setShowPreloader = value => (showPreloader.value = value);

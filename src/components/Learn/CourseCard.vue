@@ -121,7 +121,6 @@ const totalWatched = computed(() => {
 const totalLessons = computed(() => props.course.lessons.length);
 
 onMounted(() => useAppear(appear));
-appStore.iqc.amountOfIQC = 50;
 </script>
 
 <style scoped lang="scss">

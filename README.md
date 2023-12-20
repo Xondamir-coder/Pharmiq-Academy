@@ -1,1 +1,1 @@
-✔️ Web-Based Platform where young as well as ambitious pharmacists are trained. Furthermore, when the survey is completed, courses are recommended based on the choices made as well as marks from other passed courses thus resulting in tailor-made experience.
+# e-learning platform for pharmacists
